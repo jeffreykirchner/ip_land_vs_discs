@@ -1,4 +1,4 @@
-# multi_user_socket_template
+# ip_land_vs_discs
 Template for multi user Django Channels experiment.
 
 Setup Guide:
@@ -16,8 +16,8 @@ Update Python installers:
 	sudo apt-get install python3.11-distutils
 
 Activate virtual environment and install requirments:
-    virtualenv --python=python3.11 _multi_user_socket_template_env
-    source _multi_user_socket_template_env/bin/activate
+    virtualenv --python=python3.11 _ip_land_vs_discs_env
+    source _ip_land_vs_discs_env/bin/activate
     pip install -U -r requirements.txt
 
 Setup Environment:

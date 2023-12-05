@@ -1,5 +1,5 @@
 logs/*
-_multi_user_socket_template_env/*
+_ip_land_vs_discs_env/*
 .vscode/*
 *.pyc
 local_settings.py
