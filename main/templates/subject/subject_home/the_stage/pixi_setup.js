@@ -13,8 +13,9 @@ setup_pixi: function setup_pixi(){
     PIXI.Assets.add('wall_tex', '{% static "wall.png"%}');
     PIXI.Assets.add('barrier_tex', '{% static "barrier.png"%}');
     PIXI.Assets.add('bridge_tex', '{% static "bridge.jpg"%}');
+    PIXI.Assets.add('seed_tex', '{% static "seed_1.png"%}');
 
-    const textures_promise = PIXI.Assets.load(['sprite_sheet', 'bg_tex', 'sprite_sheet_2', 
+    const textures_promise = PIXI.Assets.load(['sprite_sheet', 'bg_tex', 'sprite_sheet_2', 'seed_tex',
                                                'cherry_token', 'wall_tex', 'barrier_tex', 'bridge_tex']);
 
     textures_promise.then((textures) => {
