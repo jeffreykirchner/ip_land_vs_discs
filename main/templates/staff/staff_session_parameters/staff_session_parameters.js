@@ -71,13 +71,20 @@ var app = Vue.createApp({
 
         /** fire when websocket connects to server
         */
-        handle_socket_connected(){            
+        handle_socket_connected: function handle_socket_connected(){            
             if(!app.first_load_done)
             {
                 Vue.nextTick(() => {
                     app.do_first_load();
                 });
             }
+        },
+
+                /**
+         * fire when websocket connection is lost and reconnected
+         */
+        handle_socket_connection_try: function handle_socket_connection_try(){         
+            return true;
         },
 
         /** take websocket message from server

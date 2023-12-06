@@ -135,6 +135,8 @@ class ParameterSet(models.Model):
 
                 if v.get("parameter_set_group", None) != None:
                     p.parameter_set_group_id=new_parameter_set_groups_map[str(v["parameter_set_group"])]
+                
+                p.save()
 
             self.update_player_count()
 
