@@ -164,24 +164,7 @@ class Session(models.Model):
             v['parameter_set_player_id'] = i['parameter_set_player__id']
             
             self.world_state["session_players"][str(i['id'])] = v
-        
-        #tokens
-        tokens = {}
-        for i in self.session_periods.all():
-            tokens[str(i)] = {}
-
-            for j in range(self.parameter_set.tokens_per_period):
-                
-                token = {"current_location" : {
-                         "x":random.randint(25, self.parameter_set.world_width-25),
-                         "y":random.randint(25, self.parameter_set.world_height-25)},
-                         "status":"available",}
-                
-                tokens[str(i)][str(j)] = token
-            
-
-        self.world_state["tokens"] = tokens
-
+    
         self.save()
 
     def reset_experiment(self):

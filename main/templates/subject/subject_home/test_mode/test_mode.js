@@ -134,17 +134,7 @@ test_mode_move: function test_mode_move(){
 
     if(!current_period_id) return;
    
-    if(!app.test_mode_location_target || 
-        app.get_distance(app.test_mode_location_target,  obj.current_location) <= 25)
-    {
-         //if near target location, move to a new one
-
-        let rn = app.random_number(0, Object.keys(app.session.world_state.tokens[current_period_id]).length-1);
-        let r = Object.keys(app.session.world_state.tokens[current_period_id])[rn];
-        
-        app.test_mode_location_target = app.session.world_state.tokens[current_period_id][r].current_location;
-    }
-    else if(app.get_distance(app.test_mode_location_target,  obj.current_location)<1000)
+    if(app.get_distance(app.test_mode_location_target,  obj.current_location)<1000)
     {
         //object is close move to it
         obj.target_location = app.test_mode_location_target;
