@@ -21,7 +21,6 @@ setup_pixi: function setup_pixi(){
     textures_promise.then((textures) => {
         app.setup_pixi_sheets(textures);
         app.setup_pixi_ground();
-        app.setup_pixi_tokens_for_current_period();
         app.setup_pixi_subjects();
         app.setup_pixi_wall();
         app.setup_pixi_barrier();
@@ -206,36 +205,6 @@ check_for_collisions: function check_for_collisions(delta)
 
     const obj = app.session.world_state.session_players[app.session_player.id];
     let collision_found = false;
-
-    //check for collisions with tokens
-    const current_period_id = app.session.session_periods_order[app.session.world_state.current_period-1];
-    for(const i in app.session.world_state.tokens[current_period_id]){       
-
-        let token = app.session.world_state.tokens[current_period_id][i];
-        let distance = app.get_distance(obj.current_location, token.current_location);
-
-        if(distance <= pixi_avatars[app.session_player.id].avatar_container.width/2 &&
-           token.status == "available" && 
-           !collision_found)
-        {
-            
-            token.status = "waiting";
-            collision_found = true;
-
-            app.send_message("collect_token", 
-                             {"token_id" : i, "period_id" : current_period_id},
-                             "group");
-        }
-        else if(distance>2000)
-        {
-            token.visible=false;
-        }
-        else
-        {
-            token.visible=true;
-        }
-        
-    }
 
 },
 

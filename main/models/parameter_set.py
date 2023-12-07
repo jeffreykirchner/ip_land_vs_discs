@@ -37,7 +37,6 @@ class ParameterSet(models.Model):
     prolific_mode = models.BooleanField(default=False, verbose_name="Prolific Mode")                          #put study into prolific mode
     prolific_completion_link = models.CharField(max_length = 1000, default = '', verbose_name = 'Forward to Prolific after sesison', blank=True, null=True) #at the completion of the study forward subjects to link
 
-    tokens_per_period = models.IntegerField(verbose_name='Number of tokens each period', default=100)         #number of tokens each period
     world_width = models.IntegerField(verbose_name='Width of world in pixels', default=10000)                 #world width in pixels
     world_height = models.IntegerField(verbose_name='Height of world in pixels', default=10000)               #world height in pixels
 
@@ -91,7 +90,6 @@ class ParameterSet(models.Model):
             self.prolific_mode = new_ps.get("prolific_mode", False)
             self.prolific_completion_link = new_ps.get("prolific_completion_link", None)
 
-            self.tokens_per_period = new_ps.get("tokens_per_period", 100)
             self.world_width = new_ps.get("world_width", 1000)
             self.world_height = new_ps.get("world_height", 1000)
 
@@ -177,6 +175,14 @@ class ParameterSet(models.Model):
             for i in new_parameter_set_grounds:
                 p = main.models.ParameterSetGround.objects.create(parameter_set=self)
                 p.from_dict(new_parameter_set_grounds[i])
+            
+            #parameter set fields
+            self.parameter_set_fields.all().delete()
+            new_parameter_set_fields = new_ps.get("parameter_set_fields")
+
+            for i in new_parameter_set_fields:
+                p = main.models.ParameterSetField.objects.create(parameter_set=self)
+                p.from_dict(new_parameter_set_fields[i])
 
             self.json_for_session = None
             self.save()
@@ -258,7 +264,6 @@ class ParameterSet(models.Model):
         self.json_for_session["prolific_mode"] = "True" if self.prolific_mode else "False"
         self.json_for_session["prolific_completion_link"] = self.prolific_completion_link
 
-        self.json_for_session["tokens_per_period"] = self.tokens_per_period
         self.json_for_session["world_width"] = self.world_width
         self.json_for_session["world_height"] = self.world_height
 
@@ -282,6 +287,7 @@ class ParameterSet(models.Model):
                              update_walls=False,
                              update_barriers=False,
                              update_grounds=False,
+                             update_fields=False,
                              update_groups=False):
         '''
         update json model
@@ -301,6 +307,10 @@ class ParameterSet(models.Model):
         if update_grounds:
             self.json_for_session["parameter_set_grounds_order"] = list(self.parameter_set_grounds.all().values_list('id', flat=True))
             self.json_for_session["parameter_set_grounds"] = {str(p.id) : p.json() for p in self.parameter_set_grounds.all()}
+
+        if update_fields:
+            self.json_for_session["parameter_set_fields_order"] = list(self.parameter_set_fields.all().values_list('id', flat=True))
+            self.json_for_session["parameter_set_fields"] = {str(p.id) : p.json() for p in self.parameter_set_fields.all()}
 
         if update_notices:
             self.json_for_session["parameter_set_notices_order"] = list(self.parameter_set_notices.all().values_list('id', flat=True))
@@ -325,6 +335,7 @@ class ParameterSet(models.Model):
                                 update_walls=True,
                                 update_barriers=True,
                                 update_grounds=True,
+                                update_fields=True,
                                 update_groups=True)
 
         return self.json_for_session
