@@ -175,6 +175,14 @@ class ParameterSet(models.Model):
             for i in new_parameter_set_grounds:
                 p = main.models.ParameterSetGround.objects.create(parameter_set=self)
                 p.from_dict(new_parameter_set_grounds[i])
+            
+            #parameter set fields
+            self.parameter_set_fields.all().delete()
+            new_parameter_set_fields = new_ps.get("parameter_set_fields")
+
+            for i in new_parameter_set_fields:
+                p = main.models.ParameterSetField.objects.create(parameter_set=self)
+                p.from_dict(new_parameter_set_fields[i])
 
             self.json_for_session = None
             self.save()
@@ -279,6 +287,7 @@ class ParameterSet(models.Model):
                              update_walls=False,
                              update_barriers=False,
                              update_grounds=False,
+                             update_fields=False,
                              update_groups=False):
         '''
         update json model
@@ -298,6 +307,10 @@ class ParameterSet(models.Model):
         if update_grounds:
             self.json_for_session["parameter_set_grounds_order"] = list(self.parameter_set_grounds.all().values_list('id', flat=True))
             self.json_for_session["parameter_set_grounds"] = {str(p.id) : p.json() for p in self.parameter_set_grounds.all()}
+
+        if update_fields:
+            self.json_for_session["parameter_set_fields_order"] = list(self.parameter_set_fields.all().values_list('id', flat=True))
+            self.json_for_session["parameter_set_fields"] = {str(p.id) : p.json() for p in self.parameter_set_fields.all()}
 
         if update_notices:
             self.json_for_session["parameter_set_notices_order"] = list(self.parameter_set_notices.all().values_list('id', flat=True))
@@ -322,6 +335,7 @@ class ParameterSet(models.Model):
                                 update_walls=True,
                                 update_barriers=True,
                                 update_grounds=True,
+                                update_fields=True,
                                 update_groups=True)
 
         return self.json_for_session
