@@ -196,6 +196,8 @@ take_field_claim: function take_field_claim(message_data)
         app.destroy_pixi_fields();
         app.setup_pixi_fields();
 
+        app.setup_pixi_minimap();
+
         if(app.is_subject && source_player_id == app.session_player.id)
         {
             app.field_modal.hide();

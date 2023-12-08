@@ -44,6 +44,8 @@ var app = Vue.createApp({
 
                     notices_seen: [],
 
+                    build_seed_count : 1,
+
                     // modals
                     end_game_modal : null,
                     interaction_modal : null,

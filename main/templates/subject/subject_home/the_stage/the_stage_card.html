@@ -86,7 +86,39 @@
         </div>
 
         <div class="row justify-content-center mt-2" v-show="session.started" v-if="pixi_mode=='subject'">
-            <div class="col-md-4">                 
+            <div class="col-1">   
+                <button type="button" 
+                        title="Build Disc"
+                        class="btn btn-outline-primary"
+                        v-bind:disabled="reconnecting || working || session.started===false || session.world_state.finished"
+                        v-on:click="send_build_disc()">
+                        Build Disc <i class="fas fa-compact-disc"></i>
+                </button>
+            </div>
+            <div class="col-2 text-center">                
+                <div class="input-group w-75">
+                    <input type="number" 
+                            class="form-control fw-bold"
+                            v-model="build_seed_count"
+                            min="1"
+                            max="99"
+                            aria-label="Seed Count"                           
+                            aria-describedby="send_build_seeds_id">
+                    <button class="btn btn-outline-primary"
+                            type="button" 
+                            id="send_build_seeds" 
+                            title="Build Seeds"
+                            v-bind:disabled="reconnecting || working || session.started===false || session.world_state.finished"
+                            v-on:click="send_build_seeds">Build Seeds <i class="fas fa-seedling"></i></button>
+                </div>
+                
+            </div>
+
+            <div class="col-3 text-center fw-bold h5">
+                Production Time Remaining: [[session.world_state.session_players[session_player.id].build_time_remaining]] / [[session.parameter_set.build_time]]
+            </div>
+
+            <div class="col-4">
                 <div class="input-group">
                     <input type="text" 
                            class="form-control" 
@@ -100,7 +132,7 @@
                             id="send_chat_id" 
                             v-bind:disabled="reconnecting || working || session.started===false || session.world_state.finished"
                             v-on:click="(session.world_state.current_experiment_phase == 'Instructions') ? simulate_chat_instructions() : send_chat()">Chat <i class="far fa-comments"></i></button>
-                  </div>
+                </div>
             </div>
         </div>
        
