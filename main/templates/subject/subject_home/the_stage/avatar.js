@@ -52,7 +52,7 @@ setup_pixi_subjects: function setup_pixi_subjects(){
         token_graphic.scale.set(0.6);
         // token_graphic.alpha = 0.7;
 
-        let inventory_label = new PIXI.Text(subject.inventory[current_period_id], text_style);
+        let inventory_label = new PIXI.Text(subject.seeds, text_style);
         inventory_label.eventMode = 'passive';
         inventory_label.anchor.set(0, 0.5);
 
@@ -215,7 +215,7 @@ setup_pixi_subjects: function setup_pixi_subjects(){
 /**
  * destory pixi subject objects in world state
  */
-destory_setup_pixi_subjects: function destory_setup_pixi_subjects()
+destory_pixi_subjects: function destory_pixi_subjects()
 {
     if(!app.session) return;
 
@@ -262,7 +262,7 @@ update_player_inventory: function update_player_inventory()
     for(const i in app.session.session_players_order)
     {
         const player_id = app.session.session_players_order[i];
-        pixi_avatars[player_id].inventory_label.text = app.session.world_state.session_players[player_id].inventory[period_id];
+        pixi_avatars[player_id].inventory_label.text = app.session.world_state.session_players[player_id].seeds;
     }
 },
 
@@ -369,8 +369,8 @@ take_update_interaction: function take_update_interaction(message_data)
         source_player.inventory[period] = message_data.source_player_inventory;
         target_player.inventory[period] = message_data.target_player_inventory;
         
-        pixi_avatars[source_player_id].inventory_label.text = source_player.inventory[currnent_period_id];
-        pixi_avatars[target_player_id].inventory_label.text = target_player.inventory[currnent_period_id];
+        pixi_avatars[source_player_id].inventory_label.text = source_player.seeds;
+        pixi_avatars[target_player_id].inventory_label.text = target_player.seeds;
 
         //add transfer beam
         if(message_data.direction == "give")

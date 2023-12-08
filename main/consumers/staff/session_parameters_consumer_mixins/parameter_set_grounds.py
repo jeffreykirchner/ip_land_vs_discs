@@ -125,7 +125,12 @@ def take_add_parameterset_ground(data):
         logger.warning(f"take_add_parameterset_ground session, not found ID: {session_id}")
         return {"value" : "fail"}
 
+    parameter_set_ground_last = ParameterSetGround.objects.last()
     parameter_set_ground = ParameterSetGround.objects.create(parameter_set=session.parameter_set)
+
+    if parameter_set_ground_last:
+        parameter_set_ground.from_dict(parameter_set_ground_last.json())
+
     session.parameter_set.update_json_fk(update_grounds=True)
 
     return {"value" : "success"}

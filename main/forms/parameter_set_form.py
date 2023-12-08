@@ -87,6 +87,30 @@ class ParameterSetForm(forms.ModelForm):
                                                                           "step":"1",
                                                                           "min":"1"}))
 
+    build_time = forms.IntegerField(label='Total Production Time (seconds)',
+                                            min_value=1,
+                                            widget=forms.NumberInput(attrs={"v-model":"parameter_set.build_time",
+                                                                            "step":"1",
+                                                                            "min":"1"}))
+    
+    seed_build_length = forms.IntegerField(label='Seed Build Length (seconds)',
+                                            min_value=1,
+                                            widget=forms.NumberInput(attrs={"v-model":"parameter_set.seed_build_length",
+                                                                            "step":"1",
+                                                                            "min":"1"}))
+
+    field_build_length = forms.IntegerField(label='Field Build Length (seconds)',
+                                            min_value=1,
+                                            widget=forms.NumberInput(attrs={"v-model":"parameter_set.field_build_length",
+                                                                            "step":"1",
+                                                                            "min":"1"}))
+    
+    disc_build_length = forms.IntegerField(label='Disc Build Length (seconds)',
+                                           min_value=1,
+                                           widget=forms.NumberInput(attrs={"v-model":"parameter_set.disc_build_length",
+                                                                            "step":"1",
+                                                                            "min":"1"}))
+
     avatar_scale = forms.DecimalField(label='Avatar Scale',
                                       max_digits=3,
                                       decimal_places=2,
@@ -141,7 +165,7 @@ class ParameterSetForm(forms.ModelForm):
         fields =['period_count', 'period_length', 'break_frequency', 'break_length',
                  'show_instructions', 'instruction_set', 
                  'survey_required', 'survey_link', 'test_mode', 'prolific_mode', 'prolific_completion_link', 'reconnection_limit',
-                 'interaction_length', 'interaction_range', 'cool_down_length',
+                 'interaction_length', 'interaction_range', 'cool_down_length', 'build_time', 'field_build_length', 'disc_build_length','seed_build_length',
                  'avatar_scale', 'avatar_bound_box_percent', 'avatar_move_speed', 'avatar_animation_speed',
                  'world_width', 'world_height']
 

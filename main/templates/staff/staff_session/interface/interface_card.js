@@ -21,7 +21,7 @@ update_player_inventory: function update_player_inventory()
     for(const i in app.session.session_players_order)
     {
         const player_id = app.session.session_players_order[i];
-        pixi_avatars[player_id].inventory_label = app.session.world_state.session_players[player_id].inventory[period_id];
+        pixi_avatars[player_id].inventory_label = app.session.world_state.session_players[player_id].seeds;
     }
 },
 
@@ -73,11 +73,11 @@ take_update_interaction: function take_update_interaction(message_data)
         target_player.cool_down = app.session.parameter_set.cool_down_length;
 
         //update inventory
-        source_player.inventory[period] = message_data.source_player_inventory;
-        target_player.inventory[period] = message_data.target_player_inventory;
+        source_player.seeds = message_data.source_player_inventory;
+        target_player.seeds = message_data.target_player_inventory;
         
-        pixi_avatars[source_player_id].inventory_label.text = source_player.inventory[current_period_id];
-        pixi_avatars[target_player_id].inventory_label.text = target_player.inventory[current_period_id];
+        pixi_avatars[source_player_id].inventory_label.text = source_player.seeds;
+        pixi_avatars[target_player_id].inventory_label.text = target_player.seeds;
 
         //add transfer beam
         if(message_data.direction == "give")

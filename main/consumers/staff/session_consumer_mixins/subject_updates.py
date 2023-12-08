@@ -259,71 +259,6 @@ class SubjectUpdatesMixin():
         await self.send_message(message_to_self=event_data, message_to_group=None,
                                 message_type=event['type'], send_to_client=True, send_to_group=False)
 
-    async def collect_token(self, event):
-        '''
-        subject collects token
-        '''
-        if self.controlling_channel != self.channel_name:
-            return
-        
-        logger = logging.getLogger(__name__)
-
-        error_message = []
-        status = "success"
-        
-        try:
-            message_text = event["message_text"]
-            token_id = message_text["token_id"]
-            period_id = message_text["period_id"]
-            player_id = self.session_players_local[event["player_key"]]["id"]
-        except:
-            logger.info(f"collect_token: invalid data, {event['message_text']}")
-            status = "fail"
-            error_message.append({"id":"collect_token", "message": "Invalid data, try again."})
-        
-        if status == "success":
-            if self.world_state_local['tokens'][str(period_id)][str(token_id)]['status'] != 'available':
-                status = "fail"
-                error_message.append({"id":"collect_token", "message": "Token already collected."})
-        
-        result = {"status" :status, "error_message" : error_message}
-
-        if status == "success":
-            self.world_state_local['tokens'][str(period_id)][str(token_id)]['status'] = player_id
-            self.world_state_local['session_players'][str(player_id)]['inventory'][str(period_id)]+=1
-
-            inventory = self.world_state_local['session_players'][str(player_id)]['inventory'][str(period_id)]
-
-            await Session.objects.filter(id=self.session_id).aupdate(world_state=self.world_state_local)
-
-            result["token_id"] = token_id
-            result["period_id"] = period_id
-            result["player_id"] = player_id
-            result["inventory"] = inventory
-
-            await SessionEvent.objects.acreate(session_id=self.session_id,
-                                            session_player_id=player_id, 
-                                            type="collect_token",
-                                            period_number=self.world_state_local["current_period"],
-                                            time_remaining=self.world_state_local["time_remaining"],
-                                            data=result)
-
-       
-                 
-        #logger.warning(f'collect_token: {message_text}, token {token_id}')
-
-        await self.send_message(message_to_self=None, message_to_group=result,
-                                message_type=event['type'], send_to_client=False, send_to_group=True)
-
-    async def update_collect_token(self, event):
-        '''
-        subject collects token update
-        '''
-        event_data = event["group_data"]
-
-        await self.send_message(message_to_self=event_data, message_to_group=None,
-                                message_type=event['type'], send_to_client=True, send_to_group=False)
-    
     async def tractor_beam(self, event):
         '''
         subject activates tractor beam
@@ -497,7 +432,7 @@ class SubjectUpdatesMixin():
     
     async def cancel_interaction(self, event):
         '''
-        subject transfers tokens
+        subject cancels interaction
         '''
         if self.controlling_channel != self.channel_name:
             return
@@ -536,7 +471,35 @@ class SubjectUpdatesMixin():
 
     async def update_cancel_interaction(self, event):
         '''
-        subject transfers tokens update
+        subject cancels interaction update
+        '''
+        event_data = event["group_data"]
+
+        await self.send_message(message_to_self=event_data, message_to_group=None,
+                                message_type=event['type'], send_to_client=True, send_to_group=False)
+        
+    async def field_claim(self, event):
+        '''
+        subject claims a field
+        '''
+
+        if self.controlling_channel != self.channel_name:
+            return
+        
+        logger = logging.getLogger(__name__)
+
+        player_id = self.session_players_local[event["player_key"]]["id"]
+        error_message = []
+        status = "success"
+
+        result = {"status" : status, "error_message" : error_message, "source_player_id" : player_id}
+
+        await self.send_message(message_to_self=None, message_to_group=result,
+                                message_type=event['type'], send_to_client=False, send_to_group=True)
+
+    async def update_field_claim(self, event):
+        '''
+        subject claims a field update
         '''
         event_data = event["group_data"]
 

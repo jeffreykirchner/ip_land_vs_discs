@@ -41,18 +41,32 @@ setup_pixi_minimap: function setup_pixi_minimap()
         mini_map.container.addChild(temp_ground);
     }
 
-    //walls
-    for(const i in app.session.parameter_set.parameter_set_walls)
-    { 
+    //fields
+    for(const i in app.session.parameter_set.parameter_set_fields){
+        const field = app.session.parameter_set.parameter_set_fields[i];
 
-        const wall = app.session.parameter_set.parameter_set_walls[i];
+        let temp_field = new PIXI.Graphics();
+        temp_field.beginFill('saddlebrown');
+        temp_field.drawRect((field.x - field.width/2) * scale, 
+                            (field.y - field.height/2) * scale, 
+                             field.width * scale, 
+                             field.height * scale);
 
-        let temp_wall = new PIXI.Graphics();
-        temp_wall.beginFill('DEB887');
-        temp_wall.drawRect(wall.start_x * scale, wall.start_y * scale, wall.width * scale, wall.height * scale);
-
-        mini_map.container.addChild(temp_wall);
+        mini_map.container.addChild(temp_field);
     }
+
+    //walls
+    // for(const i in app.session.parameter_set.parameter_set_walls)
+    // { 
+
+    //     const wall = app.session.parameter_set.parameter_set_walls[i];
+
+    //     let temp_wall = new PIXI.Graphics();
+    //     temp_wall.beginFill('DEB887');
+    //     temp_wall.drawRect(wall.start_x * scale, wall.start_y * scale, wall.width * scale, wall.height * scale);
+
+    //     mini_map.container.addChild(temp_wall);
+    // }
     
     //mini map view port
     let mini_map_vp = new PIXI.Graphics();

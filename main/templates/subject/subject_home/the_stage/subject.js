@@ -67,6 +67,7 @@ get_offset:function get_offset()
             return;
         }
         
+        //avatars
         for(i in app.session.world_state.session_players)
         {
             let obj = app.session.world_state.session_players[i];
@@ -92,6 +93,29 @@ get_offset:function get_offset()
                 app.subject_avatar_click(i);              
                 break;
             }
+        }
+
+        //fields
+        for(i in app.session.world_state.fields)
+        {
+            let obj = app.session.parameter_set.parameter_set_fields[i];
+            let rect={x:obj.x-obj.width/2, y:obj.y-obj.height/2, width:obj.width, height:obj.height};
+            let pt={x:local_pos.x, y:local_pos.y};
+
+            
+            if(app.check_point_in_rectagle(pt, rect))
+            {
+                //check subject close enough for interaction
+                if(app.check_for_circle_rect_intersection({x:local_player.current_location.x, 
+                                                           y:local_player.current_location.y, 
+                                                           radius:app.session.parameter_set.interaction_range},
+                                                      rect))
+                {
+                    app.subject_field_click(i);              
+                    return;
+                }
+            }
+
         }
     }
 },

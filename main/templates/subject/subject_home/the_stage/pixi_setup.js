@@ -21,6 +21,7 @@ setup_pixi: function setup_pixi(){
     textures_promise.then((textures) => {
         app.setup_pixi_sheets(textures);
         app.setup_pixi_ground();
+        app.setup_pixi_fields();
         app.setup_pixi_subjects();
         app.setup_pixi_wall();
         app.setup_pixi_barrier();
