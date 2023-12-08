@@ -172,12 +172,10 @@ setup_pixi_subjects: function setup_pixi_subjects(){
         let interaction_range = new PIXI.Graphics();
         let interaction_range_radius = app.session.parameter_set.interaction_range;
 
-        interaction_range.lineStyle({width:1, color:app.session.session_players[i].parameter_set_player.hex_color, alignment:0});
-        interaction_range.beginFill(0xFFFFFF,0);
+        interaction_range.lineStyle({width:1, color:"dimgray", alignment:0});
         interaction_range.drawCircle(0, 0, interaction_range_radius);
-        interaction_range.endFill();    
-        interaction_range.zIndex = 100;
 
+        interaction_container.zIndex=2
         interaction_container.addChild(interaction_range);
         pixi_avatars[i].interaction_container = interaction_container;
         pixi_container_main.addChild(pixi_avatars[i].interaction_container);

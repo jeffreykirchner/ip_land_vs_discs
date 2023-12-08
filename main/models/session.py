@@ -150,6 +150,7 @@ class Session(models.Model):
             v["status"] = "available"
             v["owner"] = None
             v["parameter_set_field"] = i.id
+            v["id"] = i.id
 
             self.world_state["fields"][str(i.id)] = v
             

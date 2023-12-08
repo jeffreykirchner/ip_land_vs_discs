@@ -14,9 +14,13 @@ setup_pixi: function setup_pixi(){
     PIXI.Assets.add('barrier_tex', '{% static "barrier.png"%}');
     PIXI.Assets.add('bridge_tex', '{% static "bridge.jpg"%}');
     PIXI.Assets.add('seed_tex', '{% static "seed_1.png"%}');
+    PIXI.Assets.add('dash_tex', '{% static "dash_1.png"%}');
+    PIXI.Assets.add('left_click_tex', '{% static "left_click.png"%}');
+    PIXI.Assets.add('right_click_tex', '{% static "right_click.png"%}');
 
     const textures_promise = PIXI.Assets.load(['sprite_sheet', 'bg_tex', 'sprite_sheet_2', 'seed_tex',
-                                               'cherry_token', 'wall_tex', 'barrier_tex', 'bridge_tex']);
+                                               'cherry_token', 'wall_tex', 'barrier_tex', 'bridge_tex','dash_tex'
+                                               ,'left_click_tex', 'right_click_tex']);
 
     textures_promise.then((textures) => {
         app.setup_pixi_sheets(textures);

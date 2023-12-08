@@ -488,11 +488,46 @@ class SubjectUpdatesMixin():
         
         logger = logging.getLogger(__name__)
 
-        player_id = self.session_players_local[event["player_key"]]["id"]
         error_message = []
         status = "success"
 
-        result = {"status" : status, "error_message" : error_message, "source_player_id" : player_id}
+        try:
+            player_id = self.session_players_local[event["player_key"]]["id"]
+            source_player = self.world_state_local['session_players'][str(player_id)]
+            field_id = event["message_text"]["field_id"]
+            field = self.world_state_local["fields"][str(field_id)]
+        except:
+            logger.info(f"field_claim: invalid data, {event['message_text']}")
+            status = "fail"
+            error_message.append({"id":"field_claim", "message": "Invalid data, try again."})
+
+        #check if field is already claimed
+        if status == "success":
+            if field["status"] != "available":
+                status = "fail"
+                error_message.append({"id":"field_claim", "message": "Field already claimed."})
+        
+        #check is player already claimed another field
+        if status == "success":
+            for i in self.world_state_local["fields"]:
+                if self.world_state_local["fields"][i]["owner"] == player_id:
+                    status = "fail"
+                    error_message.append({"id":"field_claim", "message": "You already claimed a field."})
+                    break
+
+        result = {"status" : status, 
+                  "error_message" : error_message, 
+                  "source_player_id" : player_id}
+        
+        if status == "success":
+            #claim field
+            field["status"] = "claimed"
+            field["owner"] = player_id
+
+            result["field_id"] = field_id
+            result["field"] = field
+
+            await Session.objects.filter(id=self.session_id).aupdate(world_state=self.world_state_local)
 
         await self.send_message(message_to_self=None, message_to_group=result,
                                 message_type=event['type'], send_to_client=False, send_to_group=True)
