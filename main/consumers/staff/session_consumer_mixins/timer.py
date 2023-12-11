@@ -39,21 +39,6 @@ class TimerMixin():
         
         await Session.objects.filter(id=self.session_id).aupdate(world_state=self.world_state_local)
 
-        # if self.world_state_local["timer_running"]:
-        #     result = {"timer_running" : True}
-        #     await self.send_message(message_to_self=result, message_to_group=None,
-        #                             message_type=event['type'], send_to_client=True, send_to_group=False)
-        
-        #     #start continue timer
-        #     # await self.channel_layer.send(
-        #     #     self.channel_name,
-        #     #     {
-        #     #         'type': "continue_timer",
-        #     #         'message_text': {},
-        #     #     }
-        #     # )
-        # else:
-            #stop timer
         result = {"timer_running" : self.world_state_local["timer_running"]}
         await self.send_message(message_to_self=result, message_to_group=None,
                                 message_type=event['type'], send_to_client=True, send_to_group=False)
@@ -105,11 +90,11 @@ class TimerMixin():
             last_period["consumption_completed"] = True
             
             for i in self.world_state_local["session_players"]:
-                self.world_state_local["session_players"][i]["earnings"] += self.world_state_local["session_players"][i]["inventory"][last_period_id_s]
+                self.world_state_local["session_players"][i]["earnings"] += self.world_state_local["session_players"][i]["seeds"]
 
                 result["earnings"][i] = {}
                 result["earnings"][i]["total_earnings"] = self.world_state_local["session_players"][i]["earnings"]
-                result["earnings"][i]["period_earnings"] = self.world_state_local["session_players"][i]["inventory"][last_period_id_s]
+                result["earnings"][i]["period_earnings"] = self.world_state_local["session_players"][i]["seeds"]
            
         if self.world_state_local["current_experiment_phase"] != ExperimentPhase.NAMES:
 
@@ -168,11 +153,23 @@ class TimerMixin():
                     last_period["consumption_completed"] = True
                     
                     for i in self.world_state_local["session_players"]:
-                        self.world_state_local["session_players"][i]["earnings"] += self.world_state_local["session_players"][i]["inventory"][last_period_id_s]
+                        session_player = self.world_state_local["session_players"][i]
+
+                        session_player["cool_down"] = 0
+                        session_player["interaction"] = 0
+                        session_player["frozen"] = False
+                        session_player["tractor_beam_target"] = None
+                        session_player["state"] = "open"
+                        session_player["state_payload"] = {}
+
+                        session_player["earnings"] += self.world_state_local["session_players"][i]["seeds"]
 
                         result["earnings"][i] = {}
-                        result["earnings"][i]["total_earnings"] = self.world_state_local["session_players"][i]["earnings"]
-                        result["earnings"][i]["period_earnings"] = self.world_state_local["session_players"][i]["inventory"][last_period_id_s]
+                        result["earnings"][i]["total_earnings"] = session_player["earnings"]
+                        result["earnings"][i]["period_earnings"] = session_player["seeds"]
+
+                        session_player["seeds"] = 0
+                        session_player["build_time_remaining"] = self.parameter_set_local["build_time"]                        
 
         if send_update:
             #session status
@@ -206,7 +203,8 @@ class TimerMixin():
                     session_player["interaction"] -= 1
 
                     if session_player["interaction"] == 0:
-                        session_player["cool_down"] = self.parameter_set_local["cool_down_length"]
+                        if session_player["state"] != "building_seeds":
+                            session_player["cool_down"] = self.parameter_set_local["cool_down_length"]
                 
                 if session_player["interaction"] == 0:
                     session_player["frozen"] = False
@@ -215,8 +213,16 @@ class TimerMixin():
                 session_player_status[p] = {"interaction": session_player["interaction"], 
                                             "frozen": session_player["frozen"], 
                                             "cool_down": session_player["cool_down"],
-                                            "tractor_beam_target" : session_player["tractor_beam_target"]}                
-            
+                                            "state": session_player["state"],
+                                            "seeds": session_player["seeds"],
+                                            "build_time_remaining": session_player["build_time_remaining"],
+                                            "tractor_beam_target" : session_player["tractor_beam_target"]}              
+
+                #look for state changes.
+                if session_player["state"] != "open" and session_player["interaction"] == 0:
+                    if session_player["state"] == "building_seeds":
+                        await self.build_seeds(session_player["state_payload"])
+
             result["session_player_status"] = session_player_status
 
             await SessionEvent.objects.acreate(session_id=self.session_id, 

@@ -599,26 +599,49 @@ class SubjectUpdatesMixin():
         try:
             player_id = self.session_players_local[event["player_key"]]["id"]
             build_seed_count = event["message_text"]["build_seed_count"]
+            source = event["message_text"]["source"]
         except:
             logger.info(f"build_seeds: invalid data, {event['message_text']}")
             status = "fail"
             error_message.append({"id":"build_seeds", "message": "Invalid data, try again."})
 
+        session_player = self.world_state_local["session_players"][str(player_id)]
+
+        if session_player["build_time_remaining"] < build_seed_count:
+            status = "fail"
+            error_message.append({"id":"build_seeds", "message": "Not enough time to build that many seeds."})
+
+        if source == "client" and session_player["state"] != "open":
+            status = "fail"
+            error_message.append({"id":"build_seeds", "message": "You are already building."})
+
         result = {"status" : status, 
                   "error_message" : error_message, 
                   "source_player_id" : player_id}
         
-        if self.world_state_local["session_players"][str(player_id)]["build_time_remaining"] < build_seed_count:
-            status = "fail"
-            error_message.append({"id":"build_seeds", "message": "Not enough time to build that many seeds."})
-        
         if status == "success":
             #build seeds
-            self.world_state_local["session_players"][str(player_id)]["seeds"] += build_seed_count
-            self.world_state_local["session_players"][str(player_id)]["build_time_remaining"] -= build_seed_count
 
-            result["seeds"] = self.world_state_local["session_players"][str(player_id)]["seeds"]
-            result["build_time_remaining"] = self.world_state_local["session_players"][str(player_id)]["build_time_remaining"]
+            if session_player["state"] == "building_seeds":
+                session_player["seeds"] += build_seed_count
+                session_player["build_time_remaining"] -= build_seed_count
+
+                session_player["state"] = "open"
+                session_player["state_payload"] = {}
+                session_player["frozen"] = False
+            else:
+                event["message_text"]["source"]="server"
+                session_player["state"] = "building_seeds"
+                session_player["state_payload"] = event
+                session_player["frozen"] = True
+                session_player["interaction"] = build_seed_count
+
+            result["seeds"] = session_player["seeds"]
+            result["build_time_remaining"] = session_player["build_time_remaining"]
+            result["build_seed_count"] = build_seed_count
+            result["state"] = session_player["state"]
+            result["frozen"] = session_player["frozen"]
+            result["interaction"] = session_player["interaction"]
 
             await Session.objects.filter(id=self.session_id).aupdate(world_state=self.world_state_local)
 

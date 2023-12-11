@@ -170,6 +170,8 @@ class Session(models.Model):
             v['cool_down'] = 0
             v['interaction'] = 0
             v['earnings'] = 0
+            v['state'] = "open"
+            v['state_payload'] = {}
             v['parameter_set_player_id'] = i['parameter_set_player__id']
             
             self.world_state["session_players"][str(i['id'])] = v

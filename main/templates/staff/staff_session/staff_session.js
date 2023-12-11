@@ -412,10 +412,17 @@ var app = Vue.createApp({
             for(p in message_data.session_player_status)
             {
                 session_player = message_data.session_player_status[p];
-                app.session.world_state.session_players[p].interaction = session_player.interaction;
-                app.session.world_state.session_players[p].frozen = session_player.frozen;
-                app.session.world_state.session_players[p].cool_down = session_player.cool_down;
-                app.session.world_state.session_players[p].tractor_beam_target = session_player.tractor_beam_target;
+                session_player_local = app.session.world_state.session_players[p];
+
+                session_player_local.interaction = session_player.interaction;
+                session_player_local.frozen = session_player.frozen;
+                session_player_local.cool_down = session_player.cool_down;
+                session_player_local.state = session_player.state;
+                session_player_local.seeds = session_player.seeds;
+                session_player_local.build_time_remaining = session_player.build_time_remaining;
+                session_player_local.tractor_beam_target = session_player.tractor_beam_target;
+
+                pixi_avatars[p].inventory_label.text = session_player_local.seeds;
             }
 
             //update player location

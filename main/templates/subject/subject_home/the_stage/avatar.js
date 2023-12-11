@@ -598,7 +598,15 @@ move_player: function move_player(delta)
         //update status
         if(obj.interaction > 0)
         {
-            status_label.text = "Interaction ... " + obj.interaction;
+            if(obj.state=="building_seeds")
+            {
+                status_label.text = "Building Seeds ... " + obj.interaction;
+            }
+            else
+            {
+                status_label.text = "Interaction ... " + obj.interaction;
+            }
+
             status_label.visible = true;
         }
         else if(obj.cool_down > 0)

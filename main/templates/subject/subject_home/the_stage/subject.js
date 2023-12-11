@@ -23,7 +23,14 @@ get_offset:function get_offset()
 
         if(local_player.frozen)
         {
-            app.add_text_emitters("No movement while interacting.", 
+            let frozen_text = "No movement while interacting.";
+
+            if(local_player.state == "building_seeds")
+            {
+                frozen_text = "No movement while building seeds.";
+            }
+
+            app.add_text_emitters(frozen_text, 
                             local_player.current_location.x, 
                             local_player.current_location.y,
                             local_player.current_location.x,
@@ -43,7 +50,14 @@ get_offset:function get_offset()
     {
         if(local_player.frozen)
         {
-            app.add_text_emitters("No actions while interacting.", 
+            let frozen_text = "No actions while interacting.";
+
+            if(local_player.state == "building_seeds")
+            {
+                frozen_text = "No actions while building seeds.";
+            }
+
+            app.add_text_emitters(frozen_text, 
                             local_player.current_location.x, 
                             local_player.current_location.y,
                             local_player.current_location.x,

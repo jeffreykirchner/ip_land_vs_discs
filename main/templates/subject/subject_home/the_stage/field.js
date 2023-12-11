@@ -285,7 +285,8 @@ send_build_seeds: function send_build_seeds()
     app.working = true;
         
     app.send_message("build_seeds", 
-                    {"build_seed_count" : app.build_seed_count},
+                    {"build_seed_count" : app.build_seed_count,
+                     "source" : "client"},
                     "group"); 
 },
 
@@ -298,13 +299,35 @@ take_build_seeds: function take_build_seeds(message_data)
 
     if(message_data.status == "success")
     {
-        let seeds = message_data.seeds;
-        let build_time_remaining = message_data.build_time_remaining;
 
-        app.session.world_state.session_player[source_player_id].seeds = seeds;
-        app.session.world_state.session_player[source_player_id].build_time_remaining = build_time_remaining;
+        let session_player = app.session.world_state.session_players[source_player_id];
 
-        pixi_avatars[source_player_id].inventory_label.text = app.session.world_state.session_player[source_player_id].seeds;
+        session_player.seeds =  message_data.seeds;
+        session_player.build_time_remaining =  message_data.build_time_remaining;
+        session_player.frozen = message_data.frozen;
+        session_player.state = message_data.state;
+        session_player.interaction = message_data.interaction;
+
+        if(session_player.state == "open")
+        {
+            pixi_avatars[source_player_id].inventory_label.text = session_player.seeds;
+
+            let seed_graphic = PIXI.Sprite.from(app.pixi_textures['seed_tex']);
+            seed_graphic.eventMode = 'none';
+            seed_graphic.scale.set(0.4);
+            seed_graphic.alpha = 0.7;
+
+            let source_location =  session_player.current_location;
+
+            app.add_text_emitters("+" + message_data.build_seed_count, 
+                                source_location.x, 
+                                source_location.y,
+                                source_location.x,
+                                source_location.y - 100,
+                                0xFFFFFF,
+                                28,
+                                seed_graphic)
+        }
 
         if(app.is_subject && source_player_id == app.session_player.id)
         {
