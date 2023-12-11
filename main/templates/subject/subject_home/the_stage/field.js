@@ -238,3 +238,84 @@ subject_field_click: function subject_field_click(target_field_id)
     app.field_modal_open = true;
     app.field_error = null;
 },
+
+/**
+ * send build disc
+ */
+send_build_disc: function send_build_disc()
+{
+
+    app.working = true;
+        
+    app.send_message("build_disc", 
+                    {},
+                    "group"); 
+},
+
+/**
+ * take build disc
+ */
+take_build_disc: function take_build_disc(message_data)
+{
+    var source_player_id = message_data.source_player_id;
+
+    if(message_data.status == "success")
+    {
+
+
+        if(app.is_subject && source_player_id == app.session_player.id)
+        {
+            
+        }
+    }
+    else
+    {
+        if(app.is_subject && source_player_id == app.session_player.id)
+        {
+           
+        }
+    }
+},
+
+/**
+ * send build seeds
+ */
+send_build_seeds: function send_build_seeds()
+{
+    app.working = true;
+        
+    app.send_message("build_seeds", 
+                    {"build_seed_count" : app.build_seed_count},
+                    "group"); 
+},
+
+/**
+ * take build seeds
+ */
+take_build_seeds: function take_build_seeds(message_data)
+{
+    var source_player_id = message_data.source_player_id;
+
+    if(message_data.status == "success")
+    {
+        let seeds = message_data.seeds;
+        let build_time_remaining = message_data.build_time_remaining;
+
+        app.session.world_state.session_player[source_player_id].seeds = seeds;
+        app.session.world_state.session_player[source_player_id].build_time_remaining = build_time_remaining;
+
+        pixi_avatars[source_player_id].inventory_label.text = app.session.world_state.session_player[source_player_id].seeds;
+
+        if(app.is_subject && source_player_id == app.session_player.id)
+        {
+            
+        }
+    }
+    else
+    {
+        if(app.is_subject && source_player_id == app.session_player.id)
+        {
+           
+        }
+    }
+},

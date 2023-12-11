@@ -175,6 +175,12 @@ var app = Vue.createApp({
                 case "update_field_claim":
                     app.take_field_claim(message_data);
                     break;
+                case "update_build_disc":
+                    app.take_build_disc(message_data);
+                    break;
+                case "update_build_seeds":
+                    app.take_build_seeds(message_data);
+                    break;
             }
 
             app.first_load_done = true;

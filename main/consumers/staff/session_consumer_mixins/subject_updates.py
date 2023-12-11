@@ -540,6 +540,99 @@ class SubjectUpdatesMixin():
 
         await self.send_message(message_to_self=event_data, message_to_group=None,
                                 message_type=event['type'], send_to_client=True, send_to_group=False)
+        
+    async def build_disc(self, event):
+        '''
+        subject builds a disc
+        '''
+
+        if self.controlling_channel != self.channel_name:
+            return
+        
+        logger = logging.getLogger(__name__)
+
+        error_message = []
+        status = "success"
+
+        try:
+            player_id = self.session_players_local[event["player_key"]]["id"]
+        except:
+            logger.info(f"build_disc: invalid data, {event['message_text']}")
+            status = "fail"
+            error_message.append({"id":"build_disc", "message": "Invalid data, try again."})
+
+        result = {"status" : status, 
+                  "error_message" : error_message, 
+                  "source_player_id" : player_id}
+        
+        if status == "success":
+            #build a disc
+
+
+            await Session.objects.filter(id=self.session_id).aupdate(world_state=self.world_state_local)
+
+        await self.send_message(message_to_self=None, message_to_group=result,
+                                message_type=event['type'], send_to_client=False, send_to_group=True)
+    
+    async def update_build_disc(self, event):
+        '''
+        subject builds a disc update
+        '''
+        event_data = event["group_data"]
+
+        await self.send_message(message_to_self=event_data, message_to_group=None,
+                                message_type=event['type'], send_to_client=True, send_to_group=False)
+        
+    async def build_seeds(self, event):
+        '''
+        subject builds seeds
+        '''
+
+        if self.controlling_channel != self.channel_name:
+            return
+        
+        logger = logging.getLogger(__name__)
+
+        error_message = []
+        status = "success"
+
+        try:
+            player_id = self.session_players_local[event["player_key"]]["id"]
+            build_seed_count = event["message_text"]["build_seed_count"]
+        except:
+            logger.info(f"build_seeds: invalid data, {event['message_text']}")
+            status = "fail"
+            error_message.append({"id":"build_seeds", "message": "Invalid data, try again."})
+
+        result = {"status" : status, 
+                  "error_message" : error_message, 
+                  "source_player_id" : player_id}
+        
+        if self.world_state_local["session_players"][str(player_id)]["build_time_remaining"] < build_seed_count:
+            status = "fail"
+            error_message.append({"id":"build_seeds", "message": "Not enough time to build that many seeds."})
+        
+        if status == "success":
+            #build seeds
+            self.world_state_local["session_players"][str(player_id)]["seeds"] += build_seed_count
+            self.world_state_local["session_players"][str(player_id)]["build_time_remaining"] -= build_seed_count
+
+            result["seeds"] = self.world_state_local["session_players"][str(player_id)]["seeds"]
+            result["build_time_remaining"] = self.world_state_local["session_players"][str(player_id)]["build_time_remaining"]
+
+            await Session.objects.filter(id=self.session_id).aupdate(world_state=self.world_state_local)
+
+        await self.send_message(message_to_self=None, message_to_group=result,
+                                message_type=event['type'], send_to_client=False, send_to_group=True)
+    
+    async def update_build_seeds(self, event):
+        '''
+        subject builds seeds update
+        '''
+        event_data = event["group_data"]
+
+        await self.send_message(message_to_self=event_data, message_to_group=None,
+                                message_type=event['type'], send_to_client=True, send_to_group=False)
                                       
     
 
