@@ -404,6 +404,18 @@ var app = Vue.createApp({
             //update player earnings and inventory if period has changed
             if(message_data.period_is_over)
             {
+                //update fields
+                for(let i in message_data.fields)
+                {
+                    let field = message_data.fields[i];
+                    let field_local = app.session.world_state.fields[i];
+                    field_local.owner = field.owner;
+                    field_local.status = field.status;
+                }
+
+                app.destroy_pixi_fields();
+                app.setup_pixi_fields();
+                
                 app.update_player_inventory();              
                 app.take_update_earnings(message_data.earnings);  
             }

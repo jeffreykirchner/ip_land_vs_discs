@@ -16,10 +16,11 @@ setup_pixi: function setup_pixi(){
     PIXI.Assets.add('dash_tex', '{% static "dash_1.png"%}');
     PIXI.Assets.add('left_click_tex', '{% static "left_click.png"%}');
     PIXI.Assets.add('right_click_tex', '{% static "right_click.png"%}');
+    PIXI.Assets.add('cone_tex', '{% static "cone_1.png"%}');
 
     const textures_promise = PIXI.Assets.load(['sprite_sheet', 'bg_tex', 'sprite_sheet_2', 'seed_tex',
                                                'wall_tex', 'barrier_tex', 'bridge_tex','dash_tex'
-                                               ,'left_click_tex', 'right_click_tex']);
+                                               ,'left_click_tex', 'right_click_tex', 'cone_tex']);
 
     textures_promise.then((textures) => {
         app.setup_pixi_sheets(textures);

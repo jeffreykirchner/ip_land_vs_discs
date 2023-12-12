@@ -98,7 +98,7 @@ setup_pixi_fields: function setup_pixi_fields()
             field_container.position.set(parameter_set_field.x - parameter_set_field.width/2,
                                         parameter_set_field.y - parameter_set_field.height/2);
         }
-        else if(field.status == "claimed")
+        else
         {
             let parameter_set_player = app.get_parameter_set_player_from_player_id(field.owner);
             let outline = new PIXI.Graphics();
@@ -120,7 +120,29 @@ setup_pixi_fields: function setup_pixi_fields()
                 strokeThickness: 3,
             };
 
-            let id_label = new PIXI.Text("Claimed by " + parameter_set_player.id_label + ".", text_style);
+            let id_label_text = ""
+            let left_cone_graphic = null;
+            let right_cone_graphic = null;
+            if(field.status == "claimed")
+            {
+                id_label_text = "Claimed by " + parameter_set_player.id_label + ".";
+            }
+            else
+            {
+                id_label_text = "Under construction by " + parameter_set_player.id_label + ".";
+
+                left_cone_graphic = PIXI.Sprite.from(app.pixi_textures["cone_tex"]);
+                left_cone_graphic.anchor.set(1,0.5)
+                left_cone_graphic.eventMode = 'passive';
+                left_cone_graphic.scale.set(0.5);
+
+                right_cone_graphic = PIXI.Sprite.from(app.pixi_textures["cone_tex"]);
+                right_cone_graphic.anchor.set(0,0.5)
+                right_cone_graphic.eventMode = 'passive';
+                right_cone_graphic.scale.set(0.5);
+            }
+
+            let id_label = new PIXI.Text(id_label_text, text_style);
             id_label.eventMode = 'passive';
             id_label.anchor.set(0.5);
 
@@ -130,6 +152,16 @@ setup_pixi_fields: function setup_pixi_fields()
                                  field_container.height/2 - id_label.height/2 - 20);
             
             field_container.addChild(id_label);
+
+            if(field.status == "building")
+            {
+                left_cone_graphic.position.set(field_container.width/2 - id_label.width/2 - 5 - left_cone_graphic.width/2,
+                                                field_container.height/2- id_label.height/2 - 20);
+                right_cone_graphic.position.set(field_container.width/2 + id_label.width/2 + 5 +  right_cone_graphic.width/2,
+                                                field_container.height/2- id_label.height/2 - 20);
+                field_container.addChild(left_cone_graphic);
+                field_container.addChild(right_cone_graphic);
+            }
 
             field_container.position.set(parameter_set_field.x - parameter_set_field.width/2,
                                         parameter_set_field.y - parameter_set_field.height/2);
@@ -177,7 +209,7 @@ send_field_claim: function send_field_claim()
     app.working = true;
         
     app.send_message("field_claim", 
-                    {"field_id" : field_id,},
+                    {"field_id" : field_id, "source" : "client"},
                     "group"); 
 },
 

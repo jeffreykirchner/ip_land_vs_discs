@@ -235,6 +235,8 @@ class TimerMixin():
                 if session_player["state"] != "open" and session_player["interaction"] == 0:
                     if session_player["state"] == "building_seeds":
                         await self.build_seeds(session_player["state_payload"])
+                    elif session_player["state"] == "claiming_field":
+                        await self.field_claim(session_player["state_payload"])
 
             result["session_player_status"] = session_player_status
 

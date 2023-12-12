@@ -496,19 +496,20 @@ class SubjectUpdatesMixin():
             source_player = self.world_state_local['session_players'][str(player_id)]
             field_id = event["message_text"]["field_id"]
             field = self.world_state_local["fields"][str(field_id)]
+            source = event["message_text"]["source"]
         except:
             logger.info(f"field_claim: invalid data, {event['message_text']}")
             status = "fail"
             error_message.append({"id":"field_claim", "message": "Invalid data, try again."})
 
         #check if field is already claimed
-        if status == "success":
+        if status == "success" and source == "client":
             if field["status"] != "available":
                 status = "fail"
                 error_message.append({"id":"field_claim", "message": "Field already claimed."})
         
         #check if player already claimed another field
-        if status == "success":
+        if status == "success" and source == "client":
             for i in self.world_state_local["fields"]:
                 if self.world_state_local["fields"][i]["owner"] == player_id:
                     status = "fail"
@@ -516,7 +517,7 @@ class SubjectUpdatesMixin():
                     break
         
         #check if player has enough proudction seconds remaining    
-        if status == "success":
+        if status == "success" and source == "client":
             if source_player["build_time_remaining"] < self.parameter_set_local["field_build_length"]:
                 status = "fail"
                 error_message.append({"id":"field_claim", "message": "Not enough production time to claim a field."})
@@ -528,16 +529,26 @@ class SubjectUpdatesMixin():
         if status == "success":
             session_player = self.world_state_local["session_players"][str(player_id)]
 
-            session_player["build_time_remaining"] -=  self.parameter_set_local["field_build_length"]
+            if source == "client":
+                event["message_text"]["source"]="server"
 
-            session_player["state"] = "claiming_field"
-            session_player["state_payload"] = event
-            session_player["frozen"] = True
-            session_player["interaction"] = self.parameter_set_local["field_build_length"]
-             
-            #claim field
-            field["status"] = "claimed"
-            field["owner"] = player_id
+                session_player["build_time_remaining"] -=  self.parameter_set_local["field_build_length"]
+
+                session_player["state"] = "claiming_field"
+                session_player["state_payload"] = event
+                session_player["frozen"] = True
+                session_player["interaction"] = self.parameter_set_local["field_build_length"]
+                
+                #claim field
+                field["status"] = "building"
+                field["owner"] = player_id
+            else:
+                session_player["state"] = "open"
+                session_player["state_payload"] = {}
+                session_player["frozen"] = False
+                session_player["interaction"] = 0
+
+                field["status"] = "claimed"
 
             result["field_id"] = field_id
             result["field"] = field
