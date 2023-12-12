@@ -198,6 +198,13 @@ take_field_claim: function take_field_claim(message_data)
 
         app.setup_pixi_minimap();
 
+        let session_player = app.session.world_state.session_players[source_player_id];
+
+        session_player.build_time_remaining =  message_data.build_time_remaining;
+        session_player.frozen = message_data.frozen;
+        session_player.state = message_data.state;
+        session_player.interaction = message_data.interaction;
+
         if(app.is_subject && source_player_id == app.session_player.id)
         {
             app.field_modal.hide();
@@ -261,7 +268,6 @@ take_build_disc: function take_build_disc(message_data)
 
     if(message_data.status == "success")
     {
-
 
         if(app.is_subject && source_player_id == app.session_player.id)
         {

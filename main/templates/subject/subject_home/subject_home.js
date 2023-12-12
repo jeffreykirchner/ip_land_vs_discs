@@ -370,6 +370,18 @@ var app = Vue.createApp({
             //period has changed
             if(message_data.period_is_over)
             {
+                //update fields
+                for(let i in message_data.fields)
+                {
+                    let field = message_data.fields[i];
+                    let field_local = app.session.world_state.fields[i];
+                    field_local.owner = field.owner;
+                    field_local.status = field.status;
+                }
+
+                app.destroy_pixi_fields();
+                app.setup_pixi_fields();
+
                 Vue.nextTick(() => {
                     let current_location = app.session.world_state.session_players[app.session_player.id].current_location;
 

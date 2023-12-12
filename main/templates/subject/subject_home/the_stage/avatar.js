@@ -602,6 +602,10 @@ move_player: function move_player(delta)
             {
                 status_label.text = "Building Seeds ... " + obj.interaction;
             }
+            else if(obj.state=="claiming_field")
+            {
+                status_label.text = "Building Field ... " + obj.interaction;
+            }
             else
             {
                 status_label.text = "Interaction ... " + obj.interaction;

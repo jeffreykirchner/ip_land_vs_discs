@@ -22,7 +22,10 @@
             </div>
             <div class="modal-body">   
                 <div class="row">
-                    <div class="col text-center h5">Claim Field</div>
+                    <div class="col text-center h5">Claim Field?</div>                    
+                </div>
+                <div class="row" v-if="session && session.started">
+                    <div class="col text-center h5">Cost: [[session.parameter_set.field_build_length]] Production Seconds</div>
                 </div>
                 
                 <div class="row mt-4 border-top pt-3" v-if="selected_field.field">

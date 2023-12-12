@@ -169,7 +169,12 @@ class TimerMixin():
                         result["earnings"][i]["period_earnings"] = session_player["seeds"]
 
                         session_player["seeds"] = 0
-                        session_player["build_time_remaining"] = self.parameter_set_local["build_time"]                        
+                        session_player["build_time_remaining"] = self.parameter_set_local["build_time"]   
+
+                    for i in self.world_state_local["fields"]:
+                        field = self.world_state_local["fields"][i]
+                        field["owner"] = None
+                        field["status"] = "available"             
 
         if send_update:
             #session status
@@ -190,6 +195,14 @@ class TimerMixin():
                 result["current_locations"][i] = self.world_state_local["session_players"][i]["current_location"]
                 result["target_locations"][i] = self.world_state_local["session_players"][i]["target_location"]
 
+            #fields
+            result["fields"] = {}
+            if period_is_over:
+                for i in self.world_state_local["fields"]:
+                    field = self.world_state_local["fields"][i]
+                    result["fields"][i] = {"owner": field["owner"], 
+                                           "status": field["status"]}
+
             session_player_status = {}
 
             #decrement waiting and interaction time
@@ -203,7 +216,7 @@ class TimerMixin():
                     session_player["interaction"] -= 1
 
                     if session_player["interaction"] == 0:
-                        if session_player["state"] != "building_seeds":
+                        if session_player["state"] != "building_seeds" and session_player["state"] != "claiming_field":
                             session_player["cool_down"] = self.parameter_set_local["cool_down_length"]
                 
                 if session_player["interaction"] == 0:
