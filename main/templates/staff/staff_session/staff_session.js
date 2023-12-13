@@ -435,6 +435,7 @@ var app = Vue.createApp({
             for(p in message_data.current_locations)
             {
                 let server_location = message_data.current_locations[p];
+                let server_target_location = message_data.target_locations[p];
 
                 if(message_data.period_is_over)
                 {
