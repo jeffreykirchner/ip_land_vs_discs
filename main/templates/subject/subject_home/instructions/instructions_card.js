@@ -147,7 +147,7 @@ simulate_chat_instructions: function simulate_chat_instructions(){
     if(app.chat_text.trim().length > 200) return;
 
     message_data = {chat: {text : app.chat_text.trim(),
-                            sender_label : app.session_player.parameter_set_player.id_label,
+                            sender_label :  app.get_parameter_set_player_from_player_id(app.session_player.id).id_label,
                             sender_id : app.session_player.id,
                             id : random_number(1, 1000000),},
                     chat_type:chat_type}

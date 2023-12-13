@@ -228,7 +228,10 @@ take_field_claim: function take_field_claim(message_data)
         app.destroy_pixi_fields();
         app.setup_pixi_fields();
 
-        app.setup_pixi_minimap();
+        if(app.is_subject)
+        {
+            app.setup_pixi_minimap();
+        }
 
         let session_player = app.session.world_state.session_players[source_player_id];
 
@@ -379,4 +382,32 @@ take_build_seeds: function take_build_seeds(message_data)
            
         }
     }
+},
+
+/**
+ * check field intersection
+ */
+check_fields_intersection: function check_fields_intersection(rect1, player_id)
+{
+    for(let i in app.session.parameter_set.parameter_set_fields)
+    {        
+        
+        let field = app.session.world_state.fields[i];
+        let parameter_set_field = app.session.parameter_set.parameter_set_fields[i];
+
+        if(!field.allowed_players.includes(parseInt(player_id)))
+        {
+            let rect2={x:parameter_set_field.x - parameter_set_field.width/2,
+                       y:parameter_set_field.y - parameter_set_field.height/2,
+                       width:parameter_set_field.width,
+                       height:parameter_set_field.height};
+
+            if(app.check_for_rect_intersection(rect1, rect2))
+            {  
+                return true;
+            }
+        }
+    }
+
+    return false;
 },

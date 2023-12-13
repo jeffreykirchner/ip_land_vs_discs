@@ -549,6 +549,7 @@ class SubjectUpdatesMixin():
                 session_player["interaction"] = 0
 
                 field["status"] = "claimed"
+                field["allowed_players"] = [player_id]
 
             result["field_id"] = field_id
             result["field"] = field

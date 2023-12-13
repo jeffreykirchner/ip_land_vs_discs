@@ -371,13 +371,7 @@ var app = Vue.createApp({
             if(message_data.period_is_over)
             {
                 //update fields
-                for(let i in message_data.fields)
-                {
-                    let field = message_data.fields[i];
-                    let field_local = app.session.world_state.fields[i];
-                    field_local.owner = field.owner;
-                    field_local.status = field.status;
-                }
+                app.session.world_state.fields = message_data.fields;
 
                 app.destroy_pixi_fields();
                 app.setup_pixi_fields();
@@ -397,6 +391,9 @@ var app = Vue.createApp({
                 
                 app.setup_pixi_minimap();
                 app.update_player_inventory();
+
+                //reset player locations
+
 
                 //add break notice
                 if(app.session.world_state.current_period % app.session.parameter_set.break_frequency == 0)
@@ -432,11 +429,18 @@ var app = Vue.createApp({
             //update player location
             for(p in message_data.current_locations)
             {
-                if(p != app.session_player.id)
+                if(p != app.session_player.id || message_data.period_is_over)
                 {
                     let server_location = message_data.current_locations[p];
+                    let server_target_location = message_data.target_locations[p];
 
-                    if(app.get_distance(server_location, app.session.world_state.session_players[p].current_location) > 1000)
+                    if(message_data.period_is_over)
+                    {
+                        //reset locations
+                        app.session.world_state.session_players[p].current_location = server_location;
+                        app.session.world_state.session_players[p].target_location = server_target_location;
+                    }
+                    else if(app.get_distance(server_location, app.session.world_state.session_players[p].current_location) > 1000)
                     {
                         app.session.world_state.session_players[p].current_location = server_location;
                     }

@@ -151,6 +151,7 @@ class Session(models.Model):
             v["owner"] = None
             v["parameter_set_field"] = i.id
             v["id"] = i.id
+            v["allowed_players"] = []
 
             self.world_state["fields"][str(i.id)] = v
             

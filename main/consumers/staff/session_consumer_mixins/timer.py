@@ -154,6 +154,7 @@ class TimerMixin():
                     
                     for i in self.world_state_local["session_players"]:
                         session_player = self.world_state_local["session_players"][i]
+                        parameter_set_player = self.parameter_set_local["parameter_set_players"][str(session_player["parameter_set_player_id"])]
 
                         session_player["cool_down"] = 0
                         session_player["interaction"] = 0
@@ -169,12 +170,20 @@ class TimerMixin():
                         result["earnings"][i]["period_earnings"] = session_player["seeds"]
 
                         session_player["seeds"] = 0
-                        session_player["build_time_remaining"] = self.parameter_set_local["build_time"]   
+                        session_player["build_time_remaining"] = self.parameter_set_local["build_time"] 
+
+                        #reset locations
+                        session_player["current_location"] = {"x": parameter_set_player["start_x"],
+                                                              "y": parameter_set_player["start_y"]}
+                        
+                        session_player["target_location"] = {"x": parameter_set_player["start_x"]+1,
+                                                             "y": parameter_set_player["start_y"]+1}
 
                     for i in self.world_state_local["fields"]:
                         field = self.world_state_local["fields"][i]
                         field["owner"] = None
-                        field["status"] = "available"             
+                        field["status"] = "available"       
+                        field["allowed_players"] = []      
 
         if send_update:
             #session status
@@ -198,10 +207,7 @@ class TimerMixin():
             #fields
             result["fields"] = {}
             if period_is_over:
-                for i in self.world_state_local["fields"]:
-                    field = self.world_state_local["fields"][i]
-                    result["fields"][i] = {"owner": field["owner"], 
-                                           "status": field["status"]}
+                result["fields"] = self.world_state_local["fields"]
 
             session_player_status = {}
 
