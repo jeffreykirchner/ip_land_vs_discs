@@ -4,22 +4,7 @@
 axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 axios.defaults.xsrfCookieName = "csrftoken";
 
-//var app.session.world_state = {};
-var pixi_app = null;
-var pixi_container_main = null;
-var pixi_text_emitter = {};
-var pixi_text_emitter_key = 0;
-var pixi_transfer_beams = {};
-var pixi_transfer_beams_key = 0;
-var pixi_fps_label = null;                     //fps label
-var pixi_avatars = {};                         //avatars
-var pixi_tokens = {};                          //tokens
-var pixi_walls = {};                           //walls
-var pixi_barriers = {};                        //barriers
-var pixi_grounds = {};                         //grounds
-
-var wall_search = {counter:0, current_location:{x:-1,y:-1}, target_location:{x:-1,y:-1}};
-var wall_search_objects = [];
+{%include "subject/subject_home/the_stage/pixi_globals.js"%}
 
 //vue app
 var app = Vue.createApp({
@@ -230,6 +215,15 @@ var app = Vue.createApp({
                 case "update_rescue_subject":
                     app.take_rescue_subject(message_data);
                     break;
+                case "update_field_claim":
+                    app.take_field_claim(message_data);
+                    break;
+                case "update_build_disc":
+                    app.take_build_disc(message_data);
+                    break;
+                case "update_build_seeds":
+                    app.take_build_seeds(message_data);
+                    break;
             }
 
             app.first_load_done = true;
@@ -290,6 +284,7 @@ var app = Vue.createApp({
         do_reload: function do_reload()
         {
             app.setup_pixi_subjects();
+            app.setup_pixi_fields();
         },
 
         /** send winsock request to get session info
@@ -303,7 +298,8 @@ var app = Vue.createApp({
         */
         take_get_session: function take_get_session(message_data){
             
-            app.destory_setup_pixi_subjects();
+            app.destroy_pixi_objects();
+
 
             app.session = message_data;
 
@@ -408,6 +404,12 @@ var app = Vue.createApp({
             //update player earnings and inventory if period has changed
             if(message_data.period_is_over)
             {
+                //update fields
+                app.session.world_state.fields = message_data.fields;   
+
+                app.destroy_pixi_fields();
+                app.setup_pixi_fields();
+                
                 app.update_player_inventory();              
                 app.take_update_earnings(message_data.earnings);  
             }
@@ -416,18 +418,32 @@ var app = Vue.createApp({
             for(p in message_data.session_player_status)
             {
                 session_player = message_data.session_player_status[p];
-                app.session.world_state.session_players[p].interaction = session_player.interaction;
-                app.session.world_state.session_players[p].frozen = session_player.frozen;
-                app.session.world_state.session_players[p].cool_down = session_player.cool_down;
-                app.session.world_state.session_players[p].tractor_beam_target = session_player.tractor_beam_target;
+                session_player_local = app.session.world_state.session_players[p];
+
+                session_player_local.interaction = session_player.interaction;
+                session_player_local.frozen = session_player.frozen;
+                session_player_local.cool_down = session_player.cool_down;
+                session_player_local.state = session_player.state;
+                session_player_local.seeds = session_player.seeds;
+                session_player_local.build_time_remaining = session_player.build_time_remaining;
+                session_player_local.tractor_beam_target = session_player.tractor_beam_target;
+
+                pixi_avatars[p].inventory_label.text = session_player_local.seeds;
             }
 
             //update player location
             for(p in message_data.current_locations)
             {
                 let server_location = message_data.current_locations[p];
+                let server_target_location = message_data.target_locations[p];
 
-                if(app.get_distance(server_location, app.session.world_state.session_players[p].current_location) > 1000)
+                if(message_data.period_is_over)
+                {
+                        //reset locations
+                        app.session.world_state.session_players[p].current_location = server_location;
+                        app.session.world_state.session_players[p].target_location = server_target_location;
+                }
+                else if(app.get_distance(server_location, app.session.world_state.session_players[p].current_location) > 1000)
                 {
                     app.session.world_state.session_players[p].current_location = server_location;
                 }
@@ -450,16 +466,9 @@ var app = Vue.createApp({
         {%include "staff/staff_session/interface/interface_card.js"%}
         {%include "staff/staff_session/replay/replay_card.js"%}
         {%include "staff/staff_session/the_feed/the_feed_card.js"%}
-        {%include "subject/subject_home/the_stage/pixi_setup.js"%}
-        {%include "subject/subject_home/the_stage/avatar.js"%}
-        {%include "subject/subject_home/the_stage/helpers.js"%}
         {%include "subject/subject_home/the_stage/staff.js"%}
-        {%include "subject/subject_home/the_stage/text_emitter.js"%}
-        {%include "subject/subject_home/the_stage/transfer_beam.js"%}
-        {%include "subject/subject_home/the_stage/wall.js"%}
-        {%include "subject/subject_home/the_stage/move_objects.js"%}
-        {%include "subject/subject_home/the_stage/barriers.js"%}
-        {%include "subject/subject_home/the_stage/ground.js"%}
+        {%include "subject/subject_home/the_stage/includes.js"%}
+
         {%include "js/help_doc.js"%}
     
         /** clear form error messages

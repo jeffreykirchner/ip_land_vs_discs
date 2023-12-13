@@ -11,6 +11,7 @@ setup_pixi_subjects: function setup_pixi_subjects(){
     for(const i in app.session.world_state.session_players)
     {      
         let subject = app.session.world_state.session_players[i];
+        let parameter_set_player = app.get_parameter_set_player_from_player_id(i);
         pixi_avatars[i] = {};
 
         //avatar
@@ -26,7 +27,7 @@ setup_pixi_subjects: function setup_pixi_subjects(){
         let gear_sprite = new PIXI.AnimatedSprite(app.pixi_textures.sprite_sheet.animations['walk']);
         gear_sprite.animationSpeed = app.session.parameter_set.avatar_animation_speed;
         gear_sprite.anchor.set(0.5)
-        gear_sprite.tint = app.session.session_players[i].parameter_set_player.hex_color;
+        gear_sprite.tint = parameter_set_player.hex_color;
         gear_sprite.eventMode = 'passive';    
 
         let face_sprite = PIXI.Sprite.from(app.pixi_textures.sprite_sheet_2.textures["face_1.png"]);
@@ -42,7 +43,7 @@ setup_pixi_subjects: function setup_pixi_subjects(){
             strokeThickness: 3,
         };
 
-        let id_label = new PIXI.Text(app.session.session_players[i].parameter_set_player.id_label, text_style);
+        let id_label = new PIXI.Text(parameter_set_player.id_label, text_style);
         id_label.eventMode = 'passive';
         id_label.anchor.set(0.5);
         
@@ -52,7 +53,7 @@ setup_pixi_subjects: function setup_pixi_subjects(){
         token_graphic.scale.set(0.6);
         // token_graphic.alpha = 0.7;
 
-        let inventory_label = new PIXI.Text(subject.inventory[current_period_id], text_style);
+        let inventory_label = new PIXI.Text(subject.seeds, text_style);
         inventory_label.eventMode = 'passive';
         inventory_label.anchor.set(0, 0.5);
 
@@ -172,12 +173,10 @@ setup_pixi_subjects: function setup_pixi_subjects(){
         let interaction_range = new PIXI.Graphics();
         let interaction_range_radius = app.session.parameter_set.interaction_range;
 
-        interaction_range.lineStyle({width:1, color:app.session.session_players[i].parameter_set_player.hex_color, alignment:0});
-        interaction_range.beginFill(0xFFFFFF,0);
+        interaction_range.lineStyle({width:1, color:"dimgray", alignment:0});
         interaction_range.drawCircle(0, 0, interaction_range_radius);
-        interaction_range.endFill();    
-        interaction_range.zIndex = 100;
 
+        interaction_container.zIndex=2
         interaction_container.addChild(interaction_range);
         pixi_avatars[i].interaction_container = interaction_container;
         pixi_container_main.addChild(pixi_avatars[i].interaction_container);
@@ -190,7 +189,7 @@ setup_pixi_subjects: function setup_pixi_subjects(){
 
             let view_range = new PIXI.Graphics();
             // view_range.lineStyle({width:2, color:app.session.session_players[i].parameter_set_player.hex_color, alignment:0});
-            view_range.beginFill(app.session.session_players[i].parameter_set_player.hex_color,0.1);
+            view_range.beginFill(parameter_set_player.hex_color,0.1);
             view_range.drawRect(0, 0, 1850, 800);
             view_range.endFill();    
             view_range.zIndex = 75;
@@ -215,7 +214,7 @@ setup_pixi_subjects: function setup_pixi_subjects(){
 /**
  * destory pixi subject objects in world state
  */
-destory_setup_pixi_subjects: function destory_setup_pixi_subjects()
+destory_pixi_subjects: function destory_pixi_subjects()
 {
     if(!app.session) return;
 
@@ -262,7 +261,7 @@ update_player_inventory: function update_player_inventory()
     for(const i in app.session.session_players_order)
     {
         const player_id = app.session.session_players_order[i];
-        pixi_avatars[player_id].inventory_label.text = app.session.world_state.session_players[player_id].inventory[period_id];
+        pixi_avatars[player_id].inventory_label.text = app.session.world_state.session_players[player_id].seeds;
     }
 },
 
@@ -369,8 +368,8 @@ take_update_interaction: function take_update_interaction(message_data)
         source_player.inventory[period] = message_data.source_player_inventory;
         target_player.inventory[period] = message_data.target_player_inventory;
         
-        pixi_avatars[source_player_id].inventory_label.text = source_player.inventory[currnent_period_id];
-        pixi_avatars[target_player_id].inventory_label.text = target_player.inventory[currnent_period_id];
+        pixi_avatars[source_player_id].inventory_label.text = source_player.seeds;
+        pixi_avatars[target_player_id].inventory_label.text = target_player.seeds;
 
         //add transfer beam
         if(message_data.direction == "give")
@@ -524,7 +523,7 @@ setup_tractor_beam: function setup_tractor_beam(source_id, target_id)
         {
             if (i%2 == 0)
             {
-                tb_sprite.tint = app.session.session_players[source_id].parameter_set_player.hex_color;
+                tb_sprite.tint = app.get_parameter_set_player_from_player_id(source_id).hex_color;
             }
             else
             {
@@ -539,7 +538,7 @@ setup_tractor_beam: function setup_tractor_beam(source_id, target_id)
             }
             else
             {
-                tb_sprite.tint = app.session.session_players[source_id].parameter_set_player.hex_color;
+                tb_sprite.tint = app.get_parameter_set_player_from_player_id(source_id).hex_color;
             }
         }
 
@@ -600,7 +599,19 @@ move_player: function move_player(delta)
         //update status
         if(obj.interaction > 0)
         {
-            status_label.text = "Interaction ... " + obj.interaction;
+            if(obj.state=="building_seeds")
+            {
+                status_label.text = "Building Seeds ... " + obj.interaction;
+            }
+            else if(obj.state=="claiming_field")
+            {
+                status_label.text = "Building Field ... " + obj.interaction;
+            }
+            else
+            {
+                status_label.text = "Interaction ... " + obj.interaction;
+            }
+
             status_label.visible = true;
         }
         else if(obj.cool_down > 0)

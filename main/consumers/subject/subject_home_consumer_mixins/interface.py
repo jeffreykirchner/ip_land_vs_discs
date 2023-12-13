@@ -97,6 +97,36 @@ class InterfaceMixin():
 
         await self.send_message(message_to_self=event_data, message_to_subjects=None, message_to_staff=None, 
                                 message_type=event['type'], send_to_client=True, send_to_group=False)
+        
+    async def update_field_claim(self, event):
+        '''
+        update field claimed
+        '''
+
+        event_data = event["group_data"]
+
+        await self.send_message(message_to_self=event_data, message_to_subjects=None, message_to_staff=None, 
+                                message_type=event['type'], send_to_client=True, send_to_group=False)
+    
+    async def update_build_disc(self, event):
+        '''
+        update build disc
+        '''
+
+        event_data = event["group_data"]
+
+        await self.send_message(message_to_self=event_data, message_to_subjects=None, message_to_staff=None, 
+                                message_type=event['type'], send_to_client=True, send_to_group=False)
+    
+    async def update_build_seeds(self, event):
+        '''
+        update build seeds
+        '''
+
+        event_data = event["group_data"]
+
+        await self.send_message(message_to_self=event_data, message_to_subjects=None, message_to_staff=None, 
+                                message_type=event['type'], send_to_client=True, send_to_group=False)
 
 
         

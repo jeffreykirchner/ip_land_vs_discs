@@ -44,6 +44,11 @@ class ParameterSet(models.Model):
     cool_down_length = models.IntegerField(verbose_name='Cool Down Length', default=10)                       #cool down length in seconds
     interaction_range = models.IntegerField(verbose_name='Interaction Range', default=300)                    #interaction range in pixels
 
+    build_time = models.IntegerField(verbose_name='Build Time', default=35)                                   #build time in seconds
+    seed_build_length = models.IntegerField(verbose_name='Seed Build Length', default=1)                      #seed build length in seconds
+    field_build_length = models.IntegerField(verbose_name='Field Build Length', default=12)                   #field build length in seconds
+    disc_build_length = models.IntegerField(verbose_name='Disc Build Length', default=12)                     #disc build length in seconds 
+
     avatar_scale = models.DecimalField(verbose_name='Avatar Scale', decimal_places=2, max_digits=3, default=0.5) #avatar scale
     avatar_bound_box_percent = models.DecimalField(verbose_name='Avatar Bound Box Percent', decimal_places=2, max_digits=3, default=0.75) #avatar bound box percent for interaction
     avatar_move_speed = models.DecimalField(verbose_name='Move Speed', decimal_places=1, max_digits=3, default=5.6)            #move speed
@@ -96,6 +101,11 @@ class ParameterSet(models.Model):
             self.interaction_length = new_ps.get("interaction_length", 10)
             self.cool_down_length = new_ps.get("cool_down_length", 10)
             self.interaction_range = new_ps.get("interaction_range", 300)
+
+            self.build_time = new_ps.get("build_time", 35)
+            self.seed_build_length = new_ps.get("seed_build_length", 1)
+            self.field_build_length = new_ps.get("field_build_length", 12)
+            self.disc_build_length = new_ps.get("disc_build_length", 12)
 
             self.avatar_scale = new_ps.get("avatar_scale", 1)
             self.avatar_bound_box_percent = new_ps.get("avatar_bound_box_percent", 0.75)
@@ -167,6 +177,14 @@ class ParameterSet(models.Model):
             for i in new_parameter_set_notices:
                 p = main.models.ParameterSetNotice.objects.create(parameter_set=self)
                 p.from_dict(new_parameter_set_notices[i])
+
+            #parameter set periods
+            self.parameter_set_periods.all().delete()
+            new_parameter_set_periods = new_ps.get("parameter_set_notices")
+
+            for i in new_parameter_set_periods:
+                p = main.models.ParameterSetPeriod.objects.create(parameter_set=self)
+                p.from_dict(new_parameter_set_periods[i])
 
             #parameter set grounds
             self.parameter_set_grounds.all().delete()
@@ -270,6 +288,11 @@ class ParameterSet(models.Model):
         self.json_for_session["interaction_length"] = self.interaction_length
         self.json_for_session["cool_down_length"] = self.cool_down_length
         self.json_for_session["interaction_range"] = self.interaction_range
+
+        self.json_for_session["build_time"] = self.build_time
+        self.json_for_session["seed_build_length"] = self.seed_build_length
+        self.json_for_session["field_build_length"] = self.field_build_length
+        self.json_for_session["disc_build_length"] = self.disc_build_length
         
         self.json_for_session["avatar_scale"] = self.avatar_scale
         self.json_for_session["avatar_bound_box_percent"] = self.avatar_bound_box_percent
@@ -288,7 +311,8 @@ class ParameterSet(models.Model):
                              update_barriers=False,
                              update_grounds=False,
                              update_fields=False,
-                             update_groups=False):
+                             update_groups=False,
+                             update_periods=False):
         '''
         update json model
         '''
@@ -320,6 +344,10 @@ class ParameterSet(models.Model):
             self.json_for_session["parameter_set_groups_order"] = list(self.parameter_set_groups.all().values_list('id', flat=True))
             self.json_for_session["parameter_set_groups"] = {str(p.id) : p.json() for p in self.parameter_set_groups.all()}
 
+        if update_periods:
+            self.json_for_session["parameter_set_periods_order"] = list(self.parameter_set_periods.all().values_list('id', flat=True))
+            self.json_for_session["parameter_set_periods"] = {str(p.id) : p.json() for p in self.parameter_set_periods.all()}
+
         self.save()
 
     def json(self, update_required=False):
@@ -336,7 +364,8 @@ class ParameterSet(models.Model):
                                 update_barriers=True,
                                 update_grounds=True,
                                 update_fields=True,
-                                update_groups=True)
+                                update_groups=True,
+                                update_periods=True)
 
         return self.json_for_session
     

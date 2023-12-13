@@ -9,18 +9,23 @@ setup_pixi: function setup_pixi(){
     PIXI.Assets.add('sprite_sheet', '{% static "gear_3_animated.json" %}');
     PIXI.Assets.add('sprite_sheet_2', '{% static "sprite_sheet.json" %}');
     PIXI.Assets.add('bg_tex', '{% static "background_tile_low.jpg"%}');
-    PIXI.Assets.add('cherry_token', '{% static "cherry_1_animated.json"%}');
     PIXI.Assets.add('wall_tex', '{% static "wall.png"%}');
     PIXI.Assets.add('barrier_tex', '{% static "barrier.png"%}');
     PIXI.Assets.add('bridge_tex', '{% static "bridge.jpg"%}');
     PIXI.Assets.add('seed_tex', '{% static "seed_1.png"%}');
+    PIXI.Assets.add('dash_tex', '{% static "dash_1.png"%}');
+    PIXI.Assets.add('left_click_tex', '{% static "left_click.png"%}');
+    PIXI.Assets.add('right_click_tex', '{% static "right_click.png"%}');
+    PIXI.Assets.add('cone_tex', '{% static "cone_1.png"%}');
 
     const textures_promise = PIXI.Assets.load(['sprite_sheet', 'bg_tex', 'sprite_sheet_2', 'seed_tex',
-                                               'cherry_token', 'wall_tex', 'barrier_tex', 'bridge_tex']);
+                                               'wall_tex', 'barrier_tex', 'bridge_tex','dash_tex'
+                                               ,'left_click_tex', 'right_click_tex', 'cone_tex']);
 
     textures_promise.then((textures) => {
         app.setup_pixi_sheets(textures);
         app.setup_pixi_ground();
+        app.setup_pixi_fields();
         app.setup_pixi_subjects();
         app.setup_pixi_wall();
         app.setup_pixi_barrier();

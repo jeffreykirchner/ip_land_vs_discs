@@ -5,26 +5,16 @@ axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 axios.defaults.xsrfCookieName = "csrftoken";
 
 //global variables
-//var world_state = {};
 var subject_status_overlay = {container:null, current_period_label:null, time_remaining_label:null, profit_label:null};
-var pixi_app = null;                           //pixi app   
-var pixi_container_main = null;                //main container for pixi
 var pixi_target = null;                        //target sprite for your avatar
-var pixi_text_emitter = {};                    //text emitter json
-var pixi_text_emitter_key = 0;
-var pixi_transfer_beams = {};                  //transfer beam json
-var pixi_transfer_beams_key = 0;
-var pixi_fps_label = null;                     //fps label
 var mini_map = {container:null};               //mini map container
-var pixi_avatars = {};                         //avatars
-var pixi_tokens = {};                          //tokens
 var pixi_notices = {container:null, notices:{}};                         //notices
 var pixi_notices_key = 0;
-var pixi_walls = {};                           //walls
-var pixi_barriers = {};                        //barriers
-var pixi_grounds = {};                         //grounds
-var wall_search = {counter:0, current_location:{x:-1,y:-1}, target_location:{x:-1,y:-1}};
-var wall_search_objects = [];
+
+{%include "subject/subject_home/the_stage/pixi_globals.js"%}
+
+//prevent right click
+document.addEventListener('contextmenu', event => event.preventDefault());
 
 //vue app
 var app = Vue.createApp({
@@ -54,10 +44,16 @@ var app = Vue.createApp({
 
                     notices_seen: [],
 
+                    build_seed_count : 1,
+
                     // modals
                     end_game_modal : null,
                     interaction_modal : null,
                     help_modal : null,
+                    field_modal : null,
+
+                    field_modal_open : false,
+
                     test_mode : {%if session.parameter_set.test_mode%}true{%else%}false{%endif%},
 
                     //pixi
@@ -75,6 +71,13 @@ var app = Vue.createApp({
 
                     //forms
                     interaction_form : {direction:null, amount:null},
+
+                    //selected object
+                    selected_field : {field:null,
+                    },
+
+                    //errors
+                    field_error: null,
 
                     //test mode
                     test_mode_location_target : null,
@@ -169,6 +172,15 @@ var app = Vue.createApp({
                 case "update_rescue_subject":
                     app.take_rescue_subject(message_data);
                     break;
+                case "update_field_claim":
+                    app.take_field_claim(message_data);
+                    break;
+                case "update_build_disc":
+                    app.take_build_disc(message_data);
+                    break;
+                case "update_build_seeds":
+                    app.take_build_seeds(message_data);
+                    break;
             }
 
             app.first_load_done = true;
@@ -197,9 +209,11 @@ var app = Vue.createApp({
             app.end_game_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('end_game_modal'), {keyboard: false})   
             app.interaction_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('interaction_modal'), {keyboard: false})          
             app.help_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('help_modal'), {keyboard: false})
-            
+            app.field_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('field_modal'), {keyboard: false})
+
             document.getElementById('end_game_modal').addEventListener('hidden.bs.modal', app.hide_end_game_modal);
             document.getElementById('interaction_modal').addEventListener('hidden.bs.modal', app.hide_interaction_modal);
+            document.getElementById('field_modal').addEventListener('hidden.bs.modal', app.hide_field_modal);
 
             {%if session.parameter_set.test_mode%} setTimeout(app.do_test_mode, app.random_number(1000 , 1500)); {%endif%}
 
@@ -237,10 +251,9 @@ var app = Vue.createApp({
          */
         do_reload: function do_reload()
         {
-            app.setup_pixi_ground();
             app.setup_pixi_subjects();
-            app.setup_pixi_wall();
-            app.setup_pixi_barrier();
+            app.setup_pixi_fields();
+
             app.update_subject_status_overlay();
         },
 
@@ -255,7 +268,7 @@ var app = Vue.createApp({
         */
         take_get_session: function take_get_session(message_data){
 
-            app.destory_setup_pixi_subjects();
+            app.destroy_pixi_objects();
             
             app.session = message_data.session;
             app.session_player = message_data.session_player;
@@ -357,6 +370,12 @@ var app = Vue.createApp({
             //period has changed
             if(message_data.period_is_over)
             {
+                //update fields
+                app.session.world_state.fields = message_data.fields;
+
+                app.destroy_pixi_fields();
+                app.setup_pixi_fields();
+
                 Vue.nextTick(() => {
                     let current_location = app.session.world_state.session_players[app.session_player.id].current_location;
 
@@ -373,6 +392,9 @@ var app = Vue.createApp({
                 app.setup_pixi_minimap();
                 app.update_player_inventory();
 
+                //reset player locations
+
+
                 //add break notice
                 if(app.session.world_state.current_period % app.session.parameter_set.break_frequency == 0)
                 {
@@ -386,20 +408,39 @@ var app = Vue.createApp({
             for(p in message_data.session_player_status)
             {
                 session_player = message_data.session_player_status[p];
-                app.session.world_state.session_players[p].interaction = session_player.interaction;
-                app.session.world_state.session_players[p].frozen = session_player.frozen;
-                app.session.world_state.session_players[p].cool_down = session_player.cool_down;
-                app.session.world_state.session_players[p].tractor_beam_target = session_player.tractor_beam_target;
+                session_player_local = app.session.world_state.session_players[p];
+
+                session_player_local.interaction = session_player.interaction;
+                session_player_local.frozen = session_player.frozen;
+                session_player_local.cool_down = session_player.cool_down;
+               
+                session_player_local.tractor_beam_target = session_player.tractor_beam_target;
+
+                pixi_avatars[p].inventory_label.text = session_player_local.seeds;
+
+                if(message_data.period_is_over)
+                {
+                    session_player_local.state = session_player.state;
+                    session_player_local.seeds = session_player.seeds;
+                    session_player_local.build_time_remaining = session_player.build_time_remaining;
+                }
             }
 
             //update player location
             for(p in message_data.current_locations)
             {
-                if(p != app.session_player.id)
+                if(p != app.session_player.id || message_data.period_is_over)
                 {
                     let server_location = message_data.current_locations[p];
+                    let server_target_location = message_data.target_locations[p];
 
-                    if(app.get_distance(server_location, app.session.world_state.session_players[p].current_location) > 1000)
+                    if(message_data.period_is_over)
+                    {
+                        //reset locations
+                        app.session.world_state.session_players[p].current_location = server_location;
+                        app.session.world_state.session_players[p].target_location = server_target_location;
+                    }
+                    else if(app.get_distance(server_location, app.session.world_state.session_players[p].current_location) > 1000)
                     {
                         app.session.world_state.session_players[p].current_location = server_location;
                     }
@@ -494,7 +535,7 @@ var app = Vue.createApp({
             {
                 app.session.world_state = message_data.world_state;
                 
-                app.destory_setup_pixi_subjects();
+                app.destroy_pixi_objects();
                 app.do_reload();
                 app.remove_all_notices();
             }
@@ -515,19 +556,11 @@ var app = Vue.createApp({
         {%include "subject/subject_home/summary/summary_card.js"%}
         {%include "subject/subject_home/test_mode/test_mode.js"%}
         {%include "subject/subject_home/instructions/instructions_card.js"%}
-        {%include "subject/subject_home/the_stage/pixi_setup.js"%}
-        {%include "subject/subject_home/the_stage/avatar.js"%}
-        {%include "subject/subject_home/the_stage/helpers.js"%}
+        {%include "subject/subject_home/the_stage/includes.js"%}
         {%include "subject/subject_home/the_stage/subject.js"%}
         {%include "subject/subject_home/the_stage/mini_map.js"%}
         {%include "subject/subject_home/the_stage/subject_overlay.js"%}
-        {%include "subject/subject_home/the_stage/text_emitter.js"%}
-        {%include "subject/subject_home/the_stage/transfer_beam.js"%}
         {%include "subject/subject_home/the_stage/notices.js"%}
-        {%include "subject/subject_home/the_stage/wall.js"%}
-        {%include "subject/subject_home/the_stage/move_objects.js"%}
-        {%include "subject/subject_home/the_stage/barriers.js"%}
-        {%include "subject/subject_home/the_stage/ground.js"%}
         {%include "subject/subject_home/help_doc_subject.js"%}
 
         /** clear form error messages

@@ -259,71 +259,6 @@ class SubjectUpdatesMixin():
         await self.send_message(message_to_self=event_data, message_to_group=None,
                                 message_type=event['type'], send_to_client=True, send_to_group=False)
 
-    async def collect_token(self, event):
-        '''
-        subject collects token
-        '''
-        if self.controlling_channel != self.channel_name:
-            return
-        
-        logger = logging.getLogger(__name__)
-
-        error_message = []
-        status = "success"
-        
-        try:
-            message_text = event["message_text"]
-            token_id = message_text["token_id"]
-            period_id = message_text["period_id"]
-            player_id = self.session_players_local[event["player_key"]]["id"]
-        except:
-            logger.info(f"collect_token: invalid data, {event['message_text']}")
-            status = "fail"
-            error_message.append({"id":"collect_token", "message": "Invalid data, try again."})
-        
-        if status == "success":
-            if self.world_state_local['tokens'][str(period_id)][str(token_id)]['status'] != 'available':
-                status = "fail"
-                error_message.append({"id":"collect_token", "message": "Token already collected."})
-        
-        result = {"status" :status, "error_message" : error_message}
-
-        if status == "success":
-            self.world_state_local['tokens'][str(period_id)][str(token_id)]['status'] = player_id
-            self.world_state_local['session_players'][str(player_id)]['inventory'][str(period_id)]+=1
-
-            inventory = self.world_state_local['session_players'][str(player_id)]['inventory'][str(period_id)]
-
-            await Session.objects.filter(id=self.session_id).aupdate(world_state=self.world_state_local)
-
-            result["token_id"] = token_id
-            result["period_id"] = period_id
-            result["player_id"] = player_id
-            result["inventory"] = inventory
-
-            await SessionEvent.objects.acreate(session_id=self.session_id,
-                                            session_player_id=player_id, 
-                                            type="collect_token",
-                                            period_number=self.world_state_local["current_period"],
-                                            time_remaining=self.world_state_local["time_remaining"],
-                                            data=result)
-
-       
-                 
-        #logger.warning(f'collect_token: {message_text}, token {token_id}')
-
-        await self.send_message(message_to_self=None, message_to_group=result,
-                                message_type=event['type'], send_to_client=False, send_to_group=True)
-
-    async def update_collect_token(self, event):
-        '''
-        subject collects token update
-        '''
-        event_data = event["group_data"]
-
-        await self.send_message(message_to_self=event_data, message_to_group=None,
-                                message_type=event['type'], send_to_client=True, send_to_group=False)
-    
     async def tractor_beam(self, event):
         '''
         subject activates tractor beam
@@ -497,7 +432,7 @@ class SubjectUpdatesMixin():
     
     async def cancel_interaction(self, event):
         '''
-        subject transfers tokens
+        subject cancels interaction
         '''
         if self.controlling_channel != self.channel_name:
             return
@@ -536,7 +471,218 @@ class SubjectUpdatesMixin():
 
     async def update_cancel_interaction(self, event):
         '''
-        subject transfers tokens update
+        subject cancels interaction update
+        '''
+        event_data = event["group_data"]
+
+        await self.send_message(message_to_self=event_data, message_to_group=None,
+                                message_type=event['type'], send_to_client=True, send_to_group=False)
+        
+    async def field_claim(self, event):
+        '''
+        subject claims a field
+        '''
+
+        if self.controlling_channel != self.channel_name:
+            return
+        
+        logger = logging.getLogger(__name__)
+
+        error_message = []
+        status = "success"
+
+        try:
+            player_id = self.session_players_local[event["player_key"]]["id"]
+            source_player = self.world_state_local['session_players'][str(player_id)]
+            field_id = event["message_text"]["field_id"]
+            field = self.world_state_local["fields"][str(field_id)]
+            source = event["message_text"]["source"]
+        except:
+            logger.info(f"field_claim: invalid data, {event['message_text']}")
+            status = "fail"
+            error_message.append({"id":"field_claim", "message": "Invalid data, try again."})
+
+        #check if field is already claimed
+        if status == "success" and source == "client":
+            if field["status"] != "available":
+                status = "fail"
+                error_message.append({"id":"field_claim", "message": "Field already claimed."})
+        
+        #check if player already claimed another field
+        if status == "success" and source == "client":
+            for i in self.world_state_local["fields"]:
+                if self.world_state_local["fields"][i]["owner"] == player_id:
+                    status = "fail"
+                    error_message.append({"id":"field_claim", "message": "You already claimed a field."})
+                    break
+        
+        #check if player has enough proudction seconds remaining    
+        if status == "success" and source == "client":
+            if source_player["build_time_remaining"] < self.parameter_set_local["field_build_length"]:
+                status = "fail"
+                error_message.append({"id":"field_claim", "message": "Not enough production time to claim a field."})
+
+        result = {"status" : status, 
+                  "error_message" : error_message, 
+                  "source_player_id" : player_id}
+        
+        if status == "success":
+            session_player = self.world_state_local["session_players"][str(player_id)]
+
+            if source == "client":
+                event["message_text"]["source"]="server"
+
+                session_player["build_time_remaining"] -=  self.parameter_set_local["field_build_length"]
+
+                session_player["state"] = "claiming_field"
+                session_player["state_payload"] = event
+                session_player["frozen"] = True
+                session_player["interaction"] = self.parameter_set_local["field_build_length"]
+                
+                #claim field
+                field["status"] = "building"
+                field["owner"] = player_id
+            else:
+                session_player["state"] = "open"
+                session_player["state_payload"] = {}
+                session_player["frozen"] = False
+                session_player["interaction"] = 0
+
+                field["status"] = "claimed"
+                field["allowed_players"] = [player_id]
+
+            result["field_id"] = field_id
+            result["field"] = field
+
+            result["build_time_remaining"] = session_player["build_time_remaining"]
+            result["state"] = session_player["state"]
+            result["frozen"] = session_player["frozen"]
+            result["interaction"] = session_player["interaction"]
+
+            await Session.objects.filter(id=self.session_id).aupdate(world_state=self.world_state_local)
+
+        await self.send_message(message_to_self=None, message_to_group=result,
+                                message_type=event['type'], send_to_client=False, send_to_group=True)
+
+    async def update_field_claim(self, event):
+        '''
+        subject claims a field update
+        '''
+        event_data = event["group_data"]
+
+        await self.send_message(message_to_self=event_data, message_to_group=None,
+                                message_type=event['type'], send_to_client=True, send_to_group=False)
+        
+    async def build_disc(self, event):
+        '''
+        subject builds a disc
+        '''
+
+        if self.controlling_channel != self.channel_name:
+            return
+        
+        logger = logging.getLogger(__name__)
+
+        error_message = []
+        status = "success"
+
+        try:
+            player_id = self.session_players_local[event["player_key"]]["id"]
+        except:
+            logger.info(f"build_disc: invalid data, {event['message_text']}")
+            status = "fail"
+            error_message.append({"id":"build_disc", "message": "Invalid data, try again."})
+
+        result = {"status" : status, 
+                  "error_message" : error_message, 
+                  "source_player_id" : player_id}
+        
+        if status == "success":
+            #build a disc
+
+
+            await Session.objects.filter(id=self.session_id).aupdate(world_state=self.world_state_local)
+
+        await self.send_message(message_to_self=None, message_to_group=result,
+                                message_type=event['type'], send_to_client=False, send_to_group=True)
+    
+    async def update_build_disc(self, event):
+        '''
+        subject builds a disc update
+        '''
+        event_data = event["group_data"]
+
+        await self.send_message(message_to_self=event_data, message_to_group=None,
+                                message_type=event['type'], send_to_client=True, send_to_group=False)
+        
+    async def build_seeds(self, event):
+        '''
+        subject builds seeds
+        '''
+
+        if self.controlling_channel != self.channel_name:
+            return
+        
+        logger = logging.getLogger(__name__)
+
+        error_message = []
+        status = "success"
+
+        try:
+            player_id = self.session_players_local[event["player_key"]]["id"]
+            build_seed_count = event["message_text"]["build_seed_count"]
+            source = event["message_text"]["source"]
+        except:
+            logger.info(f"build_seeds: invalid data, {event['message_text']}")
+            status = "fail"
+            error_message.append({"id":"build_seeds", "message": "Invalid data, try again."})
+
+        session_player = self.world_state_local["session_players"][str(player_id)]
+
+        if session_player["build_time_remaining"] < build_seed_count:
+            status = "fail"
+            error_message.append({"id":"build_seeds", "message": "Not enough production time to build that many seeds."})
+
+        if source == "client" and session_player["state"] != "open":
+            status = "fail"
+            error_message.append({"id":"build_seeds", "message": "You are already building."})
+
+        result = {"status" : status, 
+                  "error_message" : error_message, 
+                  "source_player_id" : player_id}
+        
+        if status == "success":
+            #build seeds
+
+            if session_player["state"] == "building_seeds":
+                session_player["seeds"] += build_seed_count
+                session_player["build_time_remaining"] -= build_seed_count
+
+                session_player["state"] = "open"
+                session_player["state_payload"] = {}
+                session_player["frozen"] = False
+            else:
+                event["message_text"]["source"]="server"
+                session_player["state"] = "building_seeds"
+                session_player["state_payload"] = event
+                session_player["frozen"] = True
+                session_player["interaction"] = build_seed_count
+
+            result["seeds"] = session_player["seeds"]
+            result["build_time_remaining"] = session_player["build_time_remaining"]
+            result["build_seed_count"] = build_seed_count
+            result["state"] = session_player["state"]
+            result["frozen"] = session_player["frozen"]
+            result["interaction"] = session_player["interaction"]
+
+            await Session.objects.filter(id=self.session_id).aupdate(world_state=self.world_state_local)
+
+        await self.send_message(message_to_self=None, message_to_group=result,
+                                message_type=event['type'], send_to_client=False, send_to_group=True)
+    
+    async def update_build_seeds(self, event):
+        '''
+        subject builds seeds update
         '''
         event_data = event["group_data"]
 
