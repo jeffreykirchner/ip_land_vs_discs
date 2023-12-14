@@ -159,7 +159,7 @@ setup_pixi_fields: function setup_pixi_fields()
                     id_label_text += "\n Allowed Players: " + allowed_players_text + ".";
 
                     //management label
-                    if(field.owner == app.session_player.id)
+                    if(app.is_subject && field.owner == app.session_player.id)
                     {
                         management_label = new PIXI.Text("Right click to manage.", text_style);
                     }                   
