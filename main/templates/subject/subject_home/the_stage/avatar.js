@@ -365,8 +365,8 @@ take_update_interaction: function take_update_interaction(message_data)
         target_player.cool_down = app.session.parameter_set.cool_down_length;
 
         //update inventory
-        source_player.inventory[period] = message_data.source_player_inventory;
-        target_player.inventory[period] = message_data.target_player_inventory;
+        source_player.seeds = message_data.source_player_inventory;
+        target_player.seeds = message_data.target_player_inventory;
         
         pixi_avatars[source_player_id].inventory_label.text = source_player.seeds;
         pixi_avatars[target_player_id].inventory_label.text = target_player.seeds;
@@ -376,7 +376,7 @@ take_update_interaction: function take_update_interaction(message_data)
         {
             app.add_transfer_beam(source_player.current_location, 
                                 target_player.current_location,
-                                app.pixi_textures.sprite_sheet_2.textures["cherry_small.png"],
+                                app.pixi_textures["seed_tex"],
                                 message_data.source_player_change,
                                 message_data.target_player_change);
         }
@@ -384,7 +384,7 @@ take_update_interaction: function take_update_interaction(message_data)
         {
             app.add_transfer_beam(target_player.current_location, 
                                 source_player.current_location,
-                                app.pixi_textures.sprite_sheet_2.textures["cherry_small.png"],
+                                app.pixi_textures["seed_tex"],
                                 message_data.target_player_change,
                                 message_data.source_player_change);
         }

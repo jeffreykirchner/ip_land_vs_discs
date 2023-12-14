@@ -224,6 +224,9 @@ var app = Vue.createApp({
                 case "update_build_seeds":
                     app.take_build_seeds(message_data);
                     break;
+                case "update_grant_field_access":
+                    app.take_grant_field_access(message_data);
+                    break;
             }
 
             app.first_load_done = true;

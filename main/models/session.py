@@ -130,6 +130,7 @@ class Session(models.Model):
         '''
         self.world_state = {"last_update":str(datetime.now()), 
                             "session_players":{},
+                            "session_players_order":list(self.session_players.all().values_list('id', flat=True)),
                             "current_period":1,
                             "current_experiment_phase":ExperimentPhase.INSTRUCTIONS if self.parameter_set.show_instructions else ExperimentPhase.RUN,
                             "time_remaining":self.parameter_set.period_length,

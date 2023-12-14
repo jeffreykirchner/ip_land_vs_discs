@@ -363,23 +363,23 @@ class SubjectUpdatesMixin():
 
             if direction == 'take':
                 #take from target
-                if target_player["inventory"][current_period_id] < amount:
+                if target_player["seeds"] < amount:
                     status = "fail"
                     error_message = "They do not have enough tokens."
                 else:
-                    target_player["inventory"][current_period_id] -= amount
-                    source_player["inventory"][current_period_id] += amount
+                    target_player["seeds"] -= amount
+                    source_player["seeds"] += amount
 
                     result["target_player_change"] = f"-{amount}"
                     result["source_player_change"] = f"+{amount}"             
             else:
                 #give to target
-                if source_player["inventory"][current_period_id] < amount:
+                if source_player["seeds"] < amount:
                     status = "fail"
                     error_message = "You do not have enough tokens."
                 else:
-                    source_player["inventory"][current_period_id] -= amount
-                    target_player["inventory"][current_period_id] += amount
+                    source_player["seeds"] -= amount
+                    target_player["seeds"] += amount
 
                     result["source_player_change"] = f"-{amount}"
                     result["target_player_change"] = f"+{amount}"
@@ -389,8 +389,8 @@ class SubjectUpdatesMixin():
 
         if status != "fail":
 
-            result["source_player_inventory"] = source_player["inventory"][current_period_id]
-            result["target_player_inventory"] = target_player["inventory"][current_period_id]
+            result["source_player_inventory"] = source_player["seeds"]
+            result["target_player_inventory"] = target_player["seeds"]
 
             result["period"] = current_period_id
             result["direction"] = direction
@@ -543,13 +543,21 @@ class SubjectUpdatesMixin():
                 field["status"] = "building"
                 field["owner"] = player_id
             else:
+                session_period_id = self.world_state_local["session_periods_order"][self.world_state_local["current_period"]-1]
+                parameter_set_period_id = self.world_state_local["session_periods"][str(session_period_id)]["parameter_set_period"]
+                parameter_set_period = self.parameter_set_local["parameter_set_periods"][str(parameter_set_period_id)]
+
                 session_player["state"] = "open"
                 session_player["state_payload"] = {}
                 session_player["frozen"] = False
                 session_player["interaction"] = 0
 
                 field["status"] = "claimed"
-                field["allowed_players"] = [player_id]
+
+                if parameter_set_period["field_pr"] == "True":
+                    field["allowed_players"] = [player_id]
+                else:
+                    field["allowed_players"] = self.world_state_local["session_players_order"].copy()
 
             result["field_id"] = field_id
             result["field"] = field

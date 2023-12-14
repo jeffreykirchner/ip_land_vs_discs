@@ -51,8 +51,10 @@ var app = Vue.createApp({
                     interaction_modal : null,
                     help_modal : null,
                     field_modal : null,
+                    field_manage_modal : null,
 
                     field_modal_open : false,
+                    field_manage_modal_open : false,
 
                     test_mode : {%if session.parameter_set.test_mode%}true{%else%}false{%endif%},
 
@@ -78,6 +80,7 @@ var app = Vue.createApp({
 
                     //errors
                     field_error: null,
+                    field_manage_error: null,
 
                     //test mode
                     test_mode_location_target : null,
@@ -181,6 +184,9 @@ var app = Vue.createApp({
                 case "update_build_seeds":
                     app.take_build_seeds(message_data);
                     break;
+                case "update_grant_field_access":
+                    app.take_grant_field_access(message_data);
+                    break;
             }
 
             app.first_load_done = true;
@@ -210,6 +216,7 @@ var app = Vue.createApp({
             app.interaction_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('interaction_modal'), {keyboard: false})          
             app.help_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('help_modal'), {keyboard: false})
             app.field_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('field_modal'), {keyboard: false})
+            app.field_manage_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('field_manage_modal'), {keyboard: false})
 
             document.getElementById('end_game_modal').addEventListener('hidden.bs.modal', app.hide_end_game_modal);
             document.getElementById('interaction_modal').addEventListener('hidden.bs.modal', app.hide_interaction_modal);
@@ -402,6 +409,10 @@ var app = Vue.createApp({
                                     app.session.world_state.current_period,
                                     app.session.parameter_set.period_length);
                 }
+
+                app.field_modal.hide();
+                app.field_manage_modal.hide();
+                app.interaction_modal.hide();
             }
 
             //update player states

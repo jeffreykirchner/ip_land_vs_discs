@@ -1,0 +1,70 @@
+{% load crispy_forms_tags %}
+<!--field Modal -->
+<div class="modal fade " 
+     id="field_manage_modal" 
+     data-bs-backdrop="static" 
+     data-bs-keyboard="false" 
+     tabindex="-1" 
+     aria-labelledby="field_manage_modal" 
+     aria-hidden="true"
+    >
+
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-header fw-bold">
+                Manage Field
+                <span class="float-end">
+                    <button type="button" class="btn btn-link" title="Show Help" v-on:click="send_load_help_doc_subject('Field')">
+                        <i class="far fa-question-circle"></i> 
+                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </span>
+            </div>
+            <div class="modal-body">   
+                <div v-if="selected_field.field">
+                    <div class="row">
+                        <div class ="col text-center fw-bold">
+                            Click to Grant Access
+                        </div>
+                    </div>
+
+                    <div class="row mt-2" 
+                         v-for="(p, index) in get_manage_field_players_that_could_be_allowed(selected_field.field.id)"
+                         v-bind:key="p"
+                         :set="temp_p=session.parameter_set.parameter_set_players[p.parameter_set_player]">
+                        <div class ="col text-center fw-bold">
+
+                            <button class="btn btn-secondary"
+                                    type="button"
+                                    title="Grant Field Access"
+                                    v-bind:style="{'background-color': temp_p.hex_color}"                                 
+                                    v-bind:disabled="working"
+                                    v-on:click="send_grant_field_access(p.id)">
+                                    
+                                    [[temp_p.id_label]]
+
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4 border-top pt-3" >
+
+                        <div class="col text-end">
+                            <span v-if="working" class="me-2">
+                                <i class="fas fa-spinner fa-spin"></i>
+                            </span>                        
+                        </div>
+                    </div>
+
+                    <div class="row mt-4 fw-bold" v-if="field_manage_error">
+                        <div class="col text-center">                  
+                            Error: [[field_manage_error]]  
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

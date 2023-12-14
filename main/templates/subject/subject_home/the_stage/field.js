@@ -9,6 +9,7 @@ setup_pixi_fields: function setup_pixi_fields()
 
         const field = app.session.world_state.fields[i];
         const parameter_set_field = app.session.parameter_set.parameter_set_fields[i];
+        const parameter_set_period = app.get_current_parameter_set_period();
         
         let field_container = new PIXI.Container();
         field_container.eventMode = 'passive';
@@ -126,6 +127,31 @@ setup_pixi_fields: function setup_pixi_fields()
             if(field.status == "claimed")
             {
                 id_label_text = "Claimed by " + parameter_set_player.id_label + ".";
+
+                if(parameter_set_period.field_pr == "True")
+                {
+                    let allowed_players_text = "";
+
+                    for(const j in field.allowed_players)
+                    {
+                        let allowed_player = app.get_parameter_set_player_from_player_id(field.allowed_players[j]);
+
+                        if(field.allowed_players.length > 1)
+                        {
+                            if(j == field.allowed_players.length - 1)
+                            {
+                                allowed_players_text += " and ";
+                            }
+                            else if(j > 0)
+                            {
+                                allowed_players_text += ", ";
+                            }
+                        }
+                        
+                        allowed_players_text += allowed_player.id_label;
+                    }
+                    id_label_text += "\n Allowed Players: " + allowed_players_text;
+                }
             }
             else
             {
@@ -144,12 +170,24 @@ setup_pixi_fields: function setup_pixi_fields()
 
             let id_label = new PIXI.Text(id_label_text, text_style);
             id_label.eventMode = 'passive';
-            id_label.anchor.set(0.5);
+           
 
             field_container.addChild(outline);        
 
-            id_label.position.set(field_container.width/2,
-                                 field_container.height/2 - id_label.height/2 - 20);
+            if(field.status == "claimed")
+            {
+                id_label.anchor.set(0.5, 0);
+                id_label.position.set(field_container.width/2,
+                                      10);
+            }
+            else
+            {
+                id_label.anchor.set(0.5);
+                id_label.position.set(field_container.width/2,
+                                      field_container.height/2 - id_label.height/2 - 20);
+                                      
+            }
+            
             
             field_container.addChild(id_label);
 
@@ -274,11 +312,26 @@ subject_field_click: function subject_field_click(target_field_id)
     app.selected_field.field = app.session.world_state.fields[target_field_id];
 
     app.clear_main_form_errors();
-
-    app.field_modal.show();
     app.working = false;
-    app.field_modal_open = true;
-    app.field_error = null;
+
+    let parameter_set_period = app.get_current_parameter_set_period();
+
+    if(app.selected_field.field.status == "available")
+    {
+        app.selected_field.field_type = "available";
+        app.field_modal.show();
+        app.field_modal_open = true;
+        app.field_error = null;
+    }
+    else if (app.selected_field.field.status == "claimed" && 
+             parameter_set_period.field_pr == "True" && 
+             app.selected_field.field.owner == app.session_player.id)
+    {
+        app.selected_field.field_type = "claimed";
+        app.field_manage_modal.show();
+        app.field_manage_modal_open = true;
+        app.field_manage_error = null;
+    }
 },
 
 /**
@@ -410,4 +463,66 @@ check_fields_intersection: function check_fields_intersection(rect1, player_id)
     }
 
     return false;
+},
+
+/**
+ * get manage field players that could be allowed
+ */
+get_manage_field_players_that_could_be_allowed: function get_manage_field_players_that_could_be_allowed(field_id)
+{
+    let current_allowed_players = app.session.world_state.fields[field_id].allowed_players;
+    let potential_allowed_players = [];
+
+    for(i in app.session.session_players)
+    {
+        if(!current_allowed_players.includes(app.session.session_players[i].id))
+        {
+            potential_allowed_players.push(app.session.session_players[i]);
+        }
+    }
+
+    return potential_allowed_players;
+},
+
+/**
+ * send grant field access
+ */
+send_grant_field_access: function send_grant_field_access(target_player_id)
+{
+    app.working = true;
+        
+    app.send_message("grant_field_access", 
+                    {"target_player_id" : target_player_id,
+                     "field_id" : app.selected_field.field.id,
+                     "source" : "client"},
+                     "group"); 
+},
+
+/**
+ * take grant field access
+ */
+take_grant_field_access: function take_grant_field_access(message_data)
+{
+    var source_player_id = message_data.source_player_id;
+
+    if(message_data.status == "success")
+    {
+        let field_id = message_data.field_id;
+        app.session.world_state.fields[field_id] = message_data.field;
+
+        app.destroy_pixi_fields();
+        app.setup_pixi_fields();
+
+        if(app.is_subject && source_player_id == app.session_player.id)
+        {
+            app.field_manage_modal.hide();
+        }
+    }
+    else
+    {
+        if(app.is_subject && source_player_id == app.session_player.id)
+        {
+            app.field_manage_error = message_data.error_message[0].message;
+        }
+    }
 },
