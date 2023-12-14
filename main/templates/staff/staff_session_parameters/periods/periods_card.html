@@ -1,0 +1,86 @@
+<div class="card">                  
+    <div class="card-header fw-bold">                
+        <span class="align-middle">
+            Periods ([[ Object.keys(parameter_set.parameter_set_periods).length]]) 
+        </span>      
+
+        <span class="float-end">
+            <button type="button" class="btn btn-link ms-4" title="Show Help Doc" v-on:click="send_load_help_doc('Staff Parameters Periods')">
+                <i class="far fa-question-circle"></i> 
+            </button>
+        </span> 
+                
+    </div>
+    <div class="card-body" >        
+
+        <div class="row justify-content-center">
+            <!-- period settings -->
+            <div class="col-md-auto text-center">                
+                <div class="table-responsive">
+                    <table class="table table-condensed"> 
+                        <thead>
+                            <tr>
+                                <th scope="col" class = "m-1 p-1">
+                                    #
+                                </th> 
+                                <th scope="col" class = "m-1 p-1">
+                                    Field PR
+                                </th>         
+                                <th scope="col" class = "m-1 p-1">
+                                    Seed PR
+                                </th> 
+                                <th scope="col" class = "m-1 p-1">
+                                    Disc PR
+                                </th>  
+                                <th scope="col" class = "m-1 p-1">
+                                    Help Doc
+                                </th> 
+                                <th scope="col" class = "m-1 p-1">
+                                   Copy Down
+                                </th>             
+                            </tr>
+                        </thead>
+                        <tbody id="period_list">
+                            <tr v-for="(p, index) in parameter_set.parameter_set_periods_order" 
+                                v-bind:key="p"
+                                :set="temp_p=parameter_set.parameter_set_periods[p]">
+                                <td v-on:click="show_edit_parameter_set_period(p)" 
+                                    class="player_table_cell">
+                                    [[index+1]]
+                                </td>
+                                <td v-on:click="show_edit_parameter_set_period(p)" 
+                                   class="player_table_cell">
+                                    [[temp_p.field_pr=="True" ? "Yes" : "No"]]
+                                </td>
+                                <td v-on:click="show_edit_parameter_set_period(p)" 
+                                    class="player_table_cell">
+                                    [[temp_p.seed_pr=="True" ? "Yes" : "No"]]
+                                </td>
+                                <td v-on:click="show_edit_parameter_set_period(p)" 
+                                    class="player_table_cell">
+                                    [[temp_p.disc_pr=="True" ? "Yes" : "No"]]
+                                </td>
+                                <td v-on:click="show_edit_parameter_set_period(p)" 
+                                    class="player_table_cell">
+                                    [[temp_p.help_doc_title]]
+                                </td>
+                                <td>
+                                    <button class="btn btn-outline-success btn-sm"
+                                            type="button"
+                                            title="Copy Down"
+                                            v-if="index < parameter_set.parameter_set_periods_order.length-1"
+                                            v-bind:disabled="session.started || reconnecting || working"
+                                            v-on:click="send_copy_period_down(p)">
+                                            <i class="fas fa-level-down-alt"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                        
+                    </table>
+                </div>
+            </div>
+        </div>  
+        
+    </div>                    
+</div> 

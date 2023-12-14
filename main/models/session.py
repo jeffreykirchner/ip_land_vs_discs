@@ -110,9 +110,10 @@ class Session(models.Model):
         #self.time_remaining = self.parameter_set.period_length
         
         session_periods = []
+        parameter_set_periods = self.parameter_set.parameter_set_periods.all()
 
-        for i in range(self.parameter_set.period_count):
-            session_periods.append(main.models.SessionPeriod(session=self, period_number=i+1))
+        for count, period in enumerate(parameter_set_periods):
+            session_periods.append(main.models.SessionPeriod(session=self, period_number=count+1, parameter_set_period=period))
         
         main.models.SessionPeriod.objects.bulk_create(session_periods)
 

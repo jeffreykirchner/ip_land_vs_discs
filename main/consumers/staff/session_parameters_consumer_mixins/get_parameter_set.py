@@ -78,6 +78,20 @@ def take_update_parameter_set(data):
         form.save()    
         session.parameter_set.update_json_local()
 
+        #check period count
+        if session.parameter_set.parameter_set_periods.count() < session.parameter_set.period_count:
+            new_period_count = session.parameter_set.period_count - session.parameter_set.parameter_set_periods.count()
+            for i in range(new_period_count):
+                session.parameter_set.parameter_set_periods.create()
+
+            session.parameter_set.update_json_fk(update_periods=True)
+        elif session.parameter_set.parameter_set_periods.count() > session.parameter_set.period_count:
+            new_period_count = session.parameter_set.parameter_set_periods.count() - session.parameter_set.period_count
+            for i in range(new_period_count):
+                session.parameter_set.parameter_set_periods.last().delete()
+            
+            session.parameter_set.update_json_fk(update_periods=True)
+
         return {"value" : "success"}                      
                                 
     logger.info("Invalid paramterset form")

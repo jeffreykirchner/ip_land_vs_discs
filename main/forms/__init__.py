@@ -16,6 +16,7 @@ from .parameter_set_group_form import ParameterSetGroupForm
 from .parameter_set_barrier_form import ParameterSetBarrierForm
 from .parameter_set_ground_form import ParameterSetGroundForm
 from .parameter_set_field_form import ParameterSetFieldForm
+from .parameter_set_period_form import ParameterSetPeriodForm
 
 from .session_player_name_etc_form import StaffEditNameEtcForm
 
