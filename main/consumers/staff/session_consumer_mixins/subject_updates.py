@@ -543,9 +543,7 @@ class SubjectUpdatesMixin():
                 field["status"] = "building"
                 field["owner"] = player_id
             else:
-                session_period_id = self.world_state_local["session_periods_order"][self.world_state_local["current_period"]-1]
-                parameter_set_period_id = self.world_state_local["session_periods"][str(session_period_id)]["parameter_set_period"]
-                parameter_set_period = self.parameter_set_local["parameter_set_periods"][str(parameter_set_period_id)]
+                current_paramter_set_period = await self.get_current_parameter_set_period()
 
                 session_player["state"] = "open"
                 session_player["state_payload"] = {}
@@ -554,7 +552,7 @@ class SubjectUpdatesMixin():
 
                 field["status"] = "claimed"
 
-                if parameter_set_period["field_pr"] == "True":
+                if current_paramter_set_period["field_pr"] == "True":
                     field["allowed_players"] = [player_id]
                 else:
                     field["allowed_players"] = self.world_state_local["session_players_order"].copy()
@@ -580,7 +578,74 @@ class SubjectUpdatesMixin():
 
         await self.send_message(message_to_self=event_data, message_to_group=None,
                                 message_type=event['type'], send_to_client=True, send_to_group=False)
+    
+    async def grant_field_access(self, event):
+        '''
+        subject grants field access to another player
+        '''
+
+        if self.controlling_channel != self.channel_name:
+            return
         
+        logger = logging.getLogger(__name__)
+
+        error_message = []
+        status = "success"
+
+        try:
+            player_id = self.session_players_local[event["player_key"]]["id"]
+            source_player = self.world_state_local['session_players'][str(player_id)]
+            field_id = event["message_text"]["field_id"]
+            field = self.world_state_local["fields"][str(field_id)]
+            target_player_id = event["message_text"]["target_player_id"]
+        except:
+            logger.info(f"field_claim: invalid data, {event['message_text']}")
+            status = "fail"
+            error_message.append({"id":"field_claim", "message": "Invalid data, try again."})
+
+        #check if field is owned by player
+        if status == "success":
+            if field["owner"] != player_id:
+                status = "fail"
+                error_message.append({"id":"field_claim", "message": "You do not own this field."})
+        
+        #check that field property rights are in effect
+        if status == "success":
+            current_paramter_set_period = await self.get_current_parameter_set_period()
+            if current_paramter_set_period["field_pr"] == "False":
+                status = "fail"
+                error_message.append({"id":"field_claim", "message": "Invalid entry."})
+        
+        #check if target player already has access
+        if status == "success":
+            if target_player_id in field["allowed_players"]:
+                status = "fail"
+                error_message.append({"id":"field_claim", "message": "Player already has access."})
+
+        result = {"status" : status, 
+                  "error_message" : error_message, 
+                  "source_player_id" : player_id}
+        
+        if status == "success":
+            field["allowed_players"].append(target_player_id)
+
+            result["field_id"] = field_id
+            result["field"] = field
+            
+            await Session.objects.filter(id=self.session_id).aupdate(world_state=self.world_state_local)
+
+        await self.send_message(message_to_self=None, message_to_group=result,
+                                message_type=event['type'], send_to_client=False, send_to_group=True)
+        
+    async def update_grant_field_access(self, event):
+        '''
+        subject grants field access to another player update
+        '''
+        event_data = event["group_data"]
+
+        await self.send_message(message_to_self=event_data, message_to_group=None,
+                                message_type=event['type'], send_to_client=True, send_to_group=False)
+
     async def build_disc(self, event):
         '''
         subject builds a disc
@@ -696,6 +761,17 @@ class SubjectUpdatesMixin():
 
         await self.send_message(message_to_self=event_data, message_to_group=None,
                                 message_type=event['type'], send_to_client=True, send_to_group=False)
+    
+    #helpers
+    async def get_current_parameter_set_period(self):
+        '''
+        get current paramter set period
+        '''
+        session_period_id = self.world_state_local["session_periods_order"][self.world_state_local["current_period"]-1]
+        parameter_set_period_id = self.world_state_local["session_periods"][str(session_period_id)]["parameter_set_period"]
+        parameter_set_period = self.parameter_set_local["parameter_set_periods"][str(parameter_set_period_id)]
+
+        return parameter_set_period
                                       
     
 

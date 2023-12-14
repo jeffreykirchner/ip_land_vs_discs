@@ -65,7 +65,7 @@ setup_pixi_fields: function setup_pixi_fields()
                 fill: 'white',
                 align: 'center',
                 stroke: 'black',
-                strokeThickness: 3,
+                strokeThickness: 3,                
             };
 
             let id_label = new PIXI.Text("Right click to claim.", text_style);
@@ -114,20 +114,25 @@ setup_pixi_fields: function setup_pixi_fields()
             //text
             let text_style = {
                 fontFamily: 'Arial',
-                fontSize: 36,
+                fontSize: 32,
                 fill: 'white',
                 align: 'center',
                 stroke: 'black',
                 strokeThickness: 3,
+                wordWrap : true,
+                wordWrapWidth : parameter_set_field.width - 20,
             };
 
             let id_label_text = ""
             let left_cone_graphic = null;
             let right_cone_graphic = null;
+            let management_label = null;
+
             if(field.status == "claimed")
             {
                 id_label_text = "Claimed by " + parameter_set_player.id_label + ".";
 
+                //field PR enabled
                 if(parameter_set_period.field_pr == "True")
                 {
                     let allowed_players_text = "";
@@ -150,7 +155,14 @@ setup_pixi_fields: function setup_pixi_fields()
                         
                         allowed_players_text += allowed_player.id_label;
                     }
-                    id_label_text += "\n Allowed Players: " + allowed_players_text;
+
+                    id_label_text += "\n Allowed Players: " + allowed_players_text + ".";
+
+                    //management label
+                    if(field.owner == app.session_player.id)
+                    {
+                        management_label = new PIXI.Text("Right click to manage.", text_style);
+                    }                   
                 }
             }
             else
@@ -171,9 +183,9 @@ setup_pixi_fields: function setup_pixi_fields()
             let id_label = new PIXI.Text(id_label_text, text_style);
             id_label.eventMode = 'passive';
            
-
             field_container.addChild(outline);        
 
+            //claimed label
             if(field.status == "claimed")
             {
                 id_label.anchor.set(0.5, 0);
@@ -188,9 +200,28 @@ setup_pixi_fields: function setup_pixi_fields()
                                       
             }
             
-            
             field_container.addChild(id_label);
 
+            //management label
+            if(management_label)
+            {
+                management_label.anchor.set(0.5);
+                management_label.position.set(field_container.width/2,
+                                              field_container.height - management_label.height/2 - 20);
+                field_container.addChild(management_label);
+
+                //right click
+                let right_click_graphic = PIXI.Sprite.from(app.pixi_textures["right_click_tex"]);
+                right_click_graphic.anchor.set(0.5)
+                right_click_graphic.eventMode = 'passive';
+
+                right_click_graphic.position.set(field_container.width/2 + management_label.width/2 + 10 + right_click_graphic.width/2,
+                                                 field_container.height - management_label.height/2 - 20);
+
+                field_container.addChild(right_click_graphic);
+            }
+
+            //cones
             if(field.status == "building")
             {
                 left_cone_graphic.position.set(field_container.width/2 - id_label.width/2 - 5 - left_cone_graphic.width/2,
