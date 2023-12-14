@@ -180,7 +180,7 @@ class ParameterSet(models.Model):
 
             #parameter set periods
             self.parameter_set_periods.all().delete()
-            new_parameter_set_periods = new_ps.get("parameter_set_notices")
+            new_parameter_set_periods = new_ps.get("parameter_set_periods")
 
             for i in new_parameter_set_periods:
                 p = main.models.ParameterSetPeriod.objects.create(parameter_set=self)

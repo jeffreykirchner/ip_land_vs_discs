@@ -7,6 +7,7 @@ session period model
 from django.db import models
 
 from main.models import Session
+from main.models import ParameterSetPeriod
 
 import main
 
@@ -15,6 +16,7 @@ class SessionPeriod(models.Model):
     session period model
     '''
     session = models.ForeignKey(Session, on_delete=models.CASCADE, related_name="session_periods")
+    parameter_set_period = models.ForeignKey(ParameterSetPeriod, on_delete=models.CASCADE, related_name="session_periods", null=True, blank=True)
 
     period_number = models.IntegerField()                       #period number from 1 to N
 
@@ -40,5 +42,6 @@ class SessionPeriod(models.Model):
         return{
             "id" : self.id,
             "period_number" : self.period_number,
+            "parameter_set_period" : self.parameter_set_period.id,
         }
         

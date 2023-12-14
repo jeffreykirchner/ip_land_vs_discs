@@ -79,9 +79,9 @@ class ParameterSetPeriod(models.Model):
         return{
 
             "id" : self.id,
-            "field_pr" : self.field_pr,
-            "seed_pr" : self.seed_pr,
-            "disc_pr" : self.disc_pr,
+            "field_pr" : "True" if self.field_pr else "False",
+            "seed_pr" : "True" if self.seed_pr else "False",
+            "disc_pr" : "True" if self.disc_pr else "False",
             "help_doc" : self.help_doc.id if self.help_doc else None,
             "help_doc_title" : self.help_doc.title if self.help_doc else None,
         }
