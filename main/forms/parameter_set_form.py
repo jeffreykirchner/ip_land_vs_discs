@@ -110,6 +110,17 @@ class ParameterSetForm(forms.ModelForm):
                                            widget=forms.NumberInput(attrs={"v-model":"parameter_set.disc_build_length",
                                                                             "step":"1",
                                                                             "min":"1"}))
+    
+    seed_multipliers = forms.CharField(label='Seed Multipiers',
+                                             required=False,
+                                             widget=forms.Textarea(attrs={"v-model":"parameter_set.seed_multipliers",
+                                                                          "rows":"5",}))
+    
+    disc_value = forms.IntegerField(label='Disc Value(¢)',
+                                            min_value=1,
+                                            widget=forms.NumberInput(attrs={"v-model":"parameter_set.field_build_length",
+                                                                            "step":"1",
+                                                                            "min":"1"}))
 
     avatar_scale = forms.DecimalField(label='Avatar Scale',
                                       max_digits=3,
@@ -166,6 +177,7 @@ class ParameterSetForm(forms.ModelForm):
                  'show_instructions', 'instruction_set', 
                  'survey_required', 'survey_link', 'test_mode', 'prolific_mode', 'prolific_completion_link', 'reconnection_limit',
                  'interaction_length', 'interaction_range', 'cool_down_length', 'build_time', 'field_build_length', 'disc_build_length','seed_build_length',
+                 'seed_multipliers', 'disc_value',
                  'avatar_scale', 'avatar_bound_box_percent', 'avatar_move_speed', 'avatar_animation_speed',
                  'world_width', 'world_height']
 

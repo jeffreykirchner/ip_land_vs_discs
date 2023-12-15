@@ -80,24 +80,24 @@ setup_pixi_fields: function setup_pixi_fields()
             field_container.addChild(outline);        
 
             id_label.position.set(field_container.width/2,
-                                field_container.height/2 - id_label.height/2 - 20);
+                                  id_label.height/2 + 30);
             
             right_click_graphic.position.set(field_container.width/2 + id_label.width/2 + 10 +  right_click_graphic.width/2,
-                                            field_container.height/2- id_label.height/2 - 20);
+                                             id_label.position.y);
 
             //cost label 
             let cost_label = new PIXI.Text("Cost: " + app.session.parameter_set.field_build_length + " production seconds.", text_style);
             cost_label.eventMode = 'passive';
             cost_label.anchor.set(0.5);
             cost_label.position.set(field_container.width/2,
-                                    field_container.height/2);
+                                    id_label.position.y + cost_label.height + 10);
             
             field_container.addChild(id_label);
             field_container.addChild(right_click_graphic);
             field_container.addChild(cost_label);
 
             field_container.position.set(parameter_set_field.x - parameter_set_field.width/2,
-                                        parameter_set_field.y - parameter_set_field.height/2);
+                                         parameter_set_field.y - parameter_set_field.height/2);
         }
         else
         {
@@ -114,7 +114,7 @@ setup_pixi_fields: function setup_pixi_fields()
             //text
             let text_style = {
                 fontFamily: 'Arial',
-                fontSize: 32,
+                fontSize: 30,
                 fill: 'white',
                 align: 'center',
                 stroke: 'black',
@@ -186,19 +186,19 @@ setup_pixi_fields: function setup_pixi_fields()
             field_container.addChild(outline);        
 
             //claimed label
-            if(field.status == "claimed")
-            {
-                id_label.anchor.set(0.5, 0);
-                id_label.position.set(field_container.width/2,
-                                      10);
-            }
-            else
-            {
-                id_label.anchor.set(0.5);
-                id_label.position.set(field_container.width/2,
-                                      field_container.height/2 - id_label.height/2 - 20);
+            // if(field.status == "claimed")
+            // {
+            id_label.anchor.set(0.5);
+            id_label.position.set(field_container.width/2,
+                                  id_label.height/2 + 20);
+            // }
+            // else
+            // {
+            //     id_label.anchor.set(0.5);
+            //     id_label.position.set(field_container.width/2,
+            //                           field_container.height/2 - id_label.height/2 - 20);
                                       
-            }
+            // }
             
             field_container.addChild(id_label);
 
@@ -225,9 +225,9 @@ setup_pixi_fields: function setup_pixi_fields()
             if(field.status == "building")
             {
                 left_cone_graphic.position.set(field_container.width/2 - id_label.width/2 - 5 - left_cone_graphic.width/2,
-                                                field_container.height/2- id_label.height/2 - 20);
+                                               id_label.position.y);
                 right_cone_graphic.position.set(field_container.width/2 + id_label.width/2 + 5 +  right_cone_graphic.width/2,
-                                                field_container.height/2- id_label.height/2 - 20);
+                                                id_label.position.y);
                 field_container.addChild(left_cone_graphic);
                 field_container.addChild(right_cone_graphic);
             }
@@ -235,6 +235,45 @@ setup_pixi_fields: function setup_pixi_fields()
             field_container.position.set(parameter_set_field.x - parameter_set_field.width/2,
                                         parameter_set_field.y - parameter_set_field.height/2);
         }
+
+        let text_style_multiplier = {
+            fontFamily: 'Arial',
+            fontSize: 26,
+            fill: 'white',
+            align: 'center',
+            stroke: 'black',
+            strokeThickness: 3,
+        };
+
+        //multiplier table
+        let multipier_text = "Seed Earnings Multiplier"
+        let multiplier_list = app.session.parameter_set.seed_multipliers.split("\n");
+        for(const i in multiplier_list)
+        {
+            let v = parseInt(i)+1;
+
+            if(v == 1)
+            {
+                multipier_text += "\n" + v + " Player " + multiplier_list[i] + "x";
+            }
+            else if(v == multiplier_list.length)
+            {
+                multipier_text += "\n" + v + "+ Players " + multiplier_list[i] + "x";
+            }
+            else
+            {
+                multipier_text += "\n" + v + " Players " + multiplier_list[i] + "x";
+            }
+        }
+
+        let multiplier_label = new PIXI.Text(multipier_text, text_style_multiplier);
+        multiplier_label.eventMode = 'passive';
+        
+        multiplier_label.anchor.set(0.5);
+        multiplier_label.position.set(field_container.width/2,
+                                      field_container.height/2+30);
+
+        field_container.addChild(multiplier_label);        
 
         field_container.zIndex = 0;
 
