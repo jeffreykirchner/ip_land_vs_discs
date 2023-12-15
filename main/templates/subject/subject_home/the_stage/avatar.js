@@ -36,7 +36,7 @@ setup_pixi_subjects: function setup_pixi_subjects(){
 
         let text_style = {
             fontFamily: 'Arial',
-            fontSize: 26,
+            fontSize: 30,
             fill: 'white',
             align: 'left',
             stroke: 'black',
