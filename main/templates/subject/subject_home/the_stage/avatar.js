@@ -245,9 +245,49 @@ subject_avatar_click: function subject_avatar_click(target_player_id)
 
     // console.log("subject avatar click", target_player_id);
 
-    app.send_message("tractor_beam", 
-                     {"target_player_id" : target_player_id},
-                     "group");
+    // app.send_message("tractor_beam", 
+    //                  {"target_player_id" : target_player_id},
+    //                  "group");
+    app.interaction_start_modal.toggle();
+    app.selected_player.session_player = app.session.world_state.session_players[target_player_id];
+    app.selected_player.parameter_set_player = app.get_parameter_set_player_from_player_id(target_player_id);
+},
+
+/**
+ * start send seeds
+ */
+start_send_seeds: function start_send_seeds()
+{
+    app.selected_player.interaction_type = "send_seeds";
+    app.interaction_start_modal.hide();
+    app.interaction_modal.toggle();
+},
+
+/**
+ * start take seeds
+ */
+start_take_seeds: function start_take_seeds()
+{
+    app.selected_player.interaction_type = "take_seeds";
+},
+
+/**
+ * start send disc
+ */
+start_send_disc: function start_send_disc()
+{
+    app.selected_player.interaction_type = "send_disc";
+
+    app.interaction_start_modal.hide();
+    app.interaction_modal.toggle();
+},
+
+/**
+ * start take disc
+ */ 
+start_take_disc: function start_take_disc()
+{
+    app.selected_player.interaction_type = "take_disc";
 },
 
 /**
@@ -404,6 +444,13 @@ take_update_interaction: function take_update_interaction(message_data)
 */
 hide_interaction_modal: function hide_interaction_modal(){
     
+},
+
+/**
+ * hide interaction start modal
+ */
+hide_interaction_start_modal: function hide_interaction_start_modal(){
+    app.interaction_start_modal.hide();
 },
 
 /**

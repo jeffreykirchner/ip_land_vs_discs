@@ -49,6 +49,7 @@ var app = Vue.createApp({
                     // modals
                     end_game_modal : null,
                     interaction_modal : null,
+                    interaction_start_modal : null,
                     help_modal : null,
                     field_modal : null,
                     field_manage_modal : null,
@@ -76,6 +77,13 @@ var app = Vue.createApp({
 
                     //selected object
                     selected_field : {field:null,
+                    },
+
+                    //selected avatar
+                    selected_player : {session_player:null,
+                        parameter_set_player:null,
+                        interaction_type:null,
+                        interaction_amount:0,
                     },
 
                     //errors
@@ -213,14 +221,17 @@ var app = Vue.createApp({
         do_first_load: function do_first_load()
         {           
             app.end_game_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('end_game_modal'), {keyboard: false})   
-            app.interaction_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('interaction_modal'), {keyboard: false})          
+            app.interaction_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('interaction_modal'), {keyboard: false}) 
+            app.interaction_start_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('interaction_start_modal'), {keyboard: false})         
             app.help_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('help_modal'), {keyboard: false})
             app.field_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('field_modal'), {keyboard: false})
             app.field_manage_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('field_manage_modal'), {keyboard: false})
-
+            
             document.getElementById('end_game_modal').addEventListener('hidden.bs.modal', app.hide_end_game_modal);
             document.getElementById('interaction_modal').addEventListener('hidden.bs.modal', app.hide_interaction_modal);
+            document.getElementById('interaction_start_modal').addEventListener('hidden.bs.modal', app.hide_interaction_start_modal);
             document.getElementById('field_modal').addEventListener('hidden.bs.modal', app.hide_field_modal);
+            document.getElementById('field_manage_modal').addEventListener('hidden.bs.modal', app.hide_field_manage_modal);
 
             {%if session.parameter_set.test_mode%} setTimeout(app.do_test_mode, app.random_number(1000 , 1500)); {%endif%}
 

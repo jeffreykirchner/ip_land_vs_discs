@@ -15,18 +15,19 @@
             </div>
             <div class="modal-body">
                 
-                <div>
-                    <form id="endGameForm" v-on:submit.prevent="onSubmit">
-                        {% for i in interaction_form %}
-                        <div class="row">
-                            <div class = "col col-md-10 offset-md-1">  
-                                {{ i|as_crispy_field }}         
-                            </div>            
-                        </div> 
-                        {% endfor %}
-                    </form>
-                </div>               
-            
+                <div class="row">
+                    <div class="col text-start" id="div_id_good_three_harvest">
+                        <input type="number" 
+                           class="transfer_model_input form-control-lg fw-bold"
+                           v-model="selected_player.interaction_amount"
+                           min="0"
+                           max="999"
+                           step="1">         
+                           
+                           of 
+                    </div>
+                </div>
+                         
             </div>
             <div class="modal-footer">
                 <button type="button"

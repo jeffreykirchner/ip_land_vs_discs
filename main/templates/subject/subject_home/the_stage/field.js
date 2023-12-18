@@ -403,6 +403,17 @@ hide_field_modal: function hide_field_modal()
 },
 
 /**
+ * handle field manage modal hide
+ */
+hide_field_manage_modal: function hide_field_manage_modal()
+{
+    app.selected_field.field = null;
+    app.selected_field.field_type = null;
+    app.field_manage_modal_open = false
+    app.working = false;
+},
+
+/**
  * subject field click
  */
 subject_field_click: function subject_field_click(target_field_id)
