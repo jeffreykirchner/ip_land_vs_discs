@@ -373,16 +373,15 @@ var app = Vue.createApp({
                 app.update_subject_status_overlay();
             });
 
+            //update fields
+            app.session.world_state.fields = message_data.fields;
+
+            app.destroy_pixi_fields();
+            app.setup_pixi_fields();
 
             //period has changed
             if(message_data.period_is_over)
             {
-                //update fields
-                app.session.world_state.fields = message_data.fields;
-
-                app.destroy_pixi_fields();
-                app.setup_pixi_fields();
-
                 Vue.nextTick(() => {
                     let current_location = app.session.world_state.session_players[app.session_player.id].current_location;
 
@@ -413,6 +412,11 @@ var app = Vue.createApp({
                 app.field_modal.hide();
                 app.field_manage_modal.hide();
                 app.interaction_modal.hide();
+            }
+            else
+            {
+                //send update about fields
+                app.send_present_players();
             }
 
             //update player states

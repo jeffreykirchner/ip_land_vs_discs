@@ -111,7 +111,7 @@ class ParameterSetForm(forms.ModelForm):
                                                                             "step":"1",
                                                                             "min":"1"}))
     
-    seed_multipliers = forms.CharField(label='Seed Multipiers',
+    seed_multipliers = forms.CharField(label='Seed multipliers',
                                              required=False,
                                              widget=forms.Textarea(attrs={"v-model":"parameter_set.seed_multipliers",
                                                                           "rows":"5",}))

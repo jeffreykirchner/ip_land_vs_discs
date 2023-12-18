@@ -762,6 +762,33 @@ class SubjectUpdatesMixin():
         await self.send_message(message_to_self=event_data, message_to_group=None,
                                 message_type=event['type'], send_to_client=True, send_to_group=False)
     
+    async def present_players(self, event):
+        '''
+        subjects that are present on a field
+        '''
+
+        if self.controlling_channel != self.channel_name:
+            return
+        
+        logger = logging.getLogger(__name__)
+        # logger.info(f"present_players: data, {event['message_text']}")
+
+        error_message = []
+        status = "success"
+
+
+        try:
+            player_id = self.session_players_local[event["player_key"]]["id"]
+            field_id = event["message_text"]["field_id"]
+            present_players = event["message_text"]["present_players"]
+        except:
+            logger.info(f"present_players: invalid data, {event['message_text']}")
+            status = "fail"
+            error_message.append({"id":"present_players", "message": "Invalid data, try again."})
+        
+        if status == "success":
+            self.world_state_local["fields"][str(field_id)]["present_players"] = present_players
+    
     #helpers
     async def get_current_parameter_set_period(self):
         '''
