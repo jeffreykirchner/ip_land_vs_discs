@@ -8,12 +8,39 @@
      aria-labelledby="interaction_modal" 
      aria-hidden="true">
 
-    <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-dialog modal-sm">
         <div class="modal-content">
             <div class="modal-header fw-bold">
                 Interaction
+
+                <span class="float-end">
+                    <button type="button" 
+                            class="btn btn-link" 
+                            title="Show Help" 
+                            v-on:click="send_load_help_doc_subject('interaction_direction')">
+                        <i class="far fa-question-circle"></i> 
+                    </button>
+                    
+                </span>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" v-if="selected_player && selected_player.session_player">
+                <div class="row">
+                    <div class="col text-center">
+                        <span v-if="selected_player.interaction_type=='send_seeds'">
+                            Send Seeds to [[selected_player.parameter_set_player.id_label]] <i class="fas fa-seedling"></i>
+                        </span>
+                        <span v-if="selected_player.interaction_type=='take_seeds'">
+                            Take Seeds from [[selected_player.parameter_set_player.id_label]] <i class="fas fa-seedling"></i>
+                        </span>
+                        
+                        <span v-if="selected_player.interaction_type=='send_disc'">
+                            Send Disc to [[selected_player.parameter_set_player.id_label]] <i class="fas fa-compact-disc"></i>
+                        </span>
+                        <span v-if="selected_player.interaction_type=='take_disc'">
+                            Take Disc from [[selected_player.parameter_set_player.id_label]] <i class="fas fa-compact-disc"></i>
+                        </span>
+                    </div>
+                </div>
                 
                 <div class="row">
                     <div class="col text-start" id="div_id_good_three_harvest">
@@ -46,6 +73,12 @@
                     Submit <i class="fas fa-sign-in-alt"></i>
                 </button>
 
+            </div>
+
+            <div class="row mt-4 fw-bold" v-if="interaction_error">
+                <div class="col text-center">                  
+                    Error: [[interaction_error]]  
+                </div>
             </div>
         </div>
     </div>

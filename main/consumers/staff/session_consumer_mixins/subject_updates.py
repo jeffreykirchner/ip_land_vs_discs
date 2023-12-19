@@ -265,43 +265,69 @@ class SubjectUpdatesMixin():
         '''
         if self.controlling_channel != self.channel_name:
             return
+        
+        logger = logging.getLogger(__name__) 
+        
+        error_message = []
+        status = "success"
 
-        player_id = self.session_players_local[event["player_key"]]["id"]
-        target_player_id = event["message_text"]["target_player_id"]
+        try:
+            player_id = self.session_players_local[event["player_key"]]["id"]
+            target_player_id = event["message_text"]["target_player_id"]
+        except:
+            logger.info(f"tractor_beam: invalid data, {event['message_text']}")
+            status = "fail"
+            error_message.append({"id":"tractor_beam", "message": "Invalid data, try again."})
 
-        source_player = self.world_state_local['session_players'][str(player_id)]
-        target_player = self.world_state_local['session_players'][str(target_player_id)]
+        result = {"status" : status, 
+                  "error_message" : error_message, 
+                  "source_player_id" : player_id}
+
+        if status == "success":
+            source_player = self.world_state_local['session_players'][str(player_id)]
+            target_player = self.world_state_local['session_players'][str(target_player_id)]
 
         # check if players are frozen
-        if source_player['frozen'] or target_player['frozen']:
-            return
+        if status == "success":
+            if source_player['frozen'] or target_player['frozen']:
+                logger.info(f"tractor_beam: players frozen, {event['message_text']}")
+                status = "fail"
+                error_message.append({"id":"tractor_beam", "message": "Invalid target."})
 
         #check if either player has tractor beam enabled
-        if source_player['tractor_beam_target'] or target_player['tractor_beam_target']:
-            return
+        if status == "success":
+            if source_player['tractor_beam_target'] or target_player['tractor_beam_target']:
+                logger.info(f"tractor_beam: already in an interaction, {event['message_text']}")
+                status = "fail"
+                error_message.append({"id":"tractor_beam", "message": "Invalid target."})
         
         #check if player is already interacting or cooling down.
-        if source_player['interaction'] > 0 or source_player['cool_down'] > 0:
-            return
+        if status == "success":
+            if source_player['interaction'] > 0 or source_player['cool_down'] > 0:
+                logger.info(f"tractor_beam: cooling down, {event['message_text']}")
+                status = "fail"
+                error_message.append({"id":"tractor_beam", "message": "Invalid target."})
         
-        source_player['frozen'] = True
-        target_player['frozen'] = True
+        if status == "success":
+            source_player['frozen'] = True
+            target_player['frozen'] = True
 
-        source_player['tractor_beam_target'] = target_player_id
-        source_player['interaction'] = self.parameter_set_local['interaction_length']
+            source_player['tractor_beam_target'] = target_player_id
+            source_player['interaction'] = self.parameter_set_local['interaction_length']
 
-        target_player['interaction'] = self.parameter_set_local['interaction_length']
+            target_player['interaction'] = self.parameter_set_local['interaction_length']
 
-        result = {"player_id" : player_id, "target_player_id" : target_player_id}
+            result["player_id"] = player_id
+            result["target_player_id"] = target_player_id
 
-        await Session.objects.filter(id=self.session_id).aupdate(world_state=self.world_state_local)
+            await Session.objects.filter(id=self.session_id).aupdate(world_state=self.world_state_local)
 
-        await SessionEvent.objects.acreate(session_id=self.session_id, 
-                                           session_player_id=player_id,
-                                           type="tractor_beam",
-                                           period_number=self.world_state_local["current_period"],
-                                           time_remaining=self.world_state_local["time_remaining"],
-                                           data=result)
+            await SessionEvent.objects.acreate(session_id=self.session_id, 
+                                            session_player_id=player_id,
+                                            type="tractor_beam",
+                                            period_number=self.world_state_local["current_period"],
+                                            time_remaining=self.world_state_local["time_remaining"],
+                                            data=result)
 
         await self.send_message(message_to_self=None, message_to_group=result,
                                 message_type=event['type'], send_to_client=False, send_to_group=True)
@@ -332,9 +358,10 @@ class SubjectUpdatesMixin():
             player_id = self.session_players_local[event["player_key"]]["id"]
             source_player = self.world_state_local['session_players'][str(player_id)]
 
-            interaction = event["message_text"]["interaction"]
-            direction = interaction["direction"]
-            amount = interaction["amount"]
+            target_player_id = event["message_text"]["target_player_id"]
+            interaction_type =  event["message_text"]["interaction_type"]
+            interaction_amount =  event["message_text"]["interaction_amount"]
+
         except:
             logger.info(f"interaction: invalid data, {event['message_text']}")
             status = "fail"
@@ -349,52 +376,52 @@ class SubjectUpdatesMixin():
 
         if status != "fail":
 
-            target_player_id = source_player['tractor_beam_target']
-            target_player = self.world_state_local['session_players'][str(target_player_id)]
+            target_player_id_s = str(target_player_id)
+            player_id_s = str(player_id)
 
-            # result = await sync_to_async(sync_interaction)(self.session_id, player_id, target_player_id, interaction["direction"], interaction["amount"])
-
-            source_player = self.world_state_local['session_players'][str(player_id)]
-            target_player = self.world_state_local['session_players'][str(target_player_id)]
+            source_player = self.world_state_local['session_players'][player_id_s]
+            target_player = self.world_state_local['session_players'][target_player_id_s]
 
             session = await Session.objects.aget(id=self.session_id)
-            current_session = await session.aget_current_session_period()
-            current_period_id = str(current_session.id)
 
-            if direction == 'take':
+            if interaction_type == 'take_seeds':
                 #take from target
-                if target_player["seeds"] < amount:
+                if target_player["seeds"] < interaction_amount:
                     status = "fail"
-                    error_message = "They do not have enough tokens."
+                    error_message = "They do not have enough seeds."
                 else:
-                    target_player["seeds"] -= amount
-                    source_player["seeds"] += amount
+                    target_player["seeds"] -= interaction_amount
+                    source_player["seeds"] += interaction_amount
 
-                    result["target_player_change"] = f"-{amount}"
-                    result["source_player_change"] = f"+{amount}"             
-            else:
+                    result["target_player_change"] = f"-{interaction_amount}"
+                    result["source_player_change"] = f"+{interaction_amount}"             
+            elif interaction_type == 'send_seeds':
                 #give to target
-                if source_player["seeds"] < amount:
+                if source_player["seeds"] < interaction_amount:
                     status = "fail"
-                    error_message = "You do not have enough tokens."
+                    error_message = "You do not have enough seeds."
                 else:
-                    source_player["seeds"] -= amount
-                    target_player["seeds"] += amount
+                    source_player["seeds"] -= interaction_amount
+                    target_player["seeds"] += interaction_amount
 
-                    result["source_player_change"] = f"-{amount}"
-                    result["target_player_change"] = f"+{amount}"
+                    result["source_player_change"] = f"-{interaction_amount}"
+                    result["target_player_change"] = f"+{interaction_amount}"
+            elif interaction_type == 'take_disc':
+                pass
+            elif interaction_type == 'send_disc':
+                pass
 
-        result["status"] = status
-        result["error_message"] = error_message
+            result["status"] = status
+            result["error_message"] = error_message
 
-        if status != "fail":
+        if status == "success":
 
-            result["source_player_inventory"] = source_player["seeds"]
-            result["target_player_inventory"] = target_player["seeds"]
+            result["source_player_seeds"] = source_player["seeds"]
+            result["target_player_seeds"] = target_player["seeds"]
 
-            result["period"] = current_period_id
-            result["direction"] = direction
             result["target_player_id"] = target_player_id
+            result["interaction_type"] = interaction_type
+            result["interaction_amount"] = interaction_amount
 
             #clear status
             source_player['interaction'] = 0

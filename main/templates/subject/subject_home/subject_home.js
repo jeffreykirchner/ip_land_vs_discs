@@ -89,6 +89,7 @@ var app = Vue.createApp({
                     //errors
                     field_error: null,
                     field_manage_error: null,
+                    interaction_error: null,
 
                     //test mode
                     test_mode_location_target : null,
@@ -172,13 +173,13 @@ var app = Vue.createApp({
                     app.take_update_collect_token(message_data);
                     break;
                 case "update_tractor_beam":
-                    app.take_update_tractor_beam(message_data);
+                    app.take_tractor_beam(message_data);
                     break;
                 case "update_interaction":
-                    app.take_update_interaction(message_data);
+                    app.take_interaction(message_data);
                     break;
                 case "update_cancel_interaction":
-                    app.take_update_cancel_interaction(message_data);
+                    app.take_cancel_interaction(message_data);
                     break;
                 case "update_rescue_subject":
                     app.take_rescue_subject(message_data);
@@ -198,8 +199,6 @@ var app = Vue.createApp({
             }
 
             app.first_load_done = true;
-
-            app.working = false;
         },
 
         /** send websocket message to server

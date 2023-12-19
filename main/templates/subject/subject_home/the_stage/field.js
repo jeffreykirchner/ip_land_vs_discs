@@ -380,6 +380,7 @@ take_field_claim: function take_field_claim(message_data)
         if(app.is_subject && source_player_id == app.session_player.id)
         {
             app.field_modal.hide();
+            app.working = false;
         }
     }
     else
@@ -387,6 +388,7 @@ take_field_claim: function take_field_claim(message_data)
         if(app.is_subject && source_player_id == app.session_player.id)
         {
             app.field_error = message_data.error_message[0].message;
+            app.working = false;
         }
     }
 },
@@ -469,14 +471,14 @@ take_build_disc: function take_build_disc(message_data)
 
         if(app.is_subject && source_player_id == app.session_player.id)
         {
-            
+            app.working = false;
         }
     }
     else
     {
         if(app.is_subject && source_player_id == app.session_player.id)
         {
-           
+            app.working = false;
         }
     }
 },
@@ -535,14 +537,14 @@ take_build_seeds: function take_build_seeds(message_data)
 
         if(app.is_subject && source_player_id == app.session_player.id)
         {
-            
+            app.working = false;
         }
     }
     else
     {
         if(app.is_subject && source_player_id == app.session_player.id)
         {
-           
+            app.working = false;
         }
     }
 },
@@ -626,6 +628,7 @@ take_grant_field_access: function take_grant_field_access(message_data)
         if(app.is_subject && source_player_id == app.session_player.id)
         {
             app.field_manage_modal.hide();
+            app.working = false;
         }
     }
     else
@@ -633,6 +636,7 @@ take_grant_field_access: function take_grant_field_access(message_data)
         if(app.is_subject && source_player_id == app.session_player.id)
         {
             app.field_manage_error = message_data.error_message[0].message;
+            app.working = false;
         }
     }
 },

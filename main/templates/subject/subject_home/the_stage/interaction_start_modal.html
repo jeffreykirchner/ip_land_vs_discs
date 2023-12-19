@@ -8,7 +8,7 @@
      aria-labelledby="interaction_start_modal" 
      aria-hidden="true">
 
-    <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-dialog modal-sm">
         <div class="modal-content">
             <div class="modal-header fw-bold">
                 Start Interaction?
@@ -67,6 +67,12 @@
                                 v-bind:disabled="reconnecting || working">
                             Take Disc from [[selected_player.parameter_set_player.id_label]] <i class="fas fa-compact-disc"></i>
                         </button>
+                    </div>
+                </div>
+
+                <div class="row mt-4 fw-bold" v-if="interaction_error">
+                    <div class="col text-center">                  
+                        Error: [[interaction_error]]  
                     </div>
                 </div>
 
