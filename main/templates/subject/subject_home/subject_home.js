@@ -490,9 +490,12 @@ var app = Vue.createApp({
             app.update_notices();
 
             //hide interaction modal if interaction is over
-            if(app.session.world_state.session_players[app.session_player.id].interaction == 0)
+            if(app.selected_player.interaction_type == "take_seeds" || app.selected_player.interaction_type == "take_disc")
             {
-                app.interaction_modal.hide();
+                if(app.session.world_state.session_players[app.session_player.id].interaction == 0)
+                {
+                    app.interaction_modal.hide();
+                }
             }
 
             //update barriers

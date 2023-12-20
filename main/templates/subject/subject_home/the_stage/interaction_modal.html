@@ -24,34 +24,39 @@
                 </span>
             </div>
             <div class="modal-body" v-if="selected_player && selected_player.session_player">
-                <div class="row">
+                <div class="row text-center">
+                    <div class="col" v-if="selected_player.interaction_type=='send_seeds' || 
+                                           selected_player.interaction_type=='take_seeds'">
+                        <img src="/static/seed_1.png" />
+                    </div>
+                </div>
+
+                <div class="row h5 mt-2">
                     <div class="col text-center">
                         <span v-if="selected_player.interaction_type=='send_seeds'">
-                            Send Seeds to [[selected_player.parameter_set_player.id_label]] <i class="fas fa-seedling"></i>
+                            Send Seeds to [[selected_player.parameter_set_player.id_label]]
                         </span>
                         <span v-if="selected_player.interaction_type=='take_seeds'">
-                            Take Seeds from [[selected_player.parameter_set_player.id_label]] <i class="fas fa-seedling"></i>
+                            Take Seeds from [[selected_player.parameter_set_player.id_label]]
                         </span>
-                        
+
                         <span v-if="selected_player.interaction_type=='send_disc'">
-                            Send Disc to [[selected_player.parameter_set_player.id_label]] <i class="fas fa-compact-disc"></i>
+                            Send Disc to [[selected_player.parameter_set_player.id_label]]
                         </span>
                         <span v-if="selected_player.interaction_type=='take_disc'">
-                            Take Disc from [[selected_player.parameter_set_player.id_label]] <i class="fas fa-compact-disc"></i>
+                            Take Disc from [[selected_player.parameter_set_player.id_label]]
                         </span>
                     </div>
                 </div>
                 
-                <div class="row">
-                    <div class="col text-start" id="div_id_good_three_harvest">
+                <div class="row mt-4">
+                    <div class="col text-center" id="div_id_good_three_harvest">
                         <input type="number" 
                            class="transfer_model_input form-control-lg fw-bold"
                            v-model="selected_player.interaction_amount"
                            min="0"
                            max="999"
                            step="1">         
-                           
-                           of 
                     </div>
                 </div>
                          
@@ -70,12 +75,19 @@
                         v-on:click = "send_interaction()"
                         title="Submit Interaction"                       
                         v-bind:disabled="reconnecting || working">
-                    Submit <i class="fas fa-sign-in-alt"></i>
+                    <span v-if="selected_player.interaction_type=='send_seeds' || selected_player.interaction_type=='send_disc'">
+                        Send
+                    </span>
+                    <span v-if="selected_player.interaction_type=='take_seeds' || selected_player.interaction_type=='take_disc'">
+                        Take
+                    </span>
+
+                    <i class="fas fa-sign-in-alt"></i>
                 </button>
 
             </div>
 
-            <div class="row mt-4 fw-bold" v-if="interaction_error">
+            <div class="row mt-2 mb-2 fw-bold" v-if="interaction_error">
                 <div class="col text-center">                  
                     Error: [[interaction_error]]  
                 </div>

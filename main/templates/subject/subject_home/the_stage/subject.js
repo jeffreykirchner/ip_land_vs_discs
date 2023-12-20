@@ -119,6 +119,20 @@ get_offset:function get_offset()
             
             if(app.check_point_in_rectagle(pt, rect))
             {
+                if(app.session.world_state.time_remaining > app.session.parameter_set.period_length &&
+                    app.session.world_state.current_period % app.session.parameter_set.break_frequency == 0)
+                {
+                    app.add_text_emitters("No claims while on break.", 
+                                            local_pos.x, 
+                                            local_pos.y,
+                                            local_pos.x,
+                                            local_pos.y-100,
+                                            0xFFFFFF,
+                                            28,
+                                            null);
+                    return;
+                }
+
                 //check subject close enough for interaction
                 if(app.check_for_circle_rect_intersection({x:local_player.current_location.x, 
                                                            y:local_player.current_location.y, 
