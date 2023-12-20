@@ -171,7 +171,6 @@ class TimerMixin():
                         session_player["earnings"] = str(Decimal(session_player["earnings"]) + period_earnings)
                         session_player["earnings"] = round_half_away_from_zero(session_player["earnings"], 1)
 
-
                         result["earnings"][i] = {}
                         result["earnings"][i]["total_earnings"] = session_player["earnings"]
                         result["earnings"][i]["period_earnings"] = round_half_away_from_zero(period_earnings, 1)
@@ -229,8 +228,15 @@ class TimerMixin():
                     session_player["interaction"] -= 1
 
                     if session_player["interaction"] == 0:
-                        if session_player["state"] != "building_seeds" and session_player["state"] != "claiming_field":
+                        if session_player["state"] != "building_seeds" and \
+                           session_player["state"] != "claiming_field" and \
+                           session_player["state"] != "tractor_beam_target":
                             session_player["cool_down"] = self.parameter_set_local["cool_down_length"]
+                        
+                        if session_player["state"] == "tractor_beam_target" or \
+                           session_player["state"] == "tractor_beam_source":
+                           
+                           session_player["state"] = "open"
                 
                 if session_player["interaction"] == 0:
                     session_player["frozen"] = False

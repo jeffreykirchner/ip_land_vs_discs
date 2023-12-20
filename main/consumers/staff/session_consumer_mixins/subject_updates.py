@@ -279,10 +279,6 @@ class SubjectUpdatesMixin():
             status = "fail"
             error_message.append({"id":"tractor_beam", "message": "Invalid data, try again."})
 
-        result = {"status" : status, 
-                  "error_message" : error_message, 
-                  "source_player_id" : player_id}
-
         if status == "success":
             source_player = self.world_state_local['session_players'][str(player_id)]
             target_player = self.world_state_local['session_players'][str(target_player_id)]
@@ -292,25 +288,32 @@ class SubjectUpdatesMixin():
             if source_player['frozen'] or target_player['frozen']:
                 logger.info(f"tractor_beam: players frozen, {event['message_text']}")
                 status = "fail"
-                error_message.append({"id":"tractor_beam", "message": "Invalid target."})
+                error_message.append({"id":"tractor_beam", "message": "The avatar is not available for an interaction."})
 
         #check if either player has tractor beam enabled
         if status == "success":
             if source_player['tractor_beam_target'] or target_player['tractor_beam_target']:
                 logger.info(f"tractor_beam: already in an interaction, {event['message_text']}")
                 status = "fail"
-                error_message.append({"id":"tractor_beam", "message": "Invalid target."})
+                error_message.append({"id":"tractor_beam", "message": "The avatar is not available for an interaction."})
         
         #check if player is already interacting or cooling down.
         if status == "success":
             if source_player['interaction'] > 0 or source_player['cool_down'] > 0:
                 logger.info(f"tractor_beam: cooling down, {event['message_text']}")
                 status = "fail"
-                error_message.append({"id":"tractor_beam", "message": "Invalid target."})
+                error_message.append({"id":"tractor_beam", "message": "The avatar is not available for an interaction."})
+        
+        result = {"status" : status, 
+                  "error_message" : error_message, 
+                  "source_player_id" : player_id}
         
         if status == "success":
             source_player['frozen'] = True
             target_player['frozen'] = True
+
+            source_player["state"] = "tractor_beam_source"
+            target_player["state"] = "tractor_beam_target"
 
             source_player['tractor_beam_target'] = target_player_id
             source_player['interaction'] = self.parameter_set_local['interaction_length']
@@ -368,7 +371,8 @@ class SubjectUpdatesMixin():
             error_message.append({"id":"interaction", "message": "Invalid data, try again."})
 
         if status == "success":
-            if source_player['interaction'] == 0:
+            if (interaction_type=='take_seeds' or interaction_type == 'take_disc') and \
+                source_player['interaction'] == 0:
                 status = "fail"
                 error_message = "No interaction in progress."
         
@@ -411,8 +415,11 @@ class SubjectUpdatesMixin():
             elif interaction_type == 'send_disc':
                 pass
 
-            result["status"] = status
-            result["error_message"] = error_message
+        result["status"] = status
+        result["error_message"] = error_message
+
+        result["source_player_id"] = player_id
+        result["target_player_id"] = target_player_id
 
         if status == "success":
 
@@ -424,16 +431,26 @@ class SubjectUpdatesMixin():
             result["interaction_amount"] = interaction_amount
 
             #clear status
-            source_player['interaction'] = 0
-            target_player['interaction'] = 0
+            if interaction_type == 'take_seeds' or interaction_type == 'take_disc':
+                source_player['interaction'] = 0
+                target_player['interaction'] = 0
 
-            source_player['frozen'] = False
-            target_player['frozen'] = False
+                source_player['frozen'] = False
+                target_player['frozen'] = False
 
-            source_player["cool_down"] = self.parameter_set_local["cool_down_length"]
-            target_player["cool_down"] = self.parameter_set_local["cool_down_length"]
+                source_player["cool_down"] = self.parameter_set_local["cool_down_length"]
+                target_player["cool_down"] = self.parameter_set_local["cool_down_length"]
 
-            source_player['tractor_beam_target'] = None
+                source_player['tractor_beam_target'] = None
+
+            result["source_player_interaction"] = source_player["interaction"]
+            result["target_player_interaction"] = target_player["interaction"]
+
+            result["source_player_frozen"] = source_player["frozen"]
+            result["target_player_frozen"] = target_player["frozen"]
+
+            result["source_player_cool_down"] = source_player["cool_down"]
+            result["target_player_cool_down"] = target_player["cool_down"]
 
             await Session.objects.filter(id=self.session_id).aupdate(world_state=self.world_state_local)
 

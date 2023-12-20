@@ -391,14 +391,13 @@ take_tractor_beam: function take_tractor_beam(message_data)
  */
 take_interaction: function take_interaction(message_data)
 {
+    let interaction_type = message_data.interaction_type;
+
+    let source_player_id = message_data.source_player_id;
+    let target_player_id = message_data.target_player_id;
+
     if(message_data.status == "success")
     {
-
-        let interaction_type = message_data.interaction_type;
-
-        let source_player_id = message_data.source_player_id;
-        let target_player_id = message_data.target_player_id;
-
         let source_player = app.session.world_state.session_players[source_player_id];
         let target_player = app.session.world_state.session_players[target_player_id];
 
@@ -407,14 +406,14 @@ take_interaction: function take_interaction(message_data)
         //update status
         source_player.tractor_beam_target = null;
 
-        source_player.frozen = false
-        target_player.frozen = false
+        source_player.frozen = message_data.source_player_frozen;
+        target_player.frozen = message_data.target_player_frozen;
     
-        source_player.interaction = 0;
-        target_player.interaction = 0;
+        source_player.interaction = message_data.source_player_interaction;
+        target_player.interaction = message_data.target_player_interaction;
 
-        source_player.cool_down = app.session.parameter_set.cool_down_length;
-        target_player.cool_down = app.session.parameter_set.cool_down_length;
+        source_player.cool_down = message_data.source_player_cool_down;
+        target_player.cool_down = message_data.target_player_cool_down;
 
         //update inventory
         source_player.seeds = message_data.source_player_seeds;
@@ -459,7 +458,7 @@ take_interaction: function take_interaction(message_data)
 
         if(app.pixi_mode=="subject")
         {
-            if(message_data.source_player_id == app.session_player.id)
+            if(source_player_id == app.session_player.id)
             {
                 app.working = false;
                 app.interaction_modal.hide();
@@ -470,7 +469,7 @@ take_interaction: function take_interaction(message_data)
     {
         if(app.is_subject && source_player_id == app.session_player.id)
         {
-            app.interaction_error = message_data.error_message[0].message;
+            app.interaction_error = message_data.error_message;
             app.working = false;
         }
     }
