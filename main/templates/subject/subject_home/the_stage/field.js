@@ -339,7 +339,7 @@ destroy_pixi_fields: function destory_setup_pixi_fields()
  */
 send_field_claim: function send_field_claim()
 {
-
+    
     let field_id = app.selected_field.field.id;
     let field = app.session.world_state.fields[field_id];
 
@@ -423,6 +423,26 @@ subject_field_click: function subject_field_click(target_field_id)
 
     app.selected_field.field = app.session.world_state.fields[target_field_id];
 
+    //check if enough time remaining in period to build
+    if(app.selected_field.field.owner == null)
+    {
+        if(app.session.world_state.time_remaining < app.session.parameter_set.field_build_length)
+        {
+            let obj = app.session.world_state.session_players[app.session_player.id];
+            app.add_text_emitters("Not enough time remaining in period to claim.", 
+                                    obj.current_location.x, 
+                                    obj.current_location.y,
+                                    obj.current_location.x,
+                                    obj.current_location.y-100,
+                                    0xFFFFFF,
+                                    28,
+                                    null);
+            
+            app.selected_field.field = null;
+            return;
+        }
+    }
+
     app.clear_main_form_errors();
     app.working = false;
 
@@ -457,6 +477,21 @@ send_build_disc: function send_build_disc()
     {
         let obj = app.session.world_state.session_players[app.session_player.id];
         app.add_text_emitters("No production while on break.", 
+                                obj.current_location.x, 
+                                obj.current_location.y,
+                                obj.current_location.x,
+                                obj.current_location.y-100,
+                                0xFFFFFF,
+                                28,
+                                null);
+        return;
+    }
+
+    //check if enough time remaining in period to build
+    if(app.session.world_state.time_remaining < app.session.parameter_set.disc_build_length)
+    {
+        let obj = app.session.world_state.session_players[app.session_player.id];
+        app.add_text_emitters("Not enough time remaining in period to produce.", 
                                 obj.current_location.x, 
                                 obj.current_location.y,
                                 obj.current_location.x,
@@ -509,6 +544,21 @@ send_build_seeds: function send_build_seeds()
     {
         let obj = app.session.world_state.session_players[app.session_player.id];
         app.add_text_emitters("No production while on break.", 
+                                obj.current_location.x, 
+                                obj.current_location.y,
+                                obj.current_location.x,
+                                obj.current_location.y-100,
+                                0xFFFFFF,
+                                28,
+                                null);
+        return;
+    }
+
+    //check if enough time remaining in period to build
+    if(app.session.world_state.time_remaining < app.session.parameter_set.seed_build_length*app.build_seed_count)
+    {
+        let obj = app.session.world_state.session_players[app.session_player.id];
+        app.add_text_emitters("Not enough time remaining in period to produce.", 
                                 obj.current_location.x, 
                                 obj.current_location.y,
                                 obj.current_location.x,
