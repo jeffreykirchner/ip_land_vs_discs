@@ -278,6 +278,11 @@ class SubjectUpdatesMixin():
             logger.info(f"tractor_beam: invalid data, {event['message_text']}")
             status = "fail"
             error_message.append({"id":"tractor_beam", "message": "Invalid data, try again."})
+        
+        #check if on break
+        if self.world_state_local["time_remaining"] > self.parameter_set_local["period_length"]:
+            status = "fail"
+            error_message.append({"id":"field_claim", "message": "You cannot claim a field during the break."})
 
         if status == "success":
             source_player = self.world_state_local['session_players'][str(player_id)]
@@ -369,6 +374,11 @@ class SubjectUpdatesMixin():
             logger.info(f"interaction: invalid data, {event['message_text']}")
             status = "fail"
             error_message.append({"id":"interaction", "message": "Invalid data, try again."})
+
+        #check if on break
+        if self.world_state_local["time_remaining"] > self.parameter_set_local["period_length"]:
+            status = "fail"
+            error_message.append({"id":"field_claim", "message": "You cannot claim a field during the break."})
 
         if status == "success":
             if (interaction_type=='take_seeds' or interaction_type == 'take_disc') and \
@@ -546,6 +556,11 @@ class SubjectUpdatesMixin():
             status = "fail"
             error_message.append({"id":"field_claim", "message": "Invalid data, try again."})
 
+        #check if on break
+        if self.world_state_local["time_remaining"] > self.parameter_set_local["period_length"]:
+            status = "fail"
+            error_message.append({"id":"field_claim", "message": "You cannot claim a field during the break."})
+
         #check if field is already claimed
         if status == "success" and source == "client":
             if field["status"] != "available":
@@ -710,6 +725,11 @@ class SubjectUpdatesMixin():
             status = "fail"
             error_message.append({"id":"build_disc", "message": "Invalid data, try again."})
 
+        #check if on break
+        if self.world_state_local["time_remaining"] > self.parameter_set_local["period_length"]:
+            status = "fail"
+            error_message.append({"id":"field_claim", "message": "No production during the break."})
+        
         result = {"status" : status, 
                   "error_message" : error_message, 
                   "source_player_id" : player_id}
@@ -756,10 +776,17 @@ class SubjectUpdatesMixin():
 
         session_player = self.world_state_local["session_players"][str(player_id)]
 
+        #check if on break
+        if self.world_state_local["time_remaining"] > self.parameter_set_local["period_length"]:
+            status = "fail"
+            error_message.append({"id":"field_claim", "message": "No production during the break."})
+
+        #check if player has enough proudction seconds remaining
         if session_player["build_time_remaining"] < build_seed_count:
             status = "fail"
             error_message.append({"id":"build_seeds", "message": "Not enough production time to build that many seeds."})
 
+        #check if player is already building
         if source == "client" and session_player["state"] != "open":
             status = "fail"
             error_message.append({"id":"build_seeds", "message": "You are already building."})

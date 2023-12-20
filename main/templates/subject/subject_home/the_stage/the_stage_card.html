@@ -113,13 +113,13 @@
                     <button class="btn btn-outline-primary btn-lg"
                             type="button" 
                             id="send_build_seeds" 
-                            title="Build Seeds"
+                            title="Grow Seeds"
                             v-bind:disabled="reconnecting || 
                                              working || 
                                              session.world_state.session_players[session_player.id].interaction > 0 ||
                                              session.started===false || 
                                              session.world_state.finished"
-                            v-on:click="send_build_seeds()">Build Seeds <i class="fas fa-seedling"></i></button>
+                            v-on:click="send_build_seeds()">Grow Seeds <i class="fas fa-seedling"></i></button>
                 </div>
                 <div class="fw-bold">[[session.parameter_set.seed_build_length]] second per seed</div>
                 
