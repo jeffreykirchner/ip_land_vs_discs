@@ -61,7 +61,7 @@ setup_pixi_fields: function setup_pixi_fields()
             //text
             let text_style = {
                 fontFamily: 'Arial',
-                fontSize: 36,
+                fontSize: 28,
                 fill: 'white',
                 align: 'center',
                 stroke: 'black',
@@ -80,24 +80,24 @@ setup_pixi_fields: function setup_pixi_fields()
             field_container.addChild(outline);        
 
             id_label.position.set(field_container.width/2,
-                                field_container.height/2 - id_label.height/2 - 20);
+                                  id_label.height/2 + 30);
             
             right_click_graphic.position.set(field_container.width/2 + id_label.width/2 + 10 +  right_click_graphic.width/2,
-                                            field_container.height/2- id_label.height/2 - 20);
+                                             id_label.position.y);
 
             //cost label 
             let cost_label = new PIXI.Text("Cost: " + app.session.parameter_set.field_build_length + " production seconds.", text_style);
             cost_label.eventMode = 'passive';
             cost_label.anchor.set(0.5);
             cost_label.position.set(field_container.width/2,
-                                    field_container.height/2);
+                                    id_label.position.y + cost_label.height);
             
             field_container.addChild(id_label);
             field_container.addChild(right_click_graphic);
             field_container.addChild(cost_label);
 
             field_container.position.set(parameter_set_field.x - parameter_set_field.width/2,
-                                        parameter_set_field.y - parameter_set_field.height/2);
+                                         parameter_set_field.y - parameter_set_field.height/2);
         }
         else
         {
@@ -114,7 +114,7 @@ setup_pixi_fields: function setup_pixi_fields()
             //text
             let text_style = {
                 fontFamily: 'Arial',
-                fontSize: 32,
+                fontSize: 28,
                 fill: 'white',
                 align: 'center',
                 stroke: 'black',
@@ -185,21 +185,10 @@ setup_pixi_fields: function setup_pixi_fields()
            
             field_container.addChild(outline);        
 
-            //claimed label
-            if(field.status == "claimed")
-            {
-                id_label.anchor.set(0.5, 0);
-                id_label.position.set(field_container.width/2,
-                                      10);
-            }
-            else
-            {
-                id_label.anchor.set(0.5);
-                id_label.position.set(field_container.width/2,
-                                      field_container.height/2 - id_label.height/2 - 20);
-                                      
-            }
-            
+            id_label.anchor.set(0.5);
+            id_label.position.set(field_container.width/2,
+                                  id_label.height/2 + 20);
+
             field_container.addChild(id_label);
 
             //management label
@@ -225,9 +214,9 @@ setup_pixi_fields: function setup_pixi_fields()
             if(field.status == "building")
             {
                 left_cone_graphic.position.set(field_container.width/2 - id_label.width/2 - 5 - left_cone_graphic.width/2,
-                                                field_container.height/2- id_label.height/2 - 20);
+                                               id_label.position.y);
                 right_cone_graphic.position.set(field_container.width/2 + id_label.width/2 + 5 +  right_cone_graphic.width/2,
-                                                field_container.height/2- id_label.height/2 - 20);
+                                                id_label.position.y);
                 field_container.addChild(left_cone_graphic);
                 field_container.addChild(right_cone_graphic);
             }
@@ -235,6 +224,85 @@ setup_pixi_fields: function setup_pixi_fields()
             field_container.position.set(parameter_set_field.x - parameter_set_field.width/2,
                                         parameter_set_field.y - parameter_set_field.height/2);
         }
+
+        let text_style_multiplier = {
+            fontFamily: 'Arial',
+            fontSize: 26,
+            fill: 'white',
+            align: 'center',
+            stroke: 'black',
+            strokeThickness: 3,
+        };
+
+        //multiplier table
+        //header
+        let multiplier_table_container = new PIXI.Container();
+        let multiplier_text = "Seed Earnings Multiplier"
+        let multiplier_list = app.session.parameter_set.seed_multipliers.split("\n");
+
+        let multiplier_label = new PIXI.Text(multiplier_text, text_style_multiplier);
+        multiplier_label.eventMode = 'passive';
+        
+        multiplier_label.anchor.set(0);
+        multiplier_label.position.set(0,0);
+
+        multiplier_table_container.addChild(multiplier_label);
+
+        //list
+        let temp_y = multiplier_label.position.y + multiplier_label.height+2;
+        for(const i in multiplier_list)
+        {
+            let v = parseInt(i)+1;
+            let multiplier_text_left = "";
+            let multiplier_text_right = "";
+
+            if(field.present_players.length == v)
+            {
+                text_style_multiplier.fill = 'yellow';
+            }
+            else
+            {
+                text_style_multiplier.fill = 'white';
+            }
+            
+            if(v == 1)
+            {
+                multiplier_text_left = v + " Player";
+            }
+            else if(v == multiplier_list.length)
+            {
+                multiplier_text_left = v + "+ Players";
+            }
+            else
+            {
+                multiplier_text_left = v + " Players";
+            }
+
+            multiplier_text_right =  multiplier_list[i] + " x";
+
+            let multiplier_label_left = new PIXI.Text(multiplier_text_left, text_style_multiplier);
+            let multiplier_label_right = new PIXI.Text(multiplier_text_right, text_style_multiplier);
+
+            multiplier_label_left.eventMode = 'passive';           
+            // multiplier_label_right.eventMode = 'passive';
+
+            multiplier_label_left.anchor.set(0,0);
+            multiplier_label_right.anchor.set(1,0);
+
+            multiplier_label_left.position.set(0,temp_y);  
+            multiplier_label_right.position.set(multiplier_label.width,
+                                                temp_y);
+            
+            multiplier_table_container.addChild(multiplier_label_left);
+            multiplier_table_container.addChild(multiplier_label_right);
+
+            temp_y += multiplier_label_left.height-8;
+        }
+
+        multiplier_table_container.position.set(field_container.width/2 - multiplier_table_container.width/2,
+                                                field_container.height/2 - multiplier_table_container.height/2+20);
+                                    
+        field_container.addChild(multiplier_table_container);
 
         field_container.zIndex = 0;
 
@@ -312,6 +380,7 @@ take_field_claim: function take_field_claim(message_data)
         if(app.is_subject && source_player_id == app.session_player.id)
         {
             app.field_modal.hide();
+            app.working = false;
         }
     }
     else
@@ -319,6 +388,7 @@ take_field_claim: function take_field_claim(message_data)
         if(app.is_subject && source_player_id == app.session_player.id)
         {
             app.field_error = message_data.error_message[0].message;
+            app.working = false;
         }
     }
 },
@@ -331,6 +401,17 @@ hide_field_modal: function hide_field_modal()
     app.selected_field.field = null;
     app.selected_field.field_type = null;
     app.field_modal_open = false
+    app.working = false;
+},
+
+/**
+ * handle field manage modal hide
+ */
+hide_field_manage_modal: function hide_field_manage_modal()
+{
+    app.selected_field.field = null;
+    app.selected_field.field_type = null;
+    app.field_manage_modal_open = false
     app.working = false;
 },
 
@@ -390,14 +471,14 @@ take_build_disc: function take_build_disc(message_data)
 
         if(app.is_subject && source_player_id == app.session_player.id)
         {
-            
+            app.working = false;
         }
     }
     else
     {
         if(app.is_subject && source_player_id == app.session_player.id)
         {
-           
+            app.working = false;
         }
     }
 },
@@ -456,14 +537,14 @@ take_build_seeds: function take_build_seeds(message_data)
 
         if(app.is_subject && source_player_id == app.session_player.id)
         {
-            
+            app.working = false;
         }
     }
     else
     {
         if(app.is_subject && source_player_id == app.session_player.id)
         {
-           
+            app.working = false;
         }
     }
 },
@@ -547,6 +628,7 @@ take_grant_field_access: function take_grant_field_access(message_data)
         if(app.is_subject && source_player_id == app.session_player.id)
         {
             app.field_manage_modal.hide();
+            app.working = false;
         }
     }
     else
@@ -554,6 +636,60 @@ take_grant_field_access: function take_grant_field_access(message_data)
         if(app.is_subject && source_player_id == app.session_player.id)
         {
             app.field_manage_error = message_data.error_message[0].message;
+            app.working = false;
         }
     }
+},
+
+/**
+ * send grant field access
+ */
+send_present_players: function send_present_players()
+{
+    let field_id = null;
+    let present_players = [];
+
+    for(const i in app.session.world_state.fields)
+    {
+        if(app.session.world_state.fields[i].owner == app.session_player.id)
+        {
+            field_id = i;
+            break;
+        }
+    }
+
+    if(!field_id) return;
+
+    let field = app.session.world_state.fields[field_id];
+    let parameter_set_field = app.session.parameter_set.parameter_set_fields[field.parameter_set_field];
+
+    for(const i in app.session.world_state.session_players)
+    {
+        let session_player = app.session.world_state.session_players[i];
+        let container=pixi_avatars[i].bounding_box;
+
+        if(!field.allowed_players.includes(parseInt(session_player.id)))
+        {
+            let rect1={x:session_player.current_location.x - container.width/2,
+                       y:session_player.current_location.y - container.height/2,
+                       width:container.width,
+                       height:container.height};
+
+            let rect2={x:parameter_set_field.x - parameter_set_field.width/2,
+                       y:parameter_set_field.y - parameter_set_field.height/2,
+                       width:parameter_set_field.width,
+                       height:parameter_set_field.height};
+
+            if(app.check_for_rect_intersection(rect1, rect2))
+            {  
+                present_players.push(i);
+            }
+        }
+    }
+        
+    app.send_message("present_players", 
+                    {"field_id" : field_id,
+                     "present_players" : present_players,
+                     "source" : "client"},
+                     "group"); 
 },

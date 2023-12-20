@@ -2,7 +2,9 @@ import logging
 import asyncio
 import math
 
+
 from datetime import datetime
+from decimal import Decimal
 
 from asgiref.sync import sync_to_async
 
@@ -12,6 +14,7 @@ from main.models import Session
 from main.models import SessionEvent
 
 from main.globals import ExperimentPhase
+from main.globals import round_half_away_from_zero
 
 class TimerMixin():
     '''
@@ -163,11 +166,14 @@ class TimerMixin():
                         session_player["state"] = "open"
                         session_player["state_payload"] = {}
 
-                        session_player["earnings"] += self.world_state_local["session_players"][i]["seeds"]
+                        period_earnings = Decimal(self.world_state_local["session_players"][i]["seeds"])
+                        period_earnings *= await self.get_seed_multiplier(i)
+                        session_player["earnings"] = str(Decimal(session_player["earnings"]) + period_earnings)
+                        session_player["earnings"] = round_half_away_from_zero(session_player["earnings"], 1)
 
                         result["earnings"][i] = {}
                         result["earnings"][i]["total_earnings"] = session_player["earnings"]
-                        result["earnings"][i]["period_earnings"] = session_player["seeds"]
+                        result["earnings"][i]["period_earnings"] = round_half_away_from_zero(period_earnings, 1)
 
                         session_player["seeds"] = 0
                         session_player["build_time_remaining"] = self.parameter_set_local["build_time"] 
@@ -184,6 +190,7 @@ class TimerMixin():
                         field["owner"] = None
                         field["status"] = "available"       
                         field["allowed_players"] = []      
+                        field["present_players"] = []
 
         if send_update:
             #session status
@@ -206,8 +213,7 @@ class TimerMixin():
 
             #fields
             result["fields"] = {}
-            if period_is_over:
-                result["fields"] = self.world_state_local["fields"]
+            result["fields"] = self.world_state_local["fields"]
 
             session_player_status = {}
 
@@ -222,8 +228,15 @@ class TimerMixin():
                     session_player["interaction"] -= 1
 
                     if session_player["interaction"] == 0:
-                        if session_player["state"] != "building_seeds" and session_player["state"] != "claiming_field":
+                        if session_player["state"] != "building_seeds" and \
+                           session_player["state"] != "claiming_field" and \
+                           session_player["state"] != "tractor_beam_target":
                             session_player["cool_down"] = self.parameter_set_local["cool_down_length"]
+                        
+                        if session_player["state"] == "tractor_beam_target" or \
+                           session_player["state"] == "tractor_beam_source":
+                           
+                           session_player["state"] = "open"
                 
                 if session_player["interaction"] == 0:
                     session_player["frozen"] = False
@@ -260,23 +273,6 @@ class TimerMixin():
             await self.send_message(message_to_self=False, message_to_group=result,
                                     message_type="time", send_to_client=False, send_to_group=True)
 
-        #if session is not over continue
-        #stop_timer = True
-        # if not stop_timer:
-
-        #     loop = asyncio.get_event_loop()
-
-        #     loop.call_later(0.33, asyncio.create_task, 
-        #                     self.channel_layer.send(
-        #                         self.channel_name,
-        #                         {
-        #                             'type': "continue_timer",
-        #                             'message_text': {},
-        #                         }
-        #                     ))
-        
-        # logger.info(f"continue_timer end")
-
     async def update_time(self, event):
         '''
         update time phase
@@ -288,4 +284,25 @@ class TimerMixin():
                                 message_type=event['type'], send_to_client=True, send_to_group=False)
         
     #async helpers
-    
+    async def get_seed_multiplier(self, player_id):
+        '''
+        get seed multiplier
+        '''
+        logger = logging.getLogger(__name__)
+        # logger.info(f"get_seed_multiplier {player_id}")
+
+        player_id_s = str(player_id)
+
+        parameter_set_multipliers = self.parameter_set_local["seed_multipliers"].split("\n")
+
+        multiplier = 1
+        for i in self.world_state_local["fields"]:
+            field = self.world_state_local["fields"][i]
+
+            if player_id_s in field["present_players"]:
+                present_player_count = len(field["present_players"])
+                multiplier = Decimal(parameter_set_multipliers[present_player_count-1])
+
+                break
+            
+        return multiplier   

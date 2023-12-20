@@ -1,0 +1,82 @@
+{% load crispy_forms_tags %}
+<!--interaction start Modal -->
+<div class="modal fade " 
+     id="interaction_start_modal" 
+     data-bs-backdrop="static" 
+     data-bs-keyboard="false" 
+     tabindex="-1" 
+     aria-labelledby="interaction_start_modal" 
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header fw-bold">
+                Start Interaction?
+
+                <span class="float-end">
+                    <button type="button" class="btn btn-link" title="Show Help" v-on:click="send_load_help_doc_subject('interaction_direction')">
+                        <i class="far fa-question-circle"></i> 
+                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </span>
+            </div>
+            <div class="modal-body" v-if="selected_player.session_player">
+                
+                <div class="row">
+                    <div class="col text-center">
+                        <button type="button"
+                                class="btn btn-outline-primary mr-2"
+                                v-on:click = "start_send_seeds()"
+                                title="Cancel Interaction"                       
+                                v-bind:disabled="reconnecting || working">
+                            Send Seeds to [[selected_player.parameter_set_player.id_label]] <i class="fas fa-seedling"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <div class="col text-center">
+                        <button type="button"
+                                class="btn btn-outline-primary mr-2"
+                                v-on:click = "start_take_seeds()"
+                                title="Cancel Interaction"                       
+                                v-bind:disabled="reconnecting || working">
+                            Take Seeds from [[selected_player.parameter_set_player.id_label]] <i class="fas fa-seedling"></i>
+                        </button>
+                    </div>
+                </div>
+                  
+                <div class="row mt-4">
+                    <div class="col text-center">
+                        <button type="button"
+                                class="btn btn-outline-primary mr-2"
+                                v-on:click = "start_send_disc()"
+                                title="Cancel Interaction"                       
+                                v-bind:disabled="reconnecting || working">
+                            Send Disc to [[selected_player.parameter_set_player.id_label]] <i class="fas fa-compact-disc"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="row mt-2">
+                    <div class="col text-center">
+                        <button type="button"
+                                class="btn btn-outline-primary mr-2"
+                                v-on:click = "start_take_disc()"
+                                title="Cancel Interaction"                       
+                                v-bind:disabled="reconnecting || working">
+                            Take Disc from [[selected_player.parameter_set_player.id_label]] <i class="fas fa-compact-disc"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row mt-4 fw-bold" v-if="interaction_error">
+                    <div class="col text-center">                  
+                        Error: [[interaction_error]]  
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

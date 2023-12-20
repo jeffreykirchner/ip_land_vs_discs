@@ -36,7 +36,7 @@ setup_pixi_subjects: function setup_pixi_subjects(){
 
         let text_style = {
             fontFamily: 'Arial',
-            fontSize: 26,
+            fontSize: 30,
             fill: 'white',
             align: 'left',
             stroke: 'black',
@@ -245,9 +245,56 @@ subject_avatar_click: function subject_avatar_click(target_player_id)
 
     // console.log("subject avatar click", target_player_id);
 
+    // app.send_message("tractor_beam", 
+    //                  {"target_player_id" : target_player_id},
+    //                  "group");
+    app.interaction_start_modal.toggle();
+    app.selected_player.session_player = app.session.world_state.session_players[target_player_id];
+    app.selected_player.selected_player_id = target_player_id;
+    app.selected_player.parameter_set_player = app.get_parameter_set_player_from_player_id(target_player_id);
+},
+
+/**
+ * start send seeds
+ */
+start_send_seeds: function start_send_seeds()
+{
+    app.selected_player.interaction_type = "send_seeds";
+    app.interaction_start_modal.hide();
+    app.interaction_modal.toggle();
+},
+
+/**
+ * start take seeds
+ */
+start_take_seeds: function start_take_seeds()
+{
+    app.working = true;
+    app.selected_player.interaction_type = "take_seeds";
+    
     app.send_message("tractor_beam", 
-                     {"target_player_id" : target_player_id},
+                    {"target_player_id": app.selected_player.selected_player_id,
+                     "interaction_type": app.selected_player.interaction_type},
                      "group");
+},
+
+/**
+ * start send disc
+ */
+start_send_disc: function start_send_disc()
+{
+    app.selected_player.interaction_type = "send_disc";
+
+    app.interaction_start_modal.hide();
+    app.interaction_modal.toggle();
+},
+
+/**
+ * start take disc
+ */ 
+start_take_disc: function start_take_disc()
+{
+    app.selected_player.interaction_type = "take_disc";
 },
 
 /**
@@ -270,83 +317,87 @@ update_player_inventory: function update_player_inventory()
  */
 send_interaction: function send_interaction()
 {
-    app.clear_main_form_errors();
-
-    let errors = {};
-
-    if(!app.interaction_form.direction || app.interaction_form.direction == "")
-    {
-        errors["direction"] = ["Choose a direction"];
-    }
-
-    if(!app.interaction_form.amount || app.interaction_form.amount < 1)
-    {
-        errors["amount"] = ["Invalid amount"];
-    }
-
-    if(Object.keys(errors).length > 0)
-    {
-        app.display_errors(errors);
-        return;
-    }
 
     app.working = true;
 
     app.send_message("interaction", 
-                    {"interaction" : app.interaction_form},
+                    {"target_player_id": app.selected_player.selected_player_id,
+                     "interaction_type": app.selected_player.interaction_type,
+                     "interaction_amount" : app.selected_player.interaction_amount},
                      "group"); 
 },
 
 /**
  * result of subject activating tractor beam
  */
-take_update_tractor_beam: function take_update_tractor_beam(message_data)
+take_tractor_beam: function take_tractor_beam(message_data)
 {
-    let player_id = message_data.player_id;
-    let target_player_id = message_data.target_player_id;
+    var source_player_id = message_data.source_player_id;
 
-    app.session.world_state.session_players[player_id].tractor_beam_target = target_player_id;
-
-    app.session.world_state.session_players[player_id].frozen = true
-    app.session.world_state.session_players[target_player_id].frozen = true
-
-    app.session.world_state.session_players[player_id].interaction = app.session.parameter_set.interaction_length;
-    app.session.world_state.session_players[target_player_id].interaction = app.session.parameter_set.interaction_length;
-
-    if(app.is_subject)
+    if(message_data.status == "success")
     {
-        if(player_id == app.session_player.id)
+        if(app.is_subject && source_player_id == app.session_player.id)
         {
-            app.clear_main_form_errors();
-            app.interaction_form.direction = null;
-            app.interaction_form.amount = null;
-            app.interaction_modal.toggle();
+            let player_id = message_data.player_id;
+            let target_player_id = message_data.target_player_id;
+        
+            app.session.world_state.session_players[player_id].tractor_beam_target = target_player_id;
+        
+            app.session.world_state.session_players[player_id].frozen = true
+            app.session.world_state.session_players[target_player_id].frozen = true
+        
+            app.session.world_state.session_players[player_id].interaction = app.session.parameter_set.interaction_length;
+            app.session.world_state.session_players[target_player_id].interaction = app.session.parameter_set.interaction_length;
+        
+            if(app.is_subject)
+            {
+                if(player_id == app.session_player.id)
+                {
+                    app.interaction_start_modal.hide();
+                    app.field_modal.hide();
+                    app.field_manage_modal.hide();
+
+                    app.interaction_modal.toggle();
+
+                    app.working = false;
+                }
+                else if(target_player_id == app.session_player.id)
+                {
+                    
+                    app.field_modal.hide();
+                    app.field_manage_modal.hide();
+
+                    app.interaction_modal.hide();
+                    app.interaction_start_modal.hide();
+
+                    app.working = false;
+                }
+            }
         }
     }
+    else
+    {
+        if(app.is_subject && source_player_id == app.session_player.id)
+        {
+            app.interaction_error = message_data.error_message[0].message;
+        }
+    }
+
+   
 },
 
 /**
  * take update from server about interactions
  */
-take_update_interaction: function take_update_interaction(message_data)
+take_interaction: function take_interaction(message_data)
 {
-    if(message_data.status == "fail")
-    {
-        if(message_data.source_player_id == app.session_player.id)
-        {
-            let errors = {};
-            errors["direction"] = [message_data.error_message];
-            app.display_errors(errors);
-            app.working = false;            
-        }
-    }
-    else
-    {
-        let currnent_period_id = app.session.session_periods_order[app.session.world_state.current_period-1];
+    let interaction_type = message_data.interaction_type;
 
-        let source_player_id = message_data.source_player_id;
-        let target_player_id = message_data.target_player_id;
+    let source_player_id = message_data.source_player_id;
+    let target_player_id = message_data.target_player_id;
 
+    if(message_data.status == "success")
+    {
         let source_player = app.session.world_state.session_players[source_player_id];
         let target_player = app.session.world_state.session_players[target_player_id];
 
@@ -355,32 +406,24 @@ take_update_interaction: function take_update_interaction(message_data)
         //update status
         source_player.tractor_beam_target = null;
 
-        source_player.frozen = false
-        target_player.frozen = false
+        source_player.frozen = message_data.source_player_frozen;
+        target_player.frozen = message_data.target_player_frozen;
     
-        source_player.interaction = 0;
-        target_player.interaction = 0;
+        source_player.interaction = message_data.source_player_interaction;
+        target_player.interaction = message_data.target_player_interaction;
 
-        source_player.cool_down = app.session.parameter_set.cool_down_length;
-        target_player.cool_down = app.session.parameter_set.cool_down_length;
+        source_player.cool_down = message_data.source_player_cool_down;
+        target_player.cool_down = message_data.target_player_cool_down;
 
         //update inventory
-        source_player.seeds = message_data.source_player_inventory;
-        target_player.seeds = message_data.target_player_inventory;
+        source_player.seeds = message_data.source_player_seeds;
+        target_player.seeds = message_data.target_player_seeds;
         
         pixi_avatars[source_player_id].inventory_label.text = source_player.seeds;
         pixi_avatars[target_player_id].inventory_label.text = target_player.seeds;
 
         //add transfer beam
-        if(message_data.direction == "give")
-        {
-            app.add_transfer_beam(source_player.current_location, 
-                                target_player.current_location,
-                                app.pixi_textures["seed_tex"],
-                                message_data.source_player_change,
-                                message_data.target_player_change);
-        }
-        else
+        if(interaction_type == "take_seeds")
         {
             app.add_transfer_beam(target_player.current_location, 
                                 source_player.current_location,
@@ -388,14 +431,46 @@ take_update_interaction: function take_update_interaction(message_data)
                                 message_data.target_player_change,
                                 message_data.source_player_change);
         }
+        else if(interaction_type == "send_seeds")
+        {
+            app.add_transfer_beam(source_player.current_location, 
+                                target_player.current_location,
+                                app.pixi_textures["seed_tex"],
+                                message_data.source_player_change,
+                                message_data.target_player_change);
+        }
+        else if(interaction_type == "take_disc")
+        {
+             app.add_transfer_beam(target_player.current_location,
+                                source_player.current_location,
+                                app.pixi_textures["disc_tex"],
+                                message_data.target_player_change,
+                                message_data.source_player_change);
+        }
+        else if(interaction_type == "send_disc")
+        {
+            app.add_transfer_beam(source_player.current_location, 
+                                target_player.current_location,
+                                app.pixi_textures["disc_tex"],
+                                message_data.source_player_change,
+                                message_data.target_player_change);
+        }
 
         if(app.pixi_mode=="subject")
         {
-            if(message_data.source_player_id == app.session_player.id)
+            if(source_player_id == app.session_player.id)
             {
                 app.working = false;
                 app.interaction_modal.hide();
             }
+        }
+    }
+    else
+    {
+        if(app.is_subject && source_player_id == app.session_player.id)
+        {
+            app.interaction_error = message_data.error_message;
+            app.working = false;
         }
     }
 },
@@ -403,7 +478,16 @@ take_update_interaction: function take_update_interaction(message_data)
 /** hide choice grid modal modal
 */
 hide_interaction_modal: function hide_interaction_modal(){
-    
+    app.interaction_error = null;
+    app.working = false;
+},
+
+/**
+ * hide interaction start modal
+ */
+hide_interaction_start_modal: function hide_interaction_start_modal(){
+    app.interaction_error = null;
+    app.working = false;
 },
 
 /**
@@ -425,7 +509,7 @@ cancel_interaction:function cancel_interaction()
                      "group"); 
 },
 
-take_update_cancel_interaction: function take_update_cancel_interaction(message_data)
+take_cancel_interaction: function take_cancel_interaction(message_data)
 {
     let source_player_id = message_data.source_player_id;
     let target_player_id = message_data.target_player_id;

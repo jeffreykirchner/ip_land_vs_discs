@@ -49,6 +49,7 @@ var app = Vue.createApp({
                     // modals
                     end_game_modal : null,
                     interaction_modal : null,
+                    interaction_start_modal : null,
                     help_modal : null,
                     field_modal : null,
                     field_manage_modal : null,
@@ -78,9 +79,17 @@ var app = Vue.createApp({
                     selected_field : {field:null,
                     },
 
+                    //selected avatar
+                    selected_player : {session_player:null,
+                        parameter_set_player:null,
+                        interaction_type:null,
+                        interaction_amount:0,
+                    },
+
                     //errors
                     field_error: null,
                     field_manage_error: null,
+                    interaction_error: null,
 
                     //test mode
                     test_mode_location_target : null,
@@ -164,13 +173,13 @@ var app = Vue.createApp({
                     app.take_update_collect_token(message_data);
                     break;
                 case "update_tractor_beam":
-                    app.take_update_tractor_beam(message_data);
+                    app.take_tractor_beam(message_data);
                     break;
                 case "update_interaction":
-                    app.take_update_interaction(message_data);
+                    app.take_interaction(message_data);
                     break;
                 case "update_cancel_interaction":
-                    app.take_update_cancel_interaction(message_data);
+                    app.take_cancel_interaction(message_data);
                     break;
                 case "update_rescue_subject":
                     app.take_rescue_subject(message_data);
@@ -190,8 +199,6 @@ var app = Vue.createApp({
             }
 
             app.first_load_done = true;
-
-            app.working = false;
         },
 
         /** send websocket message to server
@@ -213,14 +220,17 @@ var app = Vue.createApp({
         do_first_load: function do_first_load()
         {           
             app.end_game_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('end_game_modal'), {keyboard: false})   
-            app.interaction_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('interaction_modal'), {keyboard: false})          
+            app.interaction_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('interaction_modal'), {keyboard: false}) 
+            app.interaction_start_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('interaction_start_modal'), {keyboard: false})         
             app.help_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('help_modal'), {keyboard: false})
             app.field_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('field_modal'), {keyboard: false})
             app.field_manage_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('field_manage_modal'), {keyboard: false})
-
+            
             document.getElementById('end_game_modal').addEventListener('hidden.bs.modal', app.hide_end_game_modal);
             document.getElementById('interaction_modal').addEventListener('hidden.bs.modal', app.hide_interaction_modal);
+            document.getElementById('interaction_start_modal').addEventListener('hidden.bs.modal', app.hide_interaction_start_modal);
             document.getElementById('field_modal').addEventListener('hidden.bs.modal', app.hide_field_modal);
+            document.getElementById('field_manage_modal').addEventListener('hidden.bs.modal', app.hide_field_manage_modal);
 
             {%if session.parameter_set.test_mode%} setTimeout(app.do_test_mode, app.random_number(1000 , 1500)); {%endif%}
 
@@ -373,16 +383,15 @@ var app = Vue.createApp({
                 app.update_subject_status_overlay();
             });
 
+            //update fields
+            app.session.world_state.fields = message_data.fields;
+
+            app.destroy_pixi_fields();
+            app.setup_pixi_fields();
 
             //period has changed
             if(message_data.period_is_over)
             {
-                //update fields
-                app.session.world_state.fields = message_data.fields;
-
-                app.destroy_pixi_fields();
-                app.setup_pixi_fields();
-
                 Vue.nextTick(() => {
                     let current_location = app.session.world_state.session_players[app.session_player.id].current_location;
 
@@ -413,6 +422,11 @@ var app = Vue.createApp({
                 app.field_modal.hide();
                 app.field_manage_modal.hide();
                 app.interaction_modal.hide();
+            }
+            else
+            {
+                //send update about fields
+                app.send_present_players();
             }
 
             //update player states

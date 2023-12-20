@@ -25,24 +25,10 @@ update_player_inventory: function update_player_inventory()
     }
 },
 
-take_update_tractor_beam: function take_update_tractor_beam(message_data)
-{
-    let player_id = message_data.player_id;
-    let target_player_id = message_data.target_player_id;
-
-    app.session.world_state.session_players[player_id].tractor_beam_target = target_player_id;
-
-    app.session.world_state.session_players[player_id].frozen = true
-    app.session.world_state.session_players[target_player_id].frozen = true
-
-    app.session.world_state.session_players[player_id].interaction = app.session.parameter_set.interaction_length;
-    app.session.world_state.session_players[target_player_id].interaction = app.session.parameter_set.interaction_length;
-},
-
 /**
  * take update from server about interactions
  */
-take_update_interaction: function take_update_interaction(message_data)
+take_interaction: function take_interaction(message_data)
 {
     if(message_data.value == "fail")
     {
@@ -100,7 +86,7 @@ take_update_interaction: function take_update_interaction(message_data)
     }
 },
 
-take_update_cancel_interaction: function take_update_cancel_interaction(message_data)
+take_cancel_interaction: function take_cancel_interaction(message_data)
 {
     let source_player_id = message_data.source_player_id;
     let target_player_id = message_data.target_player_id;

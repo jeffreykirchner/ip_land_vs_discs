@@ -49,6 +49,9 @@ class ParameterSet(models.Model):
     field_build_length = models.IntegerField(verbose_name='Field Build Length', default=12)                   #field build length in seconds
     disc_build_length = models.IntegerField(verbose_name='Disc Build Length', default=12)                     #disc build length in seconds 
 
+    seed_multipliers = models.TextField(verbose_name='Seed Multipliers', default="3.5", blank=True)            #seed multipliers
+    disc_value = models.IntegerField(verbose_name='Disc Value', default=10)                                   #disc value
+
     avatar_scale = models.DecimalField(verbose_name='Avatar Scale', decimal_places=2, max_digits=3, default=0.5) #avatar scale
     avatar_bound_box_percent = models.DecimalField(verbose_name='Avatar Bound Box Percent', decimal_places=2, max_digits=3, default=0.75) #avatar bound box percent for interaction
     avatar_move_speed = models.DecimalField(verbose_name='Move Speed', decimal_places=1, max_digits=3, default=5.6)            #move speed
@@ -106,6 +109,9 @@ class ParameterSet(models.Model):
             self.seed_build_length = new_ps.get("seed_build_length", 1)
             self.field_build_length = new_ps.get("field_build_length", 12)
             self.disc_build_length = new_ps.get("disc_build_length", 12)
+
+            self.seed_multipliers = new_ps.get("seed_multipliers", "3.5")
+            self.disc_value = new_ps.get("disc_value", 10)
 
             self.avatar_scale = new_ps.get("avatar_scale", 1)
             self.avatar_bound_box_percent = new_ps.get("avatar_bound_box_percent", 0.75)
@@ -293,6 +299,9 @@ class ParameterSet(models.Model):
         self.json_for_session["seed_build_length"] = self.seed_build_length
         self.json_for_session["field_build_length"] = self.field_build_length
         self.json_for_session["disc_build_length"] = self.disc_build_length
+
+        self.json_for_session["seed_multipliers"] = self.seed_multipliers
+        self.json_for_session["disc_value"] = self.disc_value
         
         self.json_for_session["avatar_scale"] = self.avatar_scale
         self.json_for_session["avatar_bound_box_percent"] = self.avatar_bound_box_percent
