@@ -36,7 +36,16 @@ setup_pixi_subjects: function setup_pixi_subjects(){
 
         let text_style = {
             fontFamily: 'Arial',
-            fontSize: 30,
+            fontSize: 40,
+            fill: 'white',
+            align: 'left',
+            stroke: 'black',
+            strokeThickness: 3,
+        };
+
+        let text_style_2 = {
+            fontFamily: 'Arial',
+            fontSize: 50,
             fill: 'white',
             align: 'left',
             stroke: 'black',
@@ -48,12 +57,12 @@ setup_pixi_subjects: function setup_pixi_subjects(){
         id_label.anchor.set(0.5);
         
         let token_graphic = PIXI.Sprite.from(app.pixi_textures["seed_tex"]);
-        token_graphic.anchor.set(1, 0.5)
         token_graphic.eventMode = 'passive';
-        token_graphic.scale.set(0.6);
+        token_graphic.scale.set(0.7);
+        token_graphic.anchor.set(1, 0.5)
         // token_graphic.alpha = 0.7;
 
-        let inventory_label = new PIXI.Text(subject.seeds, text_style);
+        let inventory_label = new PIXI.Text(subject.seeds, text_style_2);
         inventory_label.eventMode = 'passive';
         inventory_label.anchor.set(0, 0.5);
 
@@ -69,11 +78,13 @@ setup_pixi_subjects: function setup_pixi_subjects(){
         avatar_container.addChild(inventory_label);
         avatar_container.addChild(status_label);
         
-        face_sprite.position.set(0, -avatar_container.height * 0.03);
-        id_label.position.set(0, -avatar_container.height * 0.2);
-        token_graphic.position.set(-2, +avatar_container.height * 0.16);
-        inventory_label.position.set(2, +avatar_container.height * 0.16);
-        status_label.position.set(0, -avatar_container.height/2 + 30);
+        let avatar_height = avatar_container.height;
+
+        face_sprite.position.set(0, 0);
+        id_label.position.set(0, avatar_height/2 - 30);
+        token_graphic.position.set(-5, -avatar_height/2);
+        inventory_label.position.set(+5, -avatar_height/2);
+        status_label.position.set(0, avatar_height/2 + 15);
 
         pixi_avatars[i].status_label = status_label;
         pixi_avatars[i].gear_sprite = gear_sprite;
