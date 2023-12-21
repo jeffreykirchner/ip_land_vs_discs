@@ -90,6 +90,8 @@ setup_subject_status_overlay: function setup_subject_status_overlay()
  */
 update_subject_status_overlay: function update_subject_status_overlay()
 {
+    return;
+    
     if(!app.session) return;
     if(!app.session.world_state.hasOwnProperty('started')) return;
 
