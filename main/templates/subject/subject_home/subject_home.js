@@ -430,6 +430,8 @@ var app = Vue.createApp({
                 app.field_modal.hide();
                 app.field_manage_modal.hide();
                 app.interaction_modal.hide();
+                app.interaction_start_modal.hide();
+                
             }
             else
             {
