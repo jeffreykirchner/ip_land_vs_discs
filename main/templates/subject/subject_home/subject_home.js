@@ -7,7 +7,7 @@ axios.defaults.xsrfCookieName = "csrftoken";
 //global variables
 var subject_status_overlay = {container:null, current_period_label:null, time_remaining_label:null, profit_label:null};
 var pixi_target = null;                        //target sprite for your avatar
-var mini_map = {container:null};               //mini map container
+var mini_map = {container:null, players:{}, fields:{}};               //mini map container
 var pixi_notices = {container:null, notices:{}};                         //notices
 var pixi_notices_key = 0;
 
