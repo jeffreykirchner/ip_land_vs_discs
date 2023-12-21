@@ -221,6 +221,8 @@ class TimerMixin():
             for p in self.world_state_local["session_players"]:
                 session_player = self.world_state_local["session_players"][p]
 
+                session_player["seed_multiplier"] = await self.get_seed_multiplier(p)
+
                 if session_player["cool_down"] > 0:
                     session_player["cool_down"] -= 1
 
@@ -247,6 +249,7 @@ class TimerMixin():
                                             "cool_down": session_player["cool_down"],
                                             "state": session_player["state"],
                                             "seeds": session_player["seeds"],
+                                            "seed_multiplier": float(session_player["seed_multiplier"]),
                                             "build_time_remaining": session_player["build_time_remaining"],
                                             "tractor_beam_target" : session_player["tractor_beam_target"]}              
 

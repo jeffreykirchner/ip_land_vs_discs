@@ -62,7 +62,7 @@ setup_pixi_subjects: function setup_pixi_subjects(){
         token_graphic.anchor.set(1, 0.5)
         // token_graphic.alpha = 0.7;
 
-        let inventory_label = new PIXI.Text(subject.seeds, text_style_2);
+        let inventory_label = new PIXI.Text(subject.seeds + "→" + subject.seeds +"¢", text_style_2);
         inventory_label.eventMode = 'passive';
         inventory_label.anchor.set(0, 0.5);
 
@@ -77,13 +77,13 @@ setup_pixi_subjects: function setup_pixi_subjects(){
         avatar_container.addChild(token_graphic);
         avatar_container.addChild(inventory_label);
         avatar_container.addChild(status_label);
-        
+
         let avatar_height = avatar_container.height;
 
         face_sprite.position.set(0, 0);
         id_label.position.set(0, avatar_height/2 - 30);
-        token_graphic.position.set(-5, -avatar_height/2);
-        inventory_label.position.set(+5, -avatar_height/2);
+        token_graphic.position.set(-50, -avatar_height/2);
+        inventory_label.position.set(-45, -avatar_height/2);
         status_label.position.set(0, avatar_height/2 + 15);
 
         pixi_avatars[i].status_label = status_label;
@@ -243,6 +243,11 @@ destory_pixi_subjects: function destory_pixi_subjects()
             {
                 pixi_objects.view_container.destroy();
             }
+
+            for(let j=0; j<pixi_objects.tractor_beam.length; j++)
+            {
+                pixi_objects.tractor_beam[j].destroy();
+            }
         }
     }
 },
@@ -319,7 +324,10 @@ update_player_inventory: function update_player_inventory()
     for(const i in app.session.session_players_order)
     {
         const player_id = app.session.session_players_order[i];
-        pixi_avatars[player_id].inventory_label.text = app.session.world_state.session_players[player_id].seeds;
+        let session_player = app.session.world_state.session_players[player_id];
+        let multiplied_seeds = session_player.seeds * session_player.seed_multiplier;
+        let text = session_player.seeds + "→" + multiplied_seeds.toFixed(1) +"¢";
+        pixi_avatars[player_id].inventory_label.text = text;
     }
 },
 
@@ -430,8 +438,8 @@ take_interaction: function take_interaction(message_data)
         source_player.seeds = message_data.source_player_seeds;
         target_player.seeds = message_data.target_player_seeds;
         
-        pixi_avatars[source_player_id].inventory_label.text = source_player.seeds;
-        pixi_avatars[target_player_id].inventory_label.text = target_player.seeds;
+        // pixi_avatars[source_player_id].inventory_label.text = source_player.seeds;
+        // pixi_avatars[target_player_id].inventory_label.text = target_player.seeds;
 
         //add transfer beam
         if(interaction_type == "take_seeds")

@@ -1,30 +1,41 @@
 <div class="card" id="graph_card">                  
-    <div class="card-header fw-bold">                
-        <span class="align-middle"></span>
+    <div class="card-header fw-bold">   
 
-        <span class="float-end">
-            <span v-show="reconnecting" class="me-1">
-                Connecting <i class="fas fa-cog fa-spin fa-1x"></i>
-            </span>
+        <div class="row align-items-center" v-if="session && session.started && is_subject">
+            <div class="col-auto m-0">
+                Current Period: [[session.world_state.current_period]]
+            </div>
+            <div class="col-auto m-0">
+                Time Remaining: [[session.world_state.time_remaining]]
+            </div>
+            <div class="col-auto m-0">
+                Total Earnings: [[session.world_state.session_players[session_player.id].earnings]]¢
+            </div>
 
-            {%if session.parameter_set.test_mode%}
-                <div class="form-check" v-if="is_subject">
-                    <input class="form-check-input"
-                           type="checkbox" 
-                           value="" 
-                           id="testModeCheckBox" 
-                           v-model="test_mode"
-                           >
-                    <label class="form-check-label" for="testModeCheckBox">
-                    Test Mode On
-                    </label>
-                </div>
-            {%endif%}
+            <div class="col text-end">
+                <span v-show="reconnecting" class="me-1">
+                    Connecting <i class="fas fa-cog fa-spin fa-1x"></i>
+                </span>
 
-            <button type="button" class="btn btn-link" title="Show Help" v-on:click="send_load_help_doc_subject('subject_stage')">
-                <i class="far fa-question-circle"></i> 
-            </button>
-        </span>
+                {%if session.parameter_set.test_mode%}
+                    <div class="form-check" v-if="is_subject">
+                        <input class="form-check-input"
+                            type="checkbox" 
+                            value="" 
+                            id="testModeCheckBox" 
+                            v-model="test_mode"
+                            >
+                        <label class="form-check-label" for="testModeCheckBox">
+                        Test Mode On
+                        </label>
+                    </div>
+                {%endif%}
+
+                <button type="button" class="btn btn-link" title="Show Help" v-on:click="send_load_help_doc_subject('subject_stage')">
+                    <i class="far fa-question-circle"></i> 
+                </button>
+            </div>
+        </div>           
 
     </div>
     <div class="card-body">

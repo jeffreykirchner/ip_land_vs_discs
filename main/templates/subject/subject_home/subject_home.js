@@ -414,7 +414,6 @@ var app = Vue.createApp({
                 });          
                 
                 app.setup_pixi_minimap();
-                app.update_player_inventory();
 
                 //reset player locations
 
@@ -431,7 +430,7 @@ var app = Vue.createApp({
                 app.field_manage_modal.hide();
                 app.interaction_modal.hide();
                 app.interaction_start_modal.hide();
-                
+
             }
             else
             {
@@ -451,15 +450,16 @@ var app = Vue.createApp({
                
                 session_player_local.tractor_beam_target = session_player.tractor_beam_target;
 
-                pixi_avatars[p].inventory_label.text = session_player_local.seeds;
-
                 if(message_data.period_is_over)
                 {
                     session_player_local.state = session_player.state;
                     session_player_local.seeds = session_player.seeds;
                     session_player_local.build_time_remaining = session_player.build_time_remaining;
-                }
+                }                
+                session_player_local.seed_multiplier = session_player.seed_multiplier;
             }
+
+            app.update_player_inventory();
 
             //update player location
             for(p in message_data.current_locations)

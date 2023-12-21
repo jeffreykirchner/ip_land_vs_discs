@@ -168,6 +168,7 @@ class Session(models.Model):
             v['current_location'] = {'x':i['parameter_set_player__start_x'], 'y':i['parameter_set_player__start_y']}
             v['target_location'] = v['current_location']
             v['seeds'] = 0
+            v['seed_multiplier'] = 1
             v['build_time_remaining'] = self.parameter_set.build_time
             v['tractor_beam_target'] = None
             v['frozen'] = False
