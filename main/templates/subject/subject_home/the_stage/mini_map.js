@@ -63,6 +63,8 @@ setup_pixi_minimap: function setup_pixi_minimap()
                              parameter_set_field.height * scale);
 
         mini_map.container.addChild(temp_field);
+
+        mini_map.fields[i] = temp_field;
     }
 
     //walls
@@ -78,6 +80,22 @@ setup_pixi_minimap: function setup_pixi_minimap()
     //     mini_map.container.addChild(temp_wall);
     // }
     
+    //players
+    for(const i in app.session.world_state.session_players){
+        const parameter_set_player = app.get_parameter_set_player_from_player_id(i);
+        const player = app.session.world_state.session_players[i];
+
+        let temp_player = new PIXI.Graphics();
+        temp_player.beginFill(parameter_set_player.hex_color, 0.75);
+        temp_player.lineStyle({alignment:1, width:1, color:'black'});
+        temp_player.drawCircle(0,0,8);
+        //temp_player.pivot.set(temp_player.width/2, temp_player.height/2);
+        // temp_player.position.set(player.current_location.x * scale, player.current_location.y * scale);
+
+        mini_map.players[i] = temp_player;
+        mini_map.container.addChild(mini_map.players[i]);
+    }
+
     //mini map view port
     let mini_map_vp = new PIXI.Graphics();
     mini_map_vp.width = pixi_app.screen.width * scale;
@@ -106,8 +124,16 @@ update_mini_map: function update_mini_map(delta)
 {
     if(!app.mini_map_scale) return;
     
+    //update view port
     let obj = app.session.world_state.session_players[app.session_player.id]
     mini_map.view_port.position.set(obj.current_location.x * app.mini_map_scale, 
                                     obj.current_location.y * app.mini_map_scale);
 
+    //update players
+    for(const i in app.session.world_state.session_players){
+        const player = app.session.world_state.session_players[i];
+
+        mini_map.players[i].position.set(player.current_location.x * app.mini_map_scale, 
+                                         player.current_location.y * app.mini_map_scale);
+    }
 },
