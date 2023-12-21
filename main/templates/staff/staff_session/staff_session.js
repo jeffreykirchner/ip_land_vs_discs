@@ -408,14 +408,14 @@ var app = Vue.createApp({
             if(message_data.period_is_over)
             {
                 //update fields
-                app.session.world_state.fields = message_data.fields;   
-
-                app.destroy_pixi_fields();
-                app.setup_pixi_fields();
-                
-                app.update_player_inventory();              
+                 
+     
                 app.take_update_earnings(message_data.earnings);  
             }
+
+            app.session.world_state.fields = message_data.fields;  
+            app.destroy_pixi_fields();
+            app.setup_pixi_fields();
 
             //update player status
             for(p in message_data.session_player_status)
@@ -427,12 +427,21 @@ var app = Vue.createApp({
                 session_player_local.frozen = session_player.frozen;
                 session_player_local.cool_down = session_player.cool_down;
                 session_player_local.state = session_player.state;
-                session_player_local.seeds = session_player.seeds;
-                session_player_local.build_time_remaining = session_player.build_time_remaining;
+
+                if(message_data.period_is_over)
+                {
+                    session_player_local.seeds = session_player.seeds;
+                    session_player_local.state = session_player.state;
+                    session_player_local.build_time_remaining = session_player.build_time_remaining;
+                }
+               
+                session_player_local.seed_multiplier = session_player.seed_multiplier;                
                 session_player_local.tractor_beam_target = session_player.tractor_beam_target;
 
-                pixi_avatars[p].inventory_label.text = session_player_local.seeds;
+                // pixi_avatars[p].inventory_label.text = session_player_local.seeds;
             }
+
+            app.update_player_inventory();     
 
             //update player location
             for(p in message_data.current_locations)

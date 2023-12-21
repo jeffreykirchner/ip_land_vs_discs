@@ -597,8 +597,9 @@ take_build_seeds: function take_build_seeds(message_data)
 
         if(session_player.state == "open")
         {
-            pixi_avatars[source_player_id].inventory_label.text = session_player.seeds;
-
+            // pixi_avatars[source_player_id].inventory_label.text = session_player.seeds;
+            app.update_player_inventory();
+            
             let seed_graphic = PIXI.Sprite.from(app.pixi_textures['seed_tex']);
             seed_graphic.eventMode = 'none';
             seed_graphic.scale.set(0.4);
