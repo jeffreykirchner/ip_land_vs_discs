@@ -243,6 +243,11 @@ destory_pixi_subjects: function destory_pixi_subjects()
             {
                 pixi_objects.view_container.destroy();
             }
+
+            for(let j=0; j<pixi_objects.tractor_beam.length; j++)
+            {
+                pixi_objects.tractor_beam[j].destroy();
+            }
         }
     }
 },
