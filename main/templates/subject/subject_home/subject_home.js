@@ -84,6 +84,7 @@ var app = Vue.createApp({
                         parameter_set_player:null,
                         interaction_type:null,
                         interaction_amount:0,
+                        interaction_discs:{},
                     },
 
                     //errors

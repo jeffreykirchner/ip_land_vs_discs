@@ -72,6 +72,7 @@ setup_pixi_subjects: function setup_pixi_subjects(){
         status_label.visible = false;
 
         let disc_wedges = new PIXI.Graphics(); 
+        disc_wedges.eventMode = 'passive';    
         let disc_wedge_radius = gear_sprite.width/2-80;
         disc_wedges.beginFill('white', 0.5);
         disc_wedges.drawCircle(0, 0, disc_wedge_radius);
@@ -276,10 +277,12 @@ subject_avatar_click: function subject_avatar_click(target_player_id)
     // app.send_message("tractor_beam", 
     //                  {"target_player_id" : target_player_id},
     //                  "group");
-    app.interaction_start_modal.toggle();
+    
     app.selected_player.session_player = app.session.world_state.session_players[target_player_id];
     app.selected_player.selected_player_id = target_player_id;
     app.selected_player.parameter_set_player = app.get_parameter_set_player_from_player_id(target_player_id);
+
+    app.interaction_start_modal.toggle();
 },
 
 /**
@@ -312,6 +315,18 @@ start_take_seeds: function start_take_seeds()
 start_send_disc: function start_send_disc()
 {
     app.selected_player.interaction_type = "send_disc";
+
+    app.selected_player.interaction_discs={};
+
+    let session_player = app.session.world_state.session_players[app.session_player.id];
+
+    for(const i in session_player.disc_inventory)
+    {
+        if(session_player.disc_inventory[i])
+        {
+            app.selected_player.interaction_discs[i] = false;
+        }
+    }
 
     app.interaction_start_modal.hide();
     app.interaction_modal.toggle();
@@ -354,7 +369,8 @@ send_interaction: function send_interaction()
     app.send_message("interaction", 
                     {"target_player_id": app.selected_player.selected_player_id,
                      "interaction_type": app.selected_player.interaction_type,
-                     "interaction_amount" : app.selected_player.interaction_amount},
+                     "interaction_amount" : app.selected_player.interaction_amount,
+                     "interaction_discs": app.selected_player.interaction_discs},
                      "group"); 
 },
 
@@ -449,9 +465,12 @@ take_interaction: function take_interaction(message_data)
         //update inventory
         source_player.seeds = message_data.source_player_seeds;
         target_player.seeds = message_data.target_player_seeds;
+
+        source_player.disc_inventory = message_data.source_player_disc_inventory;
+        target_player.disc_inventory = message_data.target_player_disc_inventory;
         
-        // pixi_avatars[source_player_id].inventory_label.text = source_player.seeds;
-        // pixi_avatars[target_player_id].inventory_label.text = target_player.seeds;
+        app.update_disc_wedges(source_player_id);
+        app.update_disc_wedges(target_player_id);
 
         //add transfer beam
         if(interaction_type == "take_seeds")
@@ -473,18 +492,18 @@ take_interaction: function take_interaction(message_data)
         else if(interaction_type == "take_disc")
         {
              app.add_transfer_beam(target_player.current_location,
-                                source_player.current_location,
-                                app.pixi_textures["disc_tex"],
-                                message_data.target_player_change,
-                                message_data.source_player_change);
+                                  source_player.current_location,
+                                  app.pixi_textures["disc_tex"],
+                                  null,
+                                  null);
         }
         else if(interaction_type == "send_disc")
         {
             app.add_transfer_beam(source_player.current_location, 
                                 target_player.current_location,
                                 app.pixi_textures["disc_tex"],
-                                message_data.source_player_change,
-                                message_data.target_player_change);
+                                null,
+                                null);
         }
 
         if(app.pixi_mode=="subject")
@@ -716,11 +735,15 @@ move_player: function move_player(delta)
         {
             if(obj.state=="building_seeds")
             {
-                status_label.text = "Building Seeds ... " + obj.interaction;
+                status_label.text = "Growing Seeds ... " + obj.interaction;
             }
             else if(obj.state=="claiming_field")
             {
-                status_label.text = "Building Field ... " + obj.interaction;
+                status_label.text = "Claiming Field ... " + obj.interaction;
+            }
+            else if(obj.state=="building_disc")
+            {
+                status_label.text = "Building Disc ... " + obj.interaction;
             }
             else
             {

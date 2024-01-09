@@ -102,7 +102,13 @@
                 <button type="button" 
                         title="Build Disc"
                         class="btn btn-outline-primary btn-lg"
-                        v-bind:disabled="reconnecting || working || session.started===false || session.world_state.finished"
+                        v-bind:disabled="reconnecting || 
+                                         working || 
+                                         session.world_state.session_players[session_player.id].interaction > 0 ||
+                                         session.world_state.session_players[session_player.id].cool_down > 0 ||
+                                         session.world_state.session_players[session_player.id].disc_inventory[session_player.id] ||
+                                         session.started===false || 
+                                         session.world_state.finished"
                         v-on:click="send_build_disc()">
                         Build Disc <i class="fas fa-compact-disc"></i>
                 </button>
@@ -128,6 +134,7 @@
                             v-bind:disabled="reconnecting || 
                                              working || 
                                              session.world_state.session_players[session_player.id].interaction > 0 ||
+                                             session.world_state.session_players[session_player.id].cool_down > 0 ||
                                              session.started===false || 
                                              session.world_state.finished"
                             v-on:click="send_build_seeds()">Grow Seeds <i class="fas fa-seedling"></i></button>

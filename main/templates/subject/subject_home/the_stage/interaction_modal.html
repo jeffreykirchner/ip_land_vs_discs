@@ -41,23 +41,46 @@
                         </span>
 
                         <span v-if="selected_player.interaction_type=='send_disc'">
-                            Send Disc to [[selected_player.parameter_set_player.id_label]]
+                            Send Disc Copies to [[selected_player.parameter_set_player.id_label]]
                         </span>
                         <span v-if="selected_player.interaction_type=='take_disc'">
-                            Take Disc from [[selected_player.parameter_set_player.id_label]]
+                            Take Disc Copies from [[selected_player.parameter_set_player.id_label]]
                         </span>
                     </div>
                 </div>
                 
                 <div class="row mt-4">
-                    <div class="col text-center" id="div_id_good_three_harvest">
-                        <input type="number" 
-                           class="transfer_model_input form-control-lg fw-bold"
-                           v-model="selected_player.interaction_amount"
-                           min="0"
-                           max="999"
-                           step="1">         
+                    <div v-if="selected_player.interaction_type=='send_seeds' ||
+                               selected_player.interaction_type=='take_seeds'">
+                        <div class="col text-center" id="div_id_good_three_harvest">
+                            <input type="number" 
+                                class="transfer_model_input form-control-lg fw-bold"
+                                v-model="selected_player.interaction_amount"
+                                min="0"
+                                max="999"
+                                step="1">         
+                        </div>
                     </div>
+                    <div v-else>
+                        <div class="row" v-for="(value, key) in selected_player.interaction_discs" 
+                                v-bind:key="key">
+                            <div class="col h5">
+                                
+                                <div class="form-check">
+                                    <input class="form-check-input" 
+                                           type="checkbox" 
+                                           value="" 
+                                           v-bind:id="'interaction_cb_' + key"
+                                           v-model="selected_player.interaction_discs[key]">
+                                    <label class="form-check-label" 
+                                           v-bind:for="'interaction_cb_' + key">
+                                      [[get_parameter_set_player_from_player_id(key).id_label]]
+                                    </label>
+                                  </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                 </div>
                          
             </div>

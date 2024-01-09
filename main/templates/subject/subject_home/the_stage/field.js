@@ -520,9 +520,37 @@ take_build_disc: function take_build_disc(message_data)
     {
 
         let session_player = app.session.world_state.session_players[source_player_id];
-        session_player.disc_inventory =  message_data.disc_inventory;
 
-        app.update_disc_wedges(message_data.source_player_id);
+        
+        session_player.build_time_remaining =  message_data.build_time_remaining;
+        session_player.frozen = message_data.frozen;
+        session_player.state = message_data.state;
+        session_player.interaction = message_data.interaction;
+
+        
+
+        if(session_player.state == "open")
+        {
+            session_player.disc_inventory =  message_data.disc_inventory;
+            app.update_disc_wedges(message_data.source_player_id);
+            
+            let disc_graphic = PIXI.Sprite.from(app.pixi_textures['disc_tex']);
+            disc_graphic.eventMode = 'none';
+            disc_graphic.scale.set(0.4);
+            disc_graphic.alpha = 0.7;
+            disc_graphic.tint = app.get_parameter_set_player_from_player_id(source_player_id).hex_color;
+
+            let source_location =  session_player.current_location;
+
+            app.add_text_emitters("+", 
+                                source_location.x, 
+                                source_location.y,
+                                source_location.x,
+                                source_location.y - 100,
+                                0xFFFFFF,
+                                28,
+                                disc_graphic)
+        }
 
         if(app.is_subject && source_player_id == app.session_player.id)
         {
