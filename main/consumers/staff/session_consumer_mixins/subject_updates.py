@@ -720,25 +720,41 @@ class SubjectUpdatesMixin():
 
         try:
             player_id = self.session_players_local[event["player_key"]]["id"]
+            source = event["message_text"]["source"]
         except:
             logger.info(f"build_disc: invalid data, {event['message_text']}")
             status = "fail"
             error_message.append({"id":"build_disc", "message": "Invalid data, try again."})
 
+        session_player = self.world_state_local["session_players"][str(player_id)]
+
         #check if on break
         if self.world_state_local["time_remaining"] > self.parameter_set_local["period_length"]:
             status = "fail"
-            error_message.append({"id":"field_claim", "message": "No production during the break."})
-        
+            error_message.append({"id":"build_disc", "message": "No production during the break."})
+
+        #check if player has enough proudction seconds remaining
+        if session_player["build_time_remaining"] <  self.parameter_set_local["disc_build_length"]:
+            status = "fail"
+            error_message.append({"id":"build_disc", "message": "Not enough production time to build a disc."})
+
+        #check if player is already building
+        if source == "client" and session_player["state"] != "open":
+            status = "fail"
+            error_message.append({"id":"build_disc", "message": "You are already building."})
+
         result = {"status" : status, 
                   "error_message" : error_message, 
                   "source_player_id" : player_id}
         
         if status == "success":
             #build a disc
-
+            player_id_s = str(player_id)
+            self.world_state_local["session_players"][player_id_s]["disc_inventory"][player_id_s] = True
 
             await Session.objects.filter(id=self.session_id).aupdate(world_state=self.world_state_local)
+
+            result["disc_inventory"] = self.world_state_local["session_players"][player_id_s]["disc_inventory"]
 
         await self.send_message(message_to_self=None, message_to_group=result,
                                 message_type=event['type'], send_to_client=False, send_to_group=True)
@@ -779,10 +795,10 @@ class SubjectUpdatesMixin():
         #check if on break
         if self.world_state_local["time_remaining"] > self.parameter_set_local["period_length"]:
             status = "fail"
-            error_message.append({"id":"field_claim", "message": "No production during the break."})
+            error_message.append({"id":"build_seeds", "message": "No production during the break."})
 
         #check if player has enough proudction seconds remaining
-        if session_player["build_time_remaining"] < build_seed_count:
+        if session_player["build_time_remaining"] < build_seed_count * self.parameter_set_local["seed_build_length"]:
             status = "fail"
             error_message.append({"id":"build_seeds", "message": "Not enough production time to build that many seeds."})
 
@@ -800,7 +816,7 @@ class SubjectUpdatesMixin():
 
             if session_player["state"] == "building_seeds":
                 session_player["seeds"] += build_seed_count
-                session_player["build_time_remaining"] -= build_seed_count
+                session_player["build_time_remaining"] -= build_seed_count * self.parameter_set_local["seed_build_length"]
 
                 session_player["state"] = "open"
                 session_player["state_payload"] = {}

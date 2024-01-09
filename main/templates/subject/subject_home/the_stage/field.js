@@ -505,7 +505,7 @@ send_build_disc: function send_build_disc()
     app.working = true;
         
     app.send_message("build_disc", 
-                    {},
+                    {"source" : "client"},
                     "group"); 
 },
 
@@ -518,6 +518,11 @@ take_build_disc: function take_build_disc(message_data)
 
     if(message_data.status == "success")
     {
+
+        let session_player = app.session.world_state.session_players[source_player_id];
+        session_player.disc_inventory =  message_data.disc_inventory;
+
+        app.update_disc_wedges(message_data.source_player_id);
 
         if(app.is_subject && source_player_id == app.session_player.id)
         {

@@ -62,7 +62,7 @@ setup_pixi_subjects: function setup_pixi_subjects(){
         token_graphic.anchor.set(1, 0.5)
         // token_graphic.alpha = 0.7;
 
-        let inventory_label = new PIXI.Text(subject.seeds + "→" + subject.seeds +"¢", text_style_2);
+        let inventory_label = new PIXI.Text(subject.seeds, text_style_2);
         inventory_label.eventMode = 'passive';
         inventory_label.anchor.set(0, 0.5);
 
@@ -71,24 +71,36 @@ setup_pixi_subjects: function setup_pixi_subjects(){
         status_label.anchor.set(0.5);
         status_label.visible = false;
 
+        let disc_wedges = new PIXI.Graphics(); 
+        let disc_wedge_radius = gear_sprite.width/2-80;
+        disc_wedges.beginFill('white', .75);
+        disc_wedges.drawCircle(0, 0, disc_wedge_radius);
+        disc_wedges.endFill();
+
+        pixi_avatars[i].disc_wedges = disc_wedges;
+       
         avatar_container.addChild(gear_sprite);
+        avatar_container.addChild(disc_wedges);
         avatar_container.addChild(face_sprite);
         avatar_container.addChild(id_label);
         avatar_container.addChild(token_graphic);
         avatar_container.addChild(inventory_label);
         avatar_container.addChild(status_label);
-
+        
         let avatar_height = avatar_container.height;
 
         face_sprite.position.set(0, 0);
         id_label.position.set(0, avatar_height/2 - 30);
-        token_graphic.position.set(-50, -avatar_height/2);
-        inventory_label.position.set(-45, -avatar_height/2);
+        token_graphic.position.set(-2, -avatar_height/2+10);
+        inventory_label.position.set(2, -avatar_height/2+10);
         status_label.position.set(0, avatar_height/2 + 15);
+        disc_wedges.position.set(0, 0);
 
         pixi_avatars[i].status_label = status_label;
         pixi_avatars[i].gear_sprite = gear_sprite;
         pixi_avatars[i].inventory_label = inventory_label;
+
+        app.update_disc_wedges(i);
 
         avatar_container.scale.set(app.session.parameter_set.avatar_scale);
 
@@ -326,7 +338,7 @@ update_player_inventory: function update_player_inventory()
         const player_id = app.session.session_players_order[i];
         let session_player = app.session.world_state.session_players[player_id];
         let multiplied_seeds = session_player.seeds * session_player.seed_multiplier;
-        let text = session_player.seeds + "→" + multiplied_seeds.toFixed(1) +"¢";
+        let text = session_player.seeds;
         pixi_avatars[player_id].inventory_label.text = text;
     }
 },
@@ -824,4 +836,47 @@ move_player: function move_player(delta)
         }
     }
     
+},
+
+/**
+ * update disc wedges
+ */
+update_disc_wedges: function update_disc_wedges(player_id)
+{
+    let disc_wedges = pixi_avatars[player_id].disc_wedges;
+    let session_player = app.session.world_state.session_players[player_id];
+
+    disc_wedges.clear();
+
+    let disc_wedge_radius = pixi_avatars[player_id].gear_sprite.width/2-80;
+    disc_wedges.beginFill('white', .75);
+    disc_wedges.drawCircle(0, 0, disc_wedge_radius);
+    disc_wedges.endFill();
+
+    let start_angle = 0;
+    let wedge_size = 360/app.session.world_state.session_players_order.length;
+    disc_wedges.lineStyle(2, "dimgray");
+    disc_wedges.moveTo(0, 0);
+
+    for(const j in app.session.world_state.session_players)
+    {
+        let alpha = 0;
+
+        if(session_player.disc_inventory[j])
+        {
+            alpha = 1;
+        }
+        
+        disc_wedges.beginFill(app.get_parameter_set_player_from_player_id(j).hex_color, alpha);
+
+        let temp_point =  app.get_point_on_circle(0, 0, disc_wedge_radius, app.degrees_to_radians(start_angle));
+        disc_wedges.lineTo(temp_point.x, temp_point.y);
+
+        disc_wedges.arc(0, 0, disc_wedge_radius, app.degrees_to_radians(start_angle), app.degrees_to_radians(start_angle + wedge_size));
+        disc_wedges.lineTo(0, 0);
+
+        start_angle += wedge_size;
+
+        disc_wedges.endFill();
+    }
 },

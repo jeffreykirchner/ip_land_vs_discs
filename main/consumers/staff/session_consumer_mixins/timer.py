@@ -151,6 +151,8 @@ class TimerMixin():
                 #check if period over
                 if period_is_over:
 
+                    session_player_ids = [i for i in self.world_state_local["session_players"]]
+
                     # current_period_id = str(self.world_state_local["session_periods_order"][self.world_state_local["current_period"]-1])
 
                     last_period["consumption_completed"] = True
@@ -165,6 +167,7 @@ class TimerMixin():
                         session_player["tractor_beam_target"] = None
                         session_player["state"] = "open"
                         session_player["state_payload"] = {}
+                        session_player['disc_inventory'] = {str(j):False for j in session_player_ids}
 
                         period_earnings = Decimal(self.world_state_local["session_players"][i]["seeds"])
                         period_earnings *= await self.get_seed_multiplier(i)
@@ -249,6 +252,7 @@ class TimerMixin():
                                             "cool_down": session_player["cool_down"],
                                             "state": session_player["state"],
                                             "seeds": session_player["seeds"],
+                                            "disc_inventory": session_player["disc_inventory"],
                                             "seed_multiplier": float(session_player["seed_multiplier"]),
                                             "build_time_remaining": session_player["build_time_remaining"],
                                             "tractor_beam_target" : session_player["tractor_beam_target"]}              
