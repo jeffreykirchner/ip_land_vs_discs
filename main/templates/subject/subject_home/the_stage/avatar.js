@@ -73,7 +73,7 @@ setup_pixi_subjects: function setup_pixi_subjects(){
 
         let disc_wedges = new PIXI.Graphics(); 
         let disc_wedge_radius = gear_sprite.width/2-80;
-        disc_wedges.beginFill('white', .75);
+        disc_wedges.beginFill('white', 0.5);
         disc_wedges.drawCircle(0, 0, disc_wedge_radius);
         disc_wedges.endFill();
 
@@ -849,7 +849,7 @@ update_disc_wedges: function update_disc_wedges(player_id)
     disc_wedges.clear();
 
     let disc_wedge_radius = pixi_avatars[player_id].gear_sprite.width/2-80;
-    disc_wedges.beginFill('white', .75);
+    disc_wedges.beginFill('white', .5);
     disc_wedges.drawCircle(0, 0, disc_wedge_radius);
     disc_wedges.endFill();
 
