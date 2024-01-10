@@ -151,6 +151,8 @@ class TimerMixin():
                 #check if period over
                 if period_is_over:
 
+                    session_player_ids = [i for i in self.world_state_local["session_players"]]
+
                     # current_period_id = str(self.world_state_local["session_periods_order"][self.world_state_local["current_period"]-1])
 
                     last_period["consumption_completed"] = True
@@ -159,15 +161,25 @@ class TimerMixin():
                         session_player = self.world_state_local["session_players"][i]
                         parameter_set_player = self.parameter_set_local["parameter_set_players"][str(session_player["parameter_set_player_id"])]
 
+                        disc_count = 0
+
+                        for j in session_player["disc_inventory"]:
+                            if session_player["disc_inventory"][j]:
+                                disc_count += 1
+
                         session_player["cool_down"] = 0
                         session_player["interaction"] = 0
                         session_player["frozen"] = False
                         session_player["tractor_beam_target"] = None
                         session_player["state"] = "open"
                         session_player["state_payload"] = {}
+                        session_player['disc_inventory'] = {str(j):False for j in session_player_ids}
 
                         period_earnings = Decimal(self.world_state_local["session_players"][i]["seeds"])
                         period_earnings *= await self.get_seed_multiplier(i)
+
+                        period_earnings += (disc_count * self.parameter_set_local["disc_value"])
+
                         session_player["earnings"] = str(Decimal(session_player["earnings"]) + period_earnings)
                         session_player["earnings"] = round_half_away_from_zero(session_player["earnings"], 1)
 
@@ -232,6 +244,7 @@ class TimerMixin():
                     if session_player["interaction"] == 0:
                         if session_player["state"] != "building_seeds" and \
                            session_player["state"] != "claiming_field" and \
+                           session_player["state"] != "building_disc" and \
                            session_player["state"] != "tractor_beam_target":
                             session_player["cool_down"] = self.parameter_set_local["cool_down_length"]
                         
@@ -249,6 +262,7 @@ class TimerMixin():
                                             "cool_down": session_player["cool_down"],
                                             "state": session_player["state"],
                                             "seeds": session_player["seeds"],
+                                            "disc_inventory": session_player["disc_inventory"],
                                             "seed_multiplier": float(session_player["seed_multiplier"]),
                                             "build_time_remaining": session_player["build_time_remaining"],
                                             "tractor_beam_target" : session_player["tractor_beam_target"]}              
@@ -259,6 +273,8 @@ class TimerMixin():
                         await self.build_seeds(session_player["state_payload"])
                     elif session_player["state"] == "claiming_field":
                         await self.field_claim(session_player["state_payload"])
+                    elif session_player["state"] == "building_disc":
+                        await self.build_disc(session_player["state_payload"])
 
             result["session_player_status"] = session_player_status
 

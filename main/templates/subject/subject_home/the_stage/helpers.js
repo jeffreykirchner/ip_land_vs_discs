@@ -102,6 +102,17 @@ degrees_to_radians(degrees)
 },
 
 /**
+ * find a point on a circle given an angle
+ */
+get_point_on_circle: function get_point_on_circle(center_x, center_y, radius, angle)
+{
+    let x = center_x + radius * Math.cos(angle);
+    let y = center_y + radius * Math.sin(angle);
+
+    return {x:x, y:y};
+},
+
+/**
  * get the parameter set player from the player id
  */
 get_parameter_set_player_from_player_id: function get_parameter_set_player_from_player_id(player_id)

@@ -157,7 +157,9 @@ class Session(models.Model):
             v["present_players"] = []
 
             self.world_state["fields"][str(i.id)] = v
-            
+
+        session_player_ids = list(self.session_players.all().values_list('id', flat=True))
+
         #session players
         for i in self.session_players.prefetch_related('parameter_set_player').all().values('id', 
                                                                                             'parameter_set_player__start_x',
@@ -178,6 +180,7 @@ class Session(models.Model):
             v['state'] = "open"
             v['state_payload'] = {}
             v['parameter_set_player_id'] = i['parameter_set_player__id']
+            v['disc_inventory'] = {str(j):False for j in session_player_ids}
             
             self.world_state["session_players"][str(i['id'])] = v
     

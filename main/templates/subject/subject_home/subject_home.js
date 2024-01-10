@@ -84,6 +84,7 @@ var app = Vue.createApp({
                         parameter_set_player:null,
                         interaction_type:null,
                         interaction_amount:0,
+                        interaction_discs:{},
                     },
 
                     //errors
@@ -454,7 +455,10 @@ var app = Vue.createApp({
                 {
                     session_player_local.state = session_player.state;
                     session_player_local.seeds = session_player.seeds;
+                    session_player_local.disc_inventory = session_player.disc_inventory;
                     session_player_local.build_time_remaining = session_player.build_time_remaining;
+
+                    app.update_disc_wedges(p);
                 }                
                 session_player_local.seed_multiplier = session_player.seed_multiplier;
             }
