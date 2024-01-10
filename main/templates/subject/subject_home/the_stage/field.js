@@ -105,7 +105,7 @@ setup_pixi_fields: function setup_pixi_fields()
             let outline = new PIXI.Graphics();
             //fill
             outline.lineStyle({width:10,color:0x000000,alpha:1});
-            outline.beginFill(parameter_set_player.hex_color, 1);
+            outline.beginFill(parameter_set_player.hex_color, 0.75);
             outline.drawRect(0, 0, parameter_set_field.width, parameter_set_field.height);
             outline.endFill();
 

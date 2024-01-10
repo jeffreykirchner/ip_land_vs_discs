@@ -79,6 +79,19 @@
                                   </div>
                             </div>
                         </div>
+                        <div class="row"
+                            >
+                            <div class="col text-center"
+                                 v-if="JSON.stringify(selected_player.interaction_discs)==='{}'">
+                                <span v-if="selected_player.interaction_type=='send_disc'">
+                                    ** Your inventory is empty **
+                                </span>
+                                <span v-else>
+                                    ** Their inventory is empty **
+                                </span>
+                                
+                            </div>
+                        </div>
                     </div>
                     
                 </div>

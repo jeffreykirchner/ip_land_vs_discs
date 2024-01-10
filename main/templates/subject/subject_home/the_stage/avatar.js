@@ -573,7 +573,7 @@ cancel_interaction:function cancel_interaction()
 
     app.working = true;
     app.send_message("cancel_interaction", 
-                    {},
+                    {"interaction_type": app.selected_player.interaction_type,},
                      "group"); 
 },
 
@@ -585,22 +585,34 @@ take_cancel_interaction: function take_cancel_interaction(message_data)
     let source_player = app.session.world_state.session_players[source_player_id];
     let target_player = app.session.world_state.session_players[target_player_id];
 
-    source_player.tractor_beam_target = null;
-
-    source_player.frozen = false
-    target_player.frozen = false
-
-    source_player.interaction = 0;
-    target_player.interaction = 0;
-
-    if(app.is_subject)
+    if(message_data.value == "success")
     {
-        if(source_player_id == app.session_player.id)
+        source_player.tractor_beam_target = null;
+
+        source_player.frozen = false
+        target_player.frozen = false
+
+        source_player.interaction = 0;
+        target_player.interaction = 0;
+
+        if(app.is_subject)
         {
-            app.working = false;
-            app.interaction_modal.hide();
+            if(source_player_id == app.session_player.id)
+            {
+                app.working = false;
+                app.interaction_modal.hide();
+            }
         }
     }
+    else
+    {
+        if(app.is_subject && source_player_id == app.session_player.id)
+        {
+            app.interaction_error = message_data.error_message[0].message;
+            app.working = false;
+        }
+    }
+    
 }, 
 
 /**

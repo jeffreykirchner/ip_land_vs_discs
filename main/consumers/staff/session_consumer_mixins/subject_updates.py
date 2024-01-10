@@ -275,7 +275,7 @@ class SubjectUpdatesMixin():
             player_id = self.session_players_local[event["player_key"]]["id"]
             target_player_id = event["message_text"]["target_player_id"]
         except:
-            logger.info(f"tractor_beam: invalid data, {event['message_text']}")
+            logger.error(f"tractor_beam: invalid data, {event['message_text']}")
             status = "fail"
             error_message.append({"id":"tractor_beam", "message": "Invalid data, try again."})
         
@@ -318,7 +318,10 @@ class SubjectUpdatesMixin():
             target_player['frozen'] = True
 
             source_player["state"] = "tractor_beam_source"
+            source_player["state_payload"] = {}
+            
             target_player["state"] = "tractor_beam_target"
+            target_player["state_payload"] = {}
 
             source_player['tractor_beam_target'] = target_player_id
             source_player['interaction'] = self.parameter_set_local['interaction_length']
@@ -331,11 +334,11 @@ class SubjectUpdatesMixin():
             await Session.objects.filter(id=self.session_id).aupdate(world_state=self.world_state_local)
 
             await SessionEvent.objects.acreate(session_id=self.session_id, 
-                                            session_player_id=player_id,
-                                            type="tractor_beam",
-                                            period_number=self.world_state_local["current_period"],
-                                            time_remaining=self.world_state_local["time_remaining"],
-                                            data=result)
+                                               session_player_id=player_id,
+                                               type="tractor_beam",
+                                               period_number=self.world_state_local["current_period"],
+                                               time_remaining=self.world_state_local["time_remaining"],
+                                               data=result)
 
         await self.send_message(message_to_self=None, message_to_group=result,
                                 message_type=event['type'], send_to_client=False, send_to_group=True)
@@ -372,7 +375,7 @@ class SubjectUpdatesMixin():
             interaction_discs =  event["message_text"]["interaction_discs"]
 
         except:
-            logger.info(f"interaction: invalid data, {event['message_text']}")
+            logger.error(f"interaction: invalid data, {event['message_text']}")
             status = "fail"
             error_message.append({"id":"interaction", "message": "Invalid data, try again."})
 
@@ -422,13 +425,28 @@ class SubjectUpdatesMixin():
                     result["source_player_change"] = f"-{interaction_amount}"
                     result["target_player_change"] = f"+{interaction_amount}"
             elif interaction_type == 'take_disc':
+                disc_found = False
+
                 for i in interaction_discs:
                     if interaction_discs[i] and target_player["disc_inventory"][i]:
                         source_player["disc_inventory"][i] = True
+                        disc_found = True
+                
+                if not disc_found:
+                    status = "fail"
+                    error_message = "No discs selected."
+
             elif interaction_type == 'send_disc':
+                disc_found = False
+
                 for i in interaction_discs:
                     if interaction_discs[i] and source_player["disc_inventory"][i]:
                         target_player["disc_inventory"][i] = True
+                        disc_found = True
+                
+                if not disc_found:
+                    status = "fail"
+                    error_message = "No discs selected."
 
 
         result["status"] = status
@@ -500,34 +518,55 @@ class SubjectUpdatesMixin():
         if self.controlling_channel != self.channel_name:
             return
         
-        player_id = self.session_players_local[event["player_key"]]["id"]
+        logger = logging.getLogger(__name__)
+        
+        error_message = []
+        status = "success"
 
-        source_player = self.world_state_local['session_players'][str(player_id)]
+        try:
+            player_id = self.session_players_local[event["player_key"]]["id"]
+            interaction_type =  event["message_text"]["interaction_type"]
+            source_player = self.world_state_local['session_players'][str(player_id)]
+        except:
+            logger.error(f"interaction: invalid data, {event['message_text']}")
+            status = "fail"
+            error_message.append({"id":"cancel_interaction", "message": "Invalid data, try again."})
 
         if source_player['interaction'] == 0:
             return
         
         target_player_id = source_player['tractor_beam_target']
         target_player = self.world_state_local['session_players'][str(target_player_id)]
+        
+        if status == "success":
+            source_player['interaction'] = 0
+            target_player['interaction'] = 0
 
-        source_player['interaction'] = 0
-        target_player['interaction'] = 0
+            source_player['frozen'] = False
+            target_player['frozen'] = False
 
-        source_player['frozen'] = False
-        target_player['frozen'] = False
+            source_player["state"] = "open"
+            source_player["state_payload"] = {}
 
-        source_player['tractor_beam_target'] = None
+            target_player["state"] = "open"
+            target_player["state_payload"] = {}
 
-        await Session.objects.filter(id=self.session_id).aupdate(world_state=self.world_state_local)
+            source_player['tractor_beam_target'] = None
 
-        result = {"source_player_id" : player_id, "target_player_id" : target_player_id, "value" : "success"}
+            await Session.objects.filter(id=self.session_id).aupdate(world_state=self.world_state_local)
 
-        await SessionEvent.objects.acreate(session_id=self.session_id, 
-                                           session_player_id=player_id,
-                                           type="cancel_interaction",
-                                           period_number=self.world_state_local["current_period"],
-                                           time_remaining=self.world_state_local["time_remaining"],
-                                           data=result)
+        result = {"source_player_id" : player_id, 
+                  "target_player_id" : target_player_id, 
+                  "value" : status,
+                  "error_message" : error_message,}
+
+        if status == "success":
+            await SessionEvent.objects.acreate(session_id=self.session_id, 
+                                               session_player_id=player_id,
+                                               type="cancel_interaction",
+                                               period_number=self.world_state_local["current_period"],
+                                               time_remaining=self.world_state_local["time_remaining"],
+                                               data=result)
 
         await self.send_message(message_to_self=None, message_to_group=result,
                                 message_type=event['type'], send_to_client=False, send_to_group=True)
@@ -561,7 +600,7 @@ class SubjectUpdatesMixin():
             field = self.world_state_local["fields"][str(field_id)]
             source = event["message_text"]["source"]
         except:
-            logger.info(f"field_claim: invalid data, {event['message_text']}")
+            logger.error(f"field_claim: invalid data, {event['message_text']}")
             status = "fail"
             error_message.append({"id":"field_claim", "message": "Invalid data, try again."})
 
@@ -667,7 +706,7 @@ class SubjectUpdatesMixin():
             field = self.world_state_local["fields"][str(field_id)]
             target_player_id = event["message_text"]["target_player_id"]
         except:
-            logger.info(f"field_claim: invalid data, {event['message_text']}")
+            logger.error(f"field_claim: invalid data, {event['message_text']}")
             status = "fail"
             error_message.append({"id":"field_claim", "message": "Invalid data, try again."})
 
@@ -731,7 +770,7 @@ class SubjectUpdatesMixin():
             player_id = self.session_players_local[event["player_key"]]["id"]
             source = event["message_text"]["source"]
         except:
-            logger.info(f"build_disc: invalid data, {event['message_text']}")
+            logger.error(f"build_disc: invalid data, {event['message_text']}")
             status = "fail"
             error_message.append({"id":"build_disc", "message": "Invalid data, try again."})
 
@@ -816,7 +855,7 @@ class SubjectUpdatesMixin():
             build_seed_count = event["message_text"]["build_seed_count"]
             source = event["message_text"]["source"]
         except:
-            logger.info(f"build_seeds: invalid data, {event['message_text']}")
+            logger.error(f"build_seeds: invalid data, {event['message_text']}")
             status = "fail"
             error_message.append({"id":"build_seeds", "message": "Invalid data, try again."})
 
@@ -894,13 +933,12 @@ class SubjectUpdatesMixin():
         error_message = []
         status = "success"
 
-
         try:
             player_id = self.session_players_local[event["player_key"]]["id"]
             field_id = event["message_text"]["field_id"]
             present_players = event["message_text"]["present_players"]
         except:
-            logger.info(f"present_players: invalid data, {event['message_text']}")
+            logger.error(f"present_players: invalid data, {event['message_text']}")
             status = "fail"
             error_message.append({"id":"present_players", "message": "Invalid data, try again."})
         
