@@ -337,7 +337,25 @@ start_send_disc: function start_send_disc()
  */ 
 start_take_disc: function start_take_disc()
 {
+    app.working = true;
     app.selected_player.interaction_type = "take_disc";
+
+    app.selected_player.interaction_discs={};
+
+    let session_player = app.session.world_state.session_players[app.selected_player.selected_player_id];
+
+    for(const i in session_player.disc_inventory)
+    {
+        if(session_player.disc_inventory[i])
+        {
+            app.selected_player.interaction_discs[i] = false;
+        }
+    }
+
+    app.send_message("tractor_beam", 
+                    {"target_player_id": app.selected_player.selected_player_id,
+                     "interaction_type": app.selected_player.interaction_type},
+                     "group");
 },
 
 /**
