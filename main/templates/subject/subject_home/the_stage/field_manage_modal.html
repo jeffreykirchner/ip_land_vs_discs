@@ -37,7 +37,9 @@
                             <button class="btn btn-secondary"
                                     type="button"
                                     title="Grant Field Access"
-                                    v-bind:style="{'background-color': temp_p.hex_color}"                                 
+                                    v-bind:style="{'background-color': temp_p.hex_color, 
+                                                   'opacity':0.75,
+                                                   'color': 'white'}"                                 
                                     v-bind:disabled="working"
                                     v-on:click="send_grant_field_access(p.id)">
                                     

@@ -447,6 +447,12 @@ class SubjectUpdatesMixin():
                 if not disc_found:
                     status = "fail"
                     error_message = "No discs selected."
+            
+            source_player["state"] = "open"
+            source_player["state_payload"] = {}
+
+            target_player["state"] = "open"
+            target_player["state_payload"] = {}
 
 
         result["status"] = status

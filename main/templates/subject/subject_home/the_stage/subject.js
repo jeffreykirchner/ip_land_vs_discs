@@ -25,9 +25,11 @@ get_offset:function get_offset()
         {
             let frozen_text = "No movement while interacting.";
 
-            if(local_player.state == "building_seeds" || local_player.state == "claiming_field")
+            if(local_player.state == "building_seeds" || 
+               local_player.state == "claiming_field" ||
+               local_player.state == "building_disc")
             {
-                frozen_text = "No movement while building.";
+                frozen_text = "No movement while working.";
             }
 
             app.add_text_emitters(frozen_text, 
@@ -52,9 +54,11 @@ get_offset:function get_offset()
         {
             let frozen_text = "No actions while interacting.";
 
-            if(local_player.state == "building_seeds" || local_player.state == "claiming_field")
+            if(local_player.state == "building_seeds" || 
+               local_player.state == "claiming_field" ||
+               local_player.state == "building_disc")
             {
-                frozen_text = "No actions while building.";
+                frozen_text = "No actions while working.";
             }
 
             app.add_text_emitters(frozen_text, 
