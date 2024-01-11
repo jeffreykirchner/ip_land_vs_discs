@@ -530,6 +530,14 @@ take_interaction: function take_interaction(message_data)
             {
                 app.working = false;
                 app.interaction_modal.hide();
+                app.setup_disc_inventory();
+                app.setup_seed_inventory();
+            }
+
+            if(target_player_id == app.session_player.id)
+            {
+                app.setup_disc_inventory();
+                app.setup_seed_inventory();
             }
         }
     }
@@ -906,7 +914,7 @@ update_disc_wedges: function update_disc_wedges(player_id)
     disc_wedges.drawCircle(0, 0, disc_wedge_radius);
     disc_wedges.endFill();
 
-    let start_angle = 0;
+    let start_angle = -90;
     let wedge_size = 360/app.session.world_state.session_players_order.length;
     disc_wedges.lineStyle(2, "dimgray");
     disc_wedges.moveTo(0, 0);

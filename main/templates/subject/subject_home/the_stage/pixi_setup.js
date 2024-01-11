@@ -39,7 +39,8 @@ setup_pixi: function setup_pixi(){
         else
         {
             app.setup_pixi_minimap();
-            app.setup_inventory();
+            app.setup_disc_inventory();
+            app.setup_seed_inventory();
             // app.setup_subject_status_overlay();
         }
     });

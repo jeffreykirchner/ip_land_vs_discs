@@ -8,7 +8,7 @@ axios.defaults.xsrfCookieName = "csrftoken";
 var subject_status_overlay = {container:null, current_period_label:null, time_remaining_label:null, profit_label:null};
 var pixi_target = null;                        //target sprite for your avatar
 var mini_map = {container:null, players:{}, fields:{}};            //on screen mini map
-var pixi_inventory = {container:null};                                  //on screen inventory
+var pixi_inventory = {disc_container:null, seed_container:null};                                  //on screen inventory
 var pixi_notices = {container:null, notices:{}};                         //notices
 var pixi_notices_key = 0;
 
@@ -273,6 +273,7 @@ var app = Vue.createApp({
             app.setup_pixi_subjects();
             app.setup_pixi_fields();
             app.setup_pixi_minimap();
+            app.setup_disc_inventory();
 
             app.update_subject_status_overlay();
         },
@@ -462,6 +463,13 @@ var app = Vue.createApp({
                     app.update_disc_wedges(p);
                 }                
                 session_player_local.seed_multiplier = session_player.seed_multiplier;
+            }
+
+            //update on screen inventory
+            if(message_data.period_is_over)
+            {
+                app.setup_disc_inventory();
+                app.setup_seed_inventory();
             }
 
             app.update_player_inventory();
