@@ -468,10 +468,10 @@ var app = Vue.createApp({
             //update on screen inventory
             if(message_data.period_is_over)
             {
-                app.setup_disc_inventory();
-                app.setup_seed_inventory();
+                app.setup_disc_inventory();                
             }
 
+            app.setup_seed_inventory();
             app.update_player_inventory();
 
             //update player location

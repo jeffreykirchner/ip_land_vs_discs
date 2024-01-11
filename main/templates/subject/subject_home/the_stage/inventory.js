@@ -107,14 +107,14 @@ setup_seed_inventory: function setup_seed_inventory()
     pixi_inventory.sortableChildren = true;
 
     //text
-    let text_disc_style = {
+    let text_seed_style = {
         fontFamily: 'Arial',
         fontSize: 16,
         fill: 'black',
         align: 'center',
     };
 
-    let text_disc_value_style = {
+    let text_seed_value_style = {
         fontFamily: 'Arial',
         fontSize: 40,
         fill: 'black',
@@ -124,13 +124,33 @@ setup_seed_inventory: function setup_seed_inventory()
     let session_player = app.session.world_state.session_players[app.session_player.id];
 
     let seed_graphic = PIXI.Sprite.from(app.pixi_textures["seed_tex"]);
-    let parameter_set_player = app.get_parameter_set_player_from_player_id(i);
+    let parameter_set_player = app.get_parameter_set_player_from_player_id(app.session_player.id);
 
     seed_graphic.scale.set(0.5);
     seed_graphic.position.set(0, 0);
     seed_graphic.zIndex = 100;
 
     pixi_inventory.seed_container.addChild(seed_graphic);
+
+    let seed_multiplier = session_player.seed_multiplier;
+    let total_seed_value = session_player.seeds * seed_multiplier;
+
+    let seed_multiplier_s = parseFloat(seed_multiplier).toFixed(1);
+    let total_seed_value_s = parseFloat(total_seed_value).toFixed(1);
+
+    let seed_value_label = new PIXI.Text(session_player.seeds + " x " + seed_multiplier_s + " = " + total_seed_value_s + "¢",
+                                         text_seed_value_style);
+
+    seed_value_label.position.set(seed_graphic.x + seed_graphic.width + 5, 
+                                  seed_graphic.y + seed_graphic.height/2 - seed_value_label.height/2);
+    seed_value_label.zIndex = 100;
+    pixi_inventory.seed_container.addChild(seed_value_label);
+
+    let seed_value_label_2 = new PIXI.Text("(seeds x multiplier = ¢)", text_seed_style);
+    seed_value_label_2.position.set(pixi_inventory.seed_container.width/2 - seed_value_label_2.width/2,
+                                    pixi_inventory.seed_container.height);
+    seed_value_label_2.zIndex = 100;
+    pixi_inventory.seed_container.addChild(seed_value_label_2);
 
     //inventory background
     let invetory_bg = new PIXI.Graphics();
