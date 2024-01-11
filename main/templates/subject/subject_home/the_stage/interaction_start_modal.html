@@ -39,6 +39,7 @@
                         <button type="button"
                                 class="btn btn-outline-primary mr-2"
                                 v-on:click = "start_take_seeds()"
+                                v-if="get_current_parameter_set_period().seed_pr=='False'"
                                 title="Cancel Interaction"                       
                                 v-bind:disabled="reconnecting || working">
                             Take Seeds from [[selected_player.parameter_set_player.id_label]] <i class="fas fa-seedling"></i>
@@ -63,6 +64,7 @@
                         <button type="button"
                                 class="btn btn-outline-primary mr-2"
                                 v-on:click = "start_take_disc()"
+                                v-if="get_current_parameter_set_period().disc_pr=='False'"
                                 title="Cancel Interaction"                       
                                 v-bind:disabled="reconnecting || working">
                             Take Disc Copies from [[selected_player.parameter_set_player.id_label]] <i class="fas fa-compact-disc"></i>

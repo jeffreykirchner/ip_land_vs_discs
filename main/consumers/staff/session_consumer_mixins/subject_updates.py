@@ -379,6 +379,8 @@ class SubjectUpdatesMixin():
             status = "fail"
             error_message.append({"id":"interaction", "message": "Invalid data, try again."})
 
+        parameter_set_period = await self.get_current_parameter_set_period()
+
         #check if on break
         if self.world_state_local["time_remaining"] > self.parameter_set_local["period_length"]:
             status = "fail"
@@ -389,6 +391,11 @@ class SubjectUpdatesMixin():
                 source_player['interaction'] == 0:
                 status = "fail"
                 error_message = "No interaction in progress."
+        
+        if status == "success":
+            if interaction_type=='take_seeds' and parameter_set_period["seed_pr"] == "True":
+                status = "fail"
+                error_message = "Invalid entry."
         
         result = {"source_player_id": player_id}
 
