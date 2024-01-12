@@ -35,6 +35,12 @@ class ParameterSetForm(forms.ModelForm):
                                       widget=forms.NumberInput(attrs={"v-model":"parameter_set.break_length",
                                                                       "step":"1",
                                                                       "min":"1"}))
+    
+    interaction_only_length = forms.IntegerField(label='Interaction Only Length (seconds)',
+                                                    min_value=1,
+                                                    widget=forms.NumberInput(attrs={"v-model":"parameter_set.interaction_only_length",
+                                                                                    "step":"1",
+                                                                                    "min":"1"}))
 
     show_instructions = forms.ChoiceField(label='Show Instructions',
                                        choices=((True, 'Yes'), (False,'No' )),
@@ -173,7 +179,7 @@ class ParameterSetForm(forms.ModelForm):
 
     class Meta:
         model=ParameterSet
-        fields =['period_count', 'period_length', 'break_frequency', 'break_length',
+        fields =['period_count', 'period_length', 'break_frequency', 'break_length', 'interaction_only_length',
                  'show_instructions', 'instruction_set', 
                  'survey_required', 'survey_link', 'test_mode', 'prolific_mode', 'prolific_completion_link', 'reconnection_limit',
                  'interaction_length', 'interaction_range', 'cool_down_length', 'build_time', 'field_build_length', 'disc_build_length','seed_build_length',

@@ -27,6 +27,7 @@ class ParameterSet(models.Model):
     period_length = models.IntegerField(verbose_name='Period Length, Production', default=60           )      #period length in seconds
     break_frequency = models.IntegerField(verbose_name='Break Frequency', default=7)                          #frequency of breaks
     break_length = models.IntegerField(verbose_name='Break Length', default=100)                              #length of breaks in seconds
+    interaction_only_length = models.IntegerField(verbose_name='Interaction Only Length', default=30)         #length of interaction only period in seconds
 
     private_chat = models.BooleanField(default=True, verbose_name='Private Chat')                             #if true subjects can privately chat one on one
     show_instructions = models.BooleanField(default=True, verbose_name='Show Instructions')                   #if true show instructions
@@ -87,6 +88,7 @@ class ParameterSet(models.Model):
             self.period_length = new_ps.get("period_length")
             self.break_frequency = new_ps.get("break_frequency", 7)
             self.break_length = new_ps.get("break_length", 100)
+            self.interaction_only_length = new_ps.get("interaction_only_length", 30)
 
             self.private_chat = False
 
@@ -277,6 +279,7 @@ class ParameterSet(models.Model):
         self.json_for_session["period_length"] = self.period_length
         self.json_for_session["break_frequency"] = self.break_frequency
         self.json_for_session["break_length"] = self.break_length
+        self.json_for_session["interaction_only_length"] = self.interaction_only_length
 
         self.json_for_session["private_chat"] = "False"
         self.json_for_session["show_instructions"] = "True" if self.show_instructions else "False"
