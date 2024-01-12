@@ -35,7 +35,7 @@
                 </div>
 
                 <div class="row mt-2"
-                     v-if="get_current_parameter_set_period().seed_pr=='False'">
+                     v-if="session.started && get_current_parameter_set_period().seed_pr=='False'">
                     <div class="col text-center">
                         <button type="button"
                                 class="btn btn-outline-primary mr-2"
@@ -48,7 +48,7 @@
                 </div>
                   
                 <div class="row mt-4" 
-                     v-if="get_current_parameter_set_period().disc_pr=='False'">
+                     v-if="session.started && get_current_parameter_set_period().disc_pr=='False'">
                     <div class="col text-center">
                         <button type="button"
                                 class="btn btn-outline-primary mr-2"
@@ -62,7 +62,7 @@
                 </div>
 
                 <div class="row mt-4"
-                     v-if="get_current_parameter_set_period().disc_pr=='True'">
+                     v-if="session.started && get_current_parameter_set_period().disc_pr=='True'">
                     <div class="col text-center">
                         <button type="button"
                                 class="btn btn-outline-primary mr-2"
@@ -75,7 +75,7 @@
                 </div>
                 
                 <div class="row mt-2"
-                     v-if="get_current_parameter_set_period().disc_pr=='False'">
+                     v-if="session.started && get_current_parameter_set_period().disc_pr=='False'">
                     <div class="col text-center">
                         <button type="button"
                                 class="btn btn-outline-primary mr-2"
