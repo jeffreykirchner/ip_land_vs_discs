@@ -94,9 +94,18 @@ class SubjectControlsMixin():
 
         session_player["current_location"] = {"x" : parameter_set_player["start_x"], "y" : parameter_set_player["start_y"]}
         session_player["target_location"] = session_player["current_location"]
+
+        session_player["state"] = "open"
+        session_player["state_payload"] = {}
+        session_player["cool_down"] = 0
+        session_player["frozen"] = False
+        session_player["interaction"] = 0
+        session_player["tractor_beam_target"] = None
+
         
         result = {"value" : "success", 
                   "new_location" : session_player["current_location"], 
+                  "session_player" : session_player,
                   "player_id" : player_id}
         
         await self.send_message(message_to_self=None, message_to_group=result,
