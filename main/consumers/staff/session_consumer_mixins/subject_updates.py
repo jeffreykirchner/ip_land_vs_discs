@@ -479,6 +479,7 @@ class SubjectUpdatesMixin():
             result["target_player_id"] = target_player_id
             result["interaction_type"] = interaction_type
             result["interaction_amount"] = interaction_amount
+            result["interaction_discs"] = interaction_discs
 
             #clear status
             if interaction_type == 'take_seeds' or interaction_type == 'take_disc':
@@ -751,6 +752,7 @@ class SubjectUpdatesMixin():
 
             result["field_id"] = field_id
             result["field"] = field
+            result["target_player_id"] = target_player_id
             
             await Session.objects.filter(id=self.session_id).aupdate(world_state=self.world_state_local)
 
