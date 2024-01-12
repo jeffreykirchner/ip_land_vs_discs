@@ -347,7 +347,7 @@ send_field_claim: function send_field_claim()
         
     app.send_message("field_claim", 
                     {"field_id" : field_id, "source" : "client"},
-                    "group"); 
+                     "group"); 
 },
 
 /**
@@ -426,7 +426,23 @@ subject_field_click: function subject_field_click(target_field_id)
     //check if enough time remaining in period to build
     if(app.selected_field.field.owner == null)
     {
-        if(app.session.world_state.time_remaining < app.session.parameter_set.field_build_length)
+        if(app.session.world_state.time_remaining > app.session.parameter_set.period_length &&
+            app.session.world_state.current_period % app.session.parameter_set.break_frequency == 0)
+        {
+            let obj = app.session.world_state.session_players[app.session_player.id];
+            app.add_text_emitters("No claims while on break.", 
+                                    obj.current_location.x, 
+                                    obj.current_location.y,
+                                    obj.current_location.x,
+                                    obj.current_location.y-100,
+                                    0xFFFFFF,
+                                    28,
+                                    null);
+            return;
+        }
+
+        if(app.session.world_state.time_remaining - app.session.parameter_set.disc_build_length < 
+            app.session.parameter_set.interaction_only_length)
         {
             let obj = app.session.world_state.session_players[app.session_player.id];
             app.add_text_emitters("Not enough time remaining in period to claim.", 
@@ -488,7 +504,8 @@ send_build_disc: function send_build_disc()
     }
 
     //check if enough time remaining in period to build
-    if(app.session.world_state.time_remaining < app.session.parameter_set.disc_build_length)
+    if(app.session.world_state.time_remaining - app.session.parameter_set.disc_build_length < 
+       app.session.parameter_set.interaction_only_length)
     {
         let obj = app.session.world_state.session_players[app.session_player.id];
         app.add_text_emitters("Not enough time remaining in period to produce.", 
@@ -589,7 +606,8 @@ send_build_seeds: function send_build_seeds()
     }
 
     //check if enough time remaining in period to build
-    if(app.session.world_state.time_remaining < app.session.parameter_set.seed_build_length*app.build_seed_count)
+    if(app.session.world_state.time_remaining - (app.build_seed_count * app.session.parameter_set.seed_build_length) < 
+       app.session.parameter_set.interaction_only_length)
     {
         let obj = app.session.world_state.session_players[app.session_player.id];
         app.add_text_emitters("Not enough time remaining in period to produce.", 

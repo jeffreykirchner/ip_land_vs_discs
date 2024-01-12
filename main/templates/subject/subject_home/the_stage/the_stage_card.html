@@ -107,6 +107,8 @@
                                          session.world_state.session_players[session_player.id].interaction > 0 ||
                                          session.world_state.session_players[session_player.id].cool_down > 0 ||
                                          session.world_state.session_players[session_player.id].disc_inventory[session_player.id] ||
+                                         session.world_state.time_remaining <= session.parameter_set.interaction_only_length ||
+                                         session.world_state.time_remaining > session.parameter_set.period_length ||
                                          session.started===false || 
                                          session.world_state.finished"
                         v-on:click="send_build_disc()">
@@ -135,6 +137,8 @@
                                              working || 
                                              session.world_state.session_players[session_player.id].interaction > 0 ||
                                              session.world_state.session_players[session_player.id].cool_down > 0 ||
+                                             session.world_state.time_remaining <= session.parameter_set.interaction_only_length ||
+                                             session.world_state.time_remaining > session.parameter_set.period_length ||
                                              session.started===false || 
                                              session.world_state.finished"
                             v-on:click="send_build_seeds()">Grow Seeds <i class="fas fa-seedling"></i></button>
@@ -143,8 +147,25 @@
                 
             </div>
 
-            <div class="col-3 text-center fw-bold fs-5">
-                Production Seconds Remaining: [[session.world_state.session_players[session_player.id].build_time_remaining]] / [[session.parameter_set.build_time]]
+            <div class="col-3 text-center ">
+                <div class="row">
+                    <div class="col text-center fw-bold fs-5">
+                         Production Seconds Remaining: [[session.world_state.session_players[session_player.id].build_time_remaining]] / [[session.parameter_set.build_time]]
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col text-center fw-bold">
+                        <span v-if="session.world_state.time_remaining > session.parameter_set.period_length">
+                            *** No Production on Break ***
+                        </span>
+                        <span v-else-if="(session.world_state.time_remaining - session.parameter_set.interaction_only_length)>=0">
+                            (All production must be complete in [[session.world_state.time_remaining - session.parameter_set.interaction_only_length]] seconds.)
+                        </span>
+                        <span v-else>
+                            *** Production Disabled ***
+                        </span>
+                    </div>
+                </div>
             </div>
 
             <div class="col-4">
