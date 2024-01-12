@@ -324,12 +324,45 @@ start_send_disc: function start_send_disc()
     {
         if(session_player.disc_inventory[i])
         {
-            app.selected_player.interaction_discs[i] = false;
+            if(i == app.session_player.id)
+            {
+                app.selected_player.interaction_discs[i] = true;
+            }
+            else
+            {
+                app.selected_player.interaction_discs[i] = false;
+            }
         }
     }
 
     app.interaction_start_modal.hide();
     app.interaction_modal.toggle();
+},
+
+/**
+ * send my disc only
+ */
+send_my_disc: function send_my_disc()
+{
+    let session_player = app.session.world_state.session_players[app.session_player.id];
+
+    if(!session_player.disc_inventory[app.session_player.id])
+    {
+        app.interaction_error = "Your is not built.";
+        return;
+    }
+
+    app.selected_player.interaction_discs={};
+    app.selected_player.interaction_discs[app.session_player.id] = true;
+
+    app.working = true;
+
+    app.send_message("interaction", 
+                    {"target_player_id": app.selected_player.selected_player_id,
+                     "interaction_type": "send_disc",
+                     "interaction_amount" : 0,
+                     "interaction_discs": app.selected_player.interaction_discs},
+                     "group"); 
 },
 
 /**
@@ -530,6 +563,15 @@ take_interaction: function take_interaction(message_data)
             {
                 app.working = false;
                 app.interaction_modal.hide();
+                app.interaction_start_modal.hide();
+                app.setup_disc_inventory();
+                app.setup_seed_inventory();
+            }
+
+            if(target_player_id == app.session_player.id)
+            {
+                app.setup_disc_inventory();
+                app.setup_seed_inventory();
             }
         }
     }
@@ -906,7 +948,7 @@ update_disc_wedges: function update_disc_wedges(player_id)
     disc_wedges.drawCircle(0, 0, disc_wedge_radius);
     disc_wedges.endFill();
 
-    let start_angle = 0;
+    let start_angle = -90;
     let wedge_size = 360/app.session.world_state.session_players_order.length;
     disc_wedges.lineStyle(2, "dimgray");
     disc_wedges.moveTo(0, 0);

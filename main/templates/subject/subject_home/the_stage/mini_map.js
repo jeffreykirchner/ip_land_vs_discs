@@ -50,7 +50,7 @@ setup_pixi_minimap: function setup_pixi_minimap()
 
         if(field.owner){
            let parameter_set_player = app.get_parameter_set_player_from_player_id(field.owner);
-           temp_field.beginFill(parameter_set_player.hex_color, 1);
+           temp_field.beginFill(parameter_set_player.hex_color, 0.75);
         }
         else
         {

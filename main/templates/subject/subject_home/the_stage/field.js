@@ -555,6 +555,7 @@ take_build_disc: function take_build_disc(message_data)
         if(app.is_subject && source_player_id == app.session_player.id)
         {
             app.working = false;
+            app.setup_disc_inventory();
         }
     }
     else
@@ -653,6 +654,7 @@ take_build_seeds: function take_build_seeds(message_data)
         if(app.is_subject && source_player_id == app.session_player.id)
         {
             app.working = false;
+            app.setup_seed_inventory();
         }
     }
     else

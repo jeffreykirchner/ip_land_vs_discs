@@ -7,7 +7,8 @@ axios.defaults.xsrfCookieName = "csrftoken";
 //global variables
 var subject_status_overlay = {container:null, current_period_label:null, time_remaining_label:null, profit_label:null};
 var pixi_target = null;                        //target sprite for your avatar
-var mini_map = {container:null, players:{}, fields:{}};               //mini map container
+var mini_map = {container:null, players:{}, fields:{}};            //on screen mini map
+var pixi_inventory = {disc_container:null, seed_container:null};                                  //on screen inventory
 var pixi_notices = {container:null, notices:{}};                         //notices
 var pixi_notices_key = 0;
 
@@ -272,6 +273,7 @@ var app = Vue.createApp({
             app.setup_pixi_subjects();
             app.setup_pixi_fields();
             app.setup_pixi_minimap();
+            app.setup_disc_inventory();
 
             app.update_subject_status_overlay();
         },
@@ -463,6 +465,13 @@ var app = Vue.createApp({
                 session_player_local.seed_multiplier = session_player.seed_multiplier;
             }
 
+            //update on screen inventory
+            if(message_data.period_is_over)
+            {
+                app.setup_disc_inventory();                
+            }
+
+            app.setup_seed_inventory();
             app.update_player_inventory();
 
             //update player location
@@ -603,6 +612,7 @@ var app = Vue.createApp({
         {%include "subject/subject_home/the_stage/mini_map.js"%}
         {%include "subject/subject_home/the_stage/subject_overlay.js"%}
         {%include "subject/subject_home/the_stage/notices.js"%}
+        {%include "subject/subject_home/the_stage/inventory.js"%}
         {%include "subject/subject_home/help_doc_subject.js"%}
 
         /** clear form error messages
