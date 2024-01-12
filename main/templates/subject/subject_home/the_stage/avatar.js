@@ -333,6 +333,32 @@ start_send_disc: function start_send_disc()
 },
 
 /**
+ * send my disc only
+ */
+send_my_disc: function send_my_disc()
+{
+    let session_player = app.session.world_state.session_players[app.session_player.id];
+
+    if(!session_player.disc_inventory[app.session_player.id])
+    {
+        app.interaction_error = "Your is not built.";
+        return;
+    }
+
+    app.selected_player.interaction_discs={};
+    app.selected_player.interaction_discs[app.session_player.id] = true;
+
+    app.working = true;
+
+    app.send_message("interaction", 
+                    {"target_player_id": app.selected_player.selected_player_id,
+                     "interaction_type": "send_disc",
+                     "interaction_amount" : 0,
+                     "interaction_discs": app.selected_player.interaction_discs},
+                     "group"); 
+},
+
+/**
  * start take disc
  */ 
 start_take_disc: function start_take_disc()
@@ -530,6 +556,7 @@ take_interaction: function take_interaction(message_data)
             {
                 app.working = false;
                 app.interaction_modal.hide();
+                app.interaction_start_modal.hide();
                 app.setup_disc_inventory();
                 app.setup_seed_inventory();
             }
