@@ -767,14 +767,13 @@ move_player: function move_player(delta)
         let gear_sprite = pixi_avatars[i].gear_sprite;
         let status_label = pixi_avatars[i].status_label;
 
-        if(obj.target_location.x !=  obj.current_location.x ||
-            obj.target_location.y !=  obj.current_location.y )
+        if((obj.target_location.x !=  obj.current_location.x ||
+            obj.target_location.y !=  obj.current_location.y) && 
+            !obj.frozen)
         {           
             //move player towards target
-            if(!obj.frozen)
-            {
-                app.move_avatar(delta,i);
-            }
+
+            app.move_avatar(delta,i);
 
             //update the sprite locations
             gear_sprite.play();

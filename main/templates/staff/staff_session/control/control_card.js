@@ -19,13 +19,6 @@ take_update_start_experiment: function take_update_start_experiment(message_data
     app.take_get_session(message_data);
 },
 
-/** update start status
-*    @param message_data {json} session day in json format
-*/
-take_update_reset_experiment: function take_update_reset_experiment(message_data){
-    app.take_get_session(message_data);
-},
-
 /**reset experiment, remove all bids, asks and trades
 */
 reset_experiment: function reset_experiment(){
@@ -45,6 +38,7 @@ reset_experiment: function reset_experiment(){
 */
 take_reset_experiment: function take_reset_experiment(message_data){
     app.chat_list_to_display=[];
+    app.the_feed = [];
     app.take_get_session(message_data);
 },
 
