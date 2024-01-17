@@ -123,6 +123,53 @@ class Session(models.Model):
             i.start()
 
         self.setup_world_state()
+        self.setup_summary_data()
+
+    def setup_summary_data(self):
+        '''
+        setup summary data
+        '''
+
+        session_players = self.session_players.values('id','parameter_set_player__id').all()
+        parameter_set = self.parameter_set.json()
+        world_state = self.world_state
+
+        summary_data = {}
+
+        for i in session_players:
+            i_s = str(i["id"])
+            summary_data[i_s] = {}
+
+            summary_data_player = summary_data[i_s]
+            summary_data_player["field_owner"] = None
+            summary_data_player["in_field"] = None
+            summary_data_player["seed_multiplier"] = 1
+            summary_data_player["admissions_total"] = 0
+
+            summary_data_player["seeds_produced"] = 0
+            summary_data_player["seeds_taken_from_me_total"] = 0
+            summary_data_player["seeds_i_took_total"] = 0
+            summary_data_player["seeds_i_sent_total"] = 0
+            summary_data_player["seeds_sent_to_me_total"] = 0
+            summary_data_player["seeds"] = 0
+
+            summary_data_player["disc_produced"] = False
+
+            summary_data_player["earnings"] = 0
+
+            summary_data_interactions = {}
+            for j in session_players:
+                j_s = str(j["id"])
+                summary_data_interactions[j_s] = {"have_their_disc":False,
+                                                  "sent_disc_to":False, 
+                                                  "took_disc_from":False, 
+                                                  "sent_seeds_to":0, 
+                                                  "took_seeds_from":0,
+                                                  "admitted_to_field":False,}
+
+            summary_data_player["interactions"] = summary_data_interactions
+
+        self.session_periods.all().update(summary_data=summary_data)
 
     def setup_world_state(self):
         '''
@@ -269,7 +316,20 @@ class Session(models.Model):
 
             writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
 
-            writer.writerow(["Session ID", "Period", "Client #", "Label", "Earnings ¢"])
+            top_row = ["Session ID", "Period", "Client #", "Label", "Earnings ¢", "Field Owner", "In Field",
+                       "Seed Multiplier", "Admissions Total", "Seeds Produced", "Seeds Taken From Me Total",
+                       "Seeds I Took Total", "Seeds I Sent Total", "Seeds Taken From Total", "Disc Produced",]
+
+            # interactions
+            for i in self.session_players.all().values('id','parameter_set_player__id_label'):
+                top_row.append(f'Has {i["parameter_set_player__id_label"]}\'s Disc')
+                top_row.append(f'Sent Disc to {i["parameter_set_player__id_label"]}')
+                top_row.append(f'Took Disc From {i["parameter_set_player__id_label"]}')
+                top_row.append(f'Sent Seeds to {i["parameter_set_player__id_label"]}')
+                top_row.append(f'Took Seeds From {i["parameter_set_player__id_label"]}')
+                top_row.append(f'Admitted {i["parameter_set_player__id_label"]} to Field')
+
+            writer.writerow(top_row)
 
             world_state = self.world_state
             parameter_set_players = {}
@@ -279,12 +339,37 @@ class Session(models.Model):
             # logger.info(parameter_set_players)
 
             for period_number, period in enumerate(world_state["session_periods"]):
+                summary_data = self.session_periods.get(id=period).summary_data
+
                 for player_number, player in enumerate(world_state["session_players"]):
-                    writer.writerow([self.id, 
-                                    period_number+1, 
-                                    player_number+1,
-                                    parameter_set_players[str(player)]["parameter_set_player__id_label"], 
-                                    world_state["session_players"][player]["seeds"]])
+                    player_s = str(player)
+                    summary_data_player = summary_data[player_s]
+                    temp_row = [self.id, 
+                                period_number+1, 
+                                player_number+1,
+                                parameter_set_players[player_s]["parameter_set_player__id_label"], 
+                                summary_data_player["earnings"],
+                                summary_data_player["field_owner"],
+                                summary_data_player["in_field"],
+                                summary_data_player["seed_multiplier"],
+                                summary_data_player["admissions_total"],
+                                summary_data_player["seeds_produced"],
+                                summary_data_player["seeds_taken_from_me_total"],
+                                summary_data_player["seeds_i_took_total"],
+                                summary_data_player["seeds_i_sent_total"],
+                                summary_data_player["seeds_sent_to_me_total"],
+                                summary_data_player["disc_produced"],]
+                    
+                    # interactions
+                    for k in world_state["session_players"]:
+                        temp_row.append(summary_data_player["interactions"][k]["have_their_disc"])
+                        temp_row.append(summary_data_player["interactions"][k]["sent_disc_to"])
+                        temp_row.append(summary_data_player["interactions"][k]["took_disc_from"])
+                        temp_row.append(summary_data_player["interactions"][k]["sent_seeds_to"])
+                        temp_row.append(summary_data_player["interactions"][k]["took_seeds_from"])
+                        temp_row.append(summary_data_player["interactions"][k]["admitted_to_field"])
+                    
+                    writer.writerow(temp_row)
                     
             v = output.getvalue()
             output.close()

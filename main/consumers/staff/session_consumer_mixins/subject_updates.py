@@ -618,6 +618,10 @@ class SubjectUpdatesMixin():
             status = "fail"
             error_message.append({"id":"field_claim", "message": "Invalid data, try again."})
 
+        player_id_s = str(player_id)
+        session = await Session.objects.aget(id=self.session_id)
+        current_period = await session.aget_current_session_period()
+
         #check if on break
         if self.world_state_local["time_remaining"] > self.parameter_set_local["period_length"]:
             status = "fail"
@@ -651,7 +655,7 @@ class SubjectUpdatesMixin():
         result["field"] = field
         
         if status == "success":
-            session_player = self.world_state_local["session_players"][str(player_id)]
+            session_player = self.world_state_local["session_players"][player_id_s]
 
             if source == "client":
                 event["message_text"]["source"]="server"
@@ -680,6 +684,9 @@ class SubjectUpdatesMixin():
                     field["allowed_players"] = [player_id]
                 else:
                     field["allowed_players"] = self.world_state_local["session_players_order"].copy()
+
+                current_period.summary_data[player_id_s]["field_owner"] = self.parameter_set_local["parameter_set_fields"][str(field["parameter_set_field"])]["info"]
+                await current_period.asave()
 
             result["build_time_remaining"] = session_player["build_time_remaining"]
             result["state"] = session_player["state"]
@@ -805,6 +812,9 @@ class SubjectUpdatesMixin():
 
         player_id_s = str(player_id)
         session_player = self.world_state_local["session_players"][player_id_s]
+
+        session = await Session.objects.aget(id=self.session_id)
+        current_period = await session.aget_current_session_period()
        
         #check if disc already built
         if session_player["disc_inventory"][player_id_s]:
@@ -833,6 +843,8 @@ class SubjectUpdatesMixin():
         if status == "success":
             #build a disc
             if source == "server":
+                current_period.summary_data[player_id_s]["disc_produced"] = True
+
                 self.world_state_local["session_players"][player_id_s]["disc_inventory"][player_id_s] = True
                 session_player["build_time_remaining"] -= self.parameter_set_local["disc_build_length"]
 
@@ -852,6 +864,7 @@ class SubjectUpdatesMixin():
             result["frozen"] = session_player["frozen"]
             result["interaction"] = session_player["interaction"]
 
+            await current_period.asave()
             await Session.objects.filter(id=self.session_id).aupdate(world_state=self.world_state_local)
 
             await SessionEvent.objects.acreate(session_id=self.session_id, 

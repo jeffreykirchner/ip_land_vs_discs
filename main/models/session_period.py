@@ -5,6 +5,7 @@ session period model
 #import logging
 
 from django.db import models
+from django.core.serializers.json import DjangoJSONEncoder
 
 from main.models import Session
 from main.models import ParameterSetPeriod
@@ -19,6 +20,8 @@ class SessionPeriod(models.Model):
     parameter_set_period = models.ForeignKey(ParameterSetPeriod, on_delete=models.CASCADE, related_name="session_periods", null=True, blank=True)
 
     period_number = models.IntegerField()                       #period number from 1 to N
+
+    summary_data = models.JSONField(encoder=DjangoJSONEncoder, null=True, blank=True, verbose_name="Summary Data")       #summary data for session period
 
     timestamp = models.DateTimeField(auto_now_add=True)
     updated= models.DateTimeField(auto_now=True)

@@ -83,21 +83,14 @@ class TimerMixin():
             self.world_state_local["current_experiment_phase"] = ExperimentPhase.NAMES
             stop_timer = True
 
-            period_is_over = True
-
             #store final period earnings    
             last_period_id = self.world_state_local["session_periods_order"][self.world_state_local["current_period"] - 1]
             last_period_id_s = str(last_period_id)
             last_period = self.world_state_local["session_periods"][last_period_id_s]
 
-            last_period["consumption_completed"] = True
-            
-            for i in self.world_state_local["session_players"]:
-                self.world_state_local["session_players"][i]["earnings"] += self.world_state_local["session_players"][i]["seeds"]
-
-                result["earnings"][i] = {}
-                result["earnings"][i]["total_earnings"] = self.world_state_local["session_players"][i]["earnings"]
-                result["earnings"][i]["period_earnings"] = self.world_state_local["session_players"][i]["seeds"]
+            last_period["consumption_completed"] = True        
+            period_is_over = True
+            await self.period_is_over(event, result)
            
         if self.world_state_local["current_experiment_phase"] != ExperimentPhase.NAMES:
 
@@ -150,60 +143,9 @@ class TimerMixin():
 
                 #check if period over
                 if period_is_over:
-
-                    session_player_ids = [i for i in self.world_state_local["session_players"]]
-
-                    # current_period_id = str(self.world_state_local["session_periods_order"][self.world_state_local["current_period"]-1])
-
                     last_period["consumption_completed"] = True
+                    await self.period_is_over(event, result)
                     
-                    for i in self.world_state_local["session_players"]:
-                        session_player = self.world_state_local["session_players"][i]
-                        parameter_set_player = self.parameter_set_local["parameter_set_players"][str(session_player["parameter_set_player_id"])]
-
-                        disc_count = 0
-
-                        for j in session_player["disc_inventory"]:
-                            if session_player["disc_inventory"][j]:
-                                disc_count += 1
-
-                        session_player["cool_down"] = 0
-                        session_player["interaction"] = 0
-                        session_player["frozen"] = False
-                        session_player["tractor_beam_target"] = None
-                        session_player["state"] = "open"
-                        session_player["state_payload"] = {}
-                        session_player['disc_inventory'] = {str(j):False for j in session_player_ids}
-
-                        period_earnings = Decimal(self.world_state_local["session_players"][i]["seeds"])
-                        period_earnings *= await self.get_seed_multiplier(i)
-
-                        period_earnings += (disc_count * self.parameter_set_local["disc_value"])
-
-                        session_player["earnings"] = str(Decimal(session_player["earnings"]) + period_earnings)
-                        session_player["earnings"] = round_half_away_from_zero(session_player["earnings"], 1)
-
-                        result["earnings"][i] = {}
-                        result["earnings"][i]["total_earnings"] = session_player["earnings"]
-                        result["earnings"][i]["period_earnings"] = round_half_away_from_zero(period_earnings, 1)
-
-                        session_player["seeds"] = 0
-                        session_player["build_time_remaining"] = self.parameter_set_local["build_time"] 
-
-                        #reset locations
-                        session_player["current_location"] = {"x": parameter_set_player["start_x"],
-                                                              "y": parameter_set_player["start_y"]}
-                        
-                        session_player["target_location"] = {"x": parameter_set_player["start_x"]+1,
-                                                             "y": parameter_set_player["start_y"]+1}
-
-                    for i in self.world_state_local["fields"]:
-                        field = self.world_state_local["fields"][i]
-                        field["owner"] = None
-                        field["status"] = "available"       
-                        field["allowed_players"] = []      
-                        field["present_players"] = []
-
         if send_update:
             #session status
             result["value"] = "success"
@@ -233,7 +175,8 @@ class TimerMixin():
             for p in self.world_state_local["session_players"]:
                 session_player = self.world_state_local["session_players"][p]
 
-                session_player["seed_multiplier"] = await self.get_seed_multiplier(p)
+                v = await self.get_seed_multiplier(p)
+                session_player["seed_multiplier"] = v["multiplier"]
 
                 if session_player["cool_down"] > 0:
                     session_player["cool_down"] -= 1
@@ -291,6 +234,76 @@ class TimerMixin():
             
             await self.send_message(message_to_self=False, message_to_group=result,
                                     message_type="time", send_to_client=False, send_to_group=True)
+            
+    async def period_is_over(self, event, result):
+        '''
+        handle period is over
+        '''
+
+        session = await Session.objects.aget(id=self.session_id)
+        current_period = await session.aget_current_session_period()
+
+        session_player_ids = [i for i in self.world_state_local["session_players"]]
+
+        # current_period_id = str(self.world_state_local["session_periods_order"][self.world_state_local["current_period"]-1])
+        
+        for i in self.world_state_local["session_players"]:
+            session_player = self.world_state_local["session_players"][i]
+            parameter_set_player = self.parameter_set_local["parameter_set_players"][str(session_player["parameter_set_player_id"])]
+
+            summary_data_player = current_period.summary_data[str(i)]
+
+            disc_count = 0
+
+            for j in session_player["disc_inventory"]:
+                if session_player["disc_inventory"][str(j)]:
+                    summary_data_player["interactions"][str(j)]["have_their_disc"] = True
+                    disc_count += 1
+
+            session_player["cool_down"] = 0
+            session_player["interaction"] = 0
+            session_player["frozen"] = False
+            session_player["tractor_beam_target"] = None
+            session_player["state"] = "open"
+            session_player["state_payload"] = {}
+            session_player['disc_inventory'] = {str(j):False for j in session_player_ids}
+
+            v = await self.get_seed_multiplier(i)
+            summary_data_player["seed_multiplier"] = v["multiplier"]
+            summary_data_player["in_field"] = v["field_label"]
+
+            period_earnings = Decimal(self.world_state_local["session_players"][i]["seeds"])
+            period_earnings *= summary_data_player["seed_multiplier"]
+
+            period_earnings += (disc_count * self.parameter_set_local["disc_value"])
+
+            session_player["earnings"] = str(Decimal(session_player["earnings"]) + period_earnings)
+            session_player["earnings"] = round_half_away_from_zero(session_player["earnings"], 1)
+
+            result["earnings"][i] = {}
+            result["earnings"][i]["total_earnings"] = session_player["earnings"]
+            result["earnings"][i]["period_earnings"] = round_half_away_from_zero(period_earnings, 1)
+
+            session_player["seeds"] = 0
+            session_player["build_time_remaining"] = self.parameter_set_local["build_time"] 
+
+            #reset locations
+            session_player["current_location"] = {"x": parameter_set_player["start_x"],
+                                                    "y": parameter_set_player["start_y"]}
+            
+            session_player["target_location"] = {"x": parameter_set_player["start_x"]+1,
+                                                 "y": parameter_set_player["start_y"]+1}
+            
+            summary_data_player["earnings"] = period_earnings
+
+        for i in self.world_state_local["fields"]:
+            field = self.world_state_local["fields"][i]
+            field["owner"] = None
+            field["status"] = "available"       
+            field["allowed_players"] = []      
+            field["present_players"] = []
+       
+        await current_period.asave()
 
     async def update_time(self, event):
         '''
@@ -315,13 +328,15 @@ class TimerMixin():
         parameter_set_multipliers = self.parameter_set_local["seed_multipliers"].split("\n")
 
         multiplier = 1
+        field_label = None
         for i in self.world_state_local["fields"]:
             field = self.world_state_local["fields"][i]
 
             if player_id_s in field["present_players"]:
                 present_player_count = len(field["present_players"])
                 multiplier = Decimal(parameter_set_multipliers[present_player_count-1])
+                field_label = self.parameter_set_local["parameter_set_fields"][str(field["parameter_set_field"])]["info"]
 
                 break
             
-        return multiplier   
+        return {"multiplier": multiplier, "field_label": field_label}
