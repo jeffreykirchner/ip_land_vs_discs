@@ -243,6 +243,9 @@ class TimerMixin():
         session = await Session.objects.aget(id=self.session_id)
         current_period = await session.aget_current_session_period()
 
+        if current_period == None:
+            return
+
         session_player_ids = [i for i in self.world_state_local["session_players"]]
 
         # current_period_id = str(self.world_state_local["session_periods_order"][self.world_state_local["current_period"]-1])
@@ -271,6 +274,7 @@ class TimerMixin():
             v = await self.get_seed_multiplier(i)
             summary_data_player["seed_multiplier"] = v["multiplier"]
             summary_data_player["in_field"] = v["field_label"]
+            summary_data_player["admissions_total"] = v["admissions_total"]
 
             period_earnings = Decimal(self.world_state_local["session_players"][i]["seeds"])
             period_earnings *= summary_data_player["seed_multiplier"]
@@ -329,6 +333,17 @@ class TimerMixin():
 
         multiplier = 1
         field_label = None
+        admissions_total = 0
+
+        #find total allowed players on field
+        for i in self.world_state_local["fields"]:
+            field = self.world_state_local["fields"][i]
+
+            if field["owner"] == int(player_id):
+                admissions_total = len(field["allowed_players"])
+                break
+        
+        #find number of players on field
         for i in self.world_state_local["fields"]:
             field = self.world_state_local["fields"][i]
 
@@ -339,4 +354,6 @@ class TimerMixin():
 
                 break
             
-        return {"multiplier": multiplier, "field_label": field_label}
+        return {"multiplier": multiplier, 
+                "field_label": field_label,
+                "admissions_total": admissions_total}

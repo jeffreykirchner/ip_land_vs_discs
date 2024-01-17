@@ -380,6 +380,8 @@ class SubjectUpdatesMixin():
             error_message.append({"id":"interaction", "message": "Invalid data, try again."})
 
         parameter_set_period = await self.get_current_parameter_set_period()
+        session = await Session.objects.aget(id=self.session_id)
+        current_period = await session.aget_current_session_period()
 
         #check if on break
         if self.world_state_local["time_remaining"] > self.parameter_set_local["period_length"]:
@@ -419,7 +421,12 @@ class SubjectUpdatesMixin():
                     source_player["seeds"] += interaction_amount
 
                     result["target_player_change"] = f"-{interaction_amount}"
-                    result["source_player_change"] = f"+{interaction_amount}"             
+                    result["source_player_change"] = f"+{interaction_amount}"       
+
+                    current_period.summary_data[target_player_id_s]["seeds_they_took_total"] += interaction_amount    
+                    current_period.summary_data[player_id_s]["seeds_i_took_total"] += interaction_amount
+
+
             elif interaction_type == 'send_seeds':
                 #give to target
                 if source_player["seeds"] < interaction_amount:
@@ -431,6 +438,9 @@ class SubjectUpdatesMixin():
 
                     result["source_player_change"] = f"-{interaction_amount}"
                     result["target_player_change"] = f"+{interaction_amount}"
+
+                    current_period.summary_data[player_id_s]["seeds_i_sent_total"] += interaction_amount
+                    current_period.summary_data[target_player_id_s]["seeds_they_sent_total"] += interaction_amount
             elif interaction_type == 'take_disc':
                 disc_found = False
 
@@ -461,6 +471,7 @@ class SubjectUpdatesMixin():
             target_player["state"] = "open"
             target_player["state_payload"] = {}
 
+            await current_period.asave()
 
         result["status"] = status
         result["error_message"] = error_message
@@ -911,6 +922,9 @@ class SubjectUpdatesMixin():
         player_id_s = str(player_id)
         session_player = self.world_state_local["session_players"][player_id_s]
 
+        session = await Session.objects.aget(id=self.session_id)
+        current_period = await session.aget_current_session_period()
+
         #check if on break
         if self.world_state_local["time_remaining"] > self.parameter_set_local["period_length"]:
             status = "fail"
@@ -940,6 +954,9 @@ class SubjectUpdatesMixin():
                 session_player["state"] = "open"
                 session_player["state_payload"] = {}
                 session_player["frozen"] = False
+
+                current_period.summary_data[player_id_s]["seeds_produced"] += build_seed_count
+                await current_period.asave()
             else:
                 event["message_text"]["source"]="server"
                 session_player["state"] = "building_seeds"
