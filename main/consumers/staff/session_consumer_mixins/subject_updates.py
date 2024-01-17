@@ -840,7 +840,7 @@ class SubjectUpdatesMixin():
         #check if player has enough proudction seconds remaining
         if session_player["build_time_remaining"] <  self.parameter_set_local["disc_build_length"]:
             status = "fail"
-            error_message.append({"id":"build_disc", "message": "Not enough production time to build a disc."})
+            error_message.append({"id":"build_disc", "message": "Not enough production time remaining."})
 
         #check if player is already building
         if source == "client" and session_player["state"] != "open":
@@ -933,7 +933,7 @@ class SubjectUpdatesMixin():
         #check if player has enough proudction seconds remaining
         if session_player["build_time_remaining"] < build_seed_count * self.parameter_set_local["seed_build_length"]:
             status = "fail"
-            error_message.append({"id":"build_seeds", "message": "Not enough production time to build that many seeds."})
+            error_message.append({"id":"build_seeds", "message": "Not enough production time remaining."})
 
         #check if player is already building
         if source == "client" and session_player["state"] != "open":
