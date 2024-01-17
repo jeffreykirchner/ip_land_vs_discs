@@ -380,6 +380,8 @@ class SubjectUpdatesMixin():
             error_message.append({"id":"interaction", "message": "Invalid data, try again."})
 
         parameter_set_period = await self.get_current_parameter_set_period()
+        session = await Session.objects.aget(id=self.session_id)
+        current_period = await session.aget_current_session_period()
 
         #check if on break
         if self.world_state_local["time_remaining"] > self.parameter_set_local["period_length"]:
@@ -419,7 +421,12 @@ class SubjectUpdatesMixin():
                     source_player["seeds"] += interaction_amount
 
                     result["target_player_change"] = f"-{interaction_amount}"
-                    result["source_player_change"] = f"+{interaction_amount}"             
+                    result["source_player_change"] = f"+{interaction_amount}"       
+
+                    current_period.summary_data[target_player_id_s]["seeds_they_took_total"] += interaction_amount    
+                    current_period.summary_data[player_id_s]["seeds_i_took_total"] += interaction_amount
+
+
             elif interaction_type == 'send_seeds':
                 #give to target
                 if source_player["seeds"] < interaction_amount:
@@ -431,6 +438,9 @@ class SubjectUpdatesMixin():
 
                     result["source_player_change"] = f"-{interaction_amount}"
                     result["target_player_change"] = f"+{interaction_amount}"
+
+                    current_period.summary_data[player_id_s]["seeds_i_sent_total"] += interaction_amount
+                    current_period.summary_data[target_player_id_s]["seeds_they_sent_total"] += interaction_amount
             elif interaction_type == 'take_disc':
                 disc_found = False
 
@@ -461,6 +471,7 @@ class SubjectUpdatesMixin():
             target_player["state"] = "open"
             target_player["state_payload"] = {}
 
+            await current_period.asave()
 
         result["status"] = status
         result["error_message"] = error_message
@@ -618,6 +629,10 @@ class SubjectUpdatesMixin():
             status = "fail"
             error_message.append({"id":"field_claim", "message": "Invalid data, try again."})
 
+        player_id_s = str(player_id)
+        session = await Session.objects.aget(id=self.session_id)
+        current_period = await session.aget_current_session_period()
+
         #check if on break
         if self.world_state_local["time_remaining"] > self.parameter_set_local["period_length"]:
             status = "fail"
@@ -651,7 +666,7 @@ class SubjectUpdatesMixin():
         result["field"] = field
         
         if status == "success":
-            session_player = self.world_state_local["session_players"][str(player_id)]
+            session_player = self.world_state_local["session_players"][player_id_s]
 
             if source == "client":
                 event["message_text"]["source"]="server"
@@ -680,6 +695,9 @@ class SubjectUpdatesMixin():
                     field["allowed_players"] = [player_id]
                 else:
                     field["allowed_players"] = self.world_state_local["session_players_order"].copy()
+
+                current_period.summary_data[player_id_s]["field_owner"] = self.parameter_set_local["parameter_set_fields"][str(field["parameter_set_field"])]["info"]
+                await current_period.asave()
 
             result["build_time_remaining"] = session_player["build_time_remaining"]
             result["state"] = session_player["state"]
@@ -805,6 +823,9 @@ class SubjectUpdatesMixin():
 
         player_id_s = str(player_id)
         session_player = self.world_state_local["session_players"][player_id_s]
+
+        session = await Session.objects.aget(id=self.session_id)
+        current_period = await session.aget_current_session_period()
        
         #check if disc already built
         if session_player["disc_inventory"][player_id_s]:
@@ -819,7 +840,7 @@ class SubjectUpdatesMixin():
         #check if player has enough proudction seconds remaining
         if session_player["build_time_remaining"] <  self.parameter_set_local["disc_build_length"]:
             status = "fail"
-            error_message.append({"id":"build_disc", "message": "Not enough production time to build a disc."})
+            error_message.append({"id":"build_disc", "message": "Not enough production time remaining."})
 
         #check if player is already building
         if source == "client" and session_player["state"] != "open":
@@ -833,6 +854,8 @@ class SubjectUpdatesMixin():
         if status == "success":
             #build a disc
             if source == "server":
+                current_period.summary_data[player_id_s]["disc_produced"] = True
+
                 self.world_state_local["session_players"][player_id_s]["disc_inventory"][player_id_s] = True
                 session_player["build_time_remaining"] -= self.parameter_set_local["disc_build_length"]
 
@@ -852,6 +875,7 @@ class SubjectUpdatesMixin():
             result["frozen"] = session_player["frozen"]
             result["interaction"] = session_player["interaction"]
 
+            await current_period.asave()
             await Session.objects.filter(id=self.session_id).aupdate(world_state=self.world_state_local)
 
             await SessionEvent.objects.acreate(session_id=self.session_id, 
@@ -898,6 +922,9 @@ class SubjectUpdatesMixin():
         player_id_s = str(player_id)
         session_player = self.world_state_local["session_players"][player_id_s]
 
+        session = await Session.objects.aget(id=self.session_id)
+        current_period = await session.aget_current_session_period()
+
         #check if on break
         if self.world_state_local["time_remaining"] > self.parameter_set_local["period_length"]:
             status = "fail"
@@ -906,7 +933,7 @@ class SubjectUpdatesMixin():
         #check if player has enough proudction seconds remaining
         if session_player["build_time_remaining"] < build_seed_count * self.parameter_set_local["seed_build_length"]:
             status = "fail"
-            error_message.append({"id":"build_seeds", "message": "Not enough production time to build that many seeds."})
+            error_message.append({"id":"build_seeds", "message": "Not enough production time remaining."})
 
         #check if player is already building
         if source == "client" and session_player["state"] != "open":
@@ -927,6 +954,9 @@ class SubjectUpdatesMixin():
                 session_player["state"] = "open"
                 session_player["state_payload"] = {}
                 session_player["frozen"] = False
+
+                current_period.summary_data[player_id_s]["seeds_produced"] += build_seed_count
+                await current_period.asave()
             else:
                 event["message_text"]["source"]="server"
                 session_player["state"] = "building_seeds"

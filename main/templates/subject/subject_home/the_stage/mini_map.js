@@ -93,7 +93,15 @@ setup_pixi_minimap: function setup_pixi_minimap()
         // temp_player.position.set(player.current_location.x * scale, player.current_location.y * scale);
 
         mini_map.players[i] = temp_player;
-        mini_map.container.addChild(mini_map.players[i]);
+        
+        if(i == app.session_player.id)
+        {
+            mini_map.container.addChild(mini_map.players[i]);
+        }
+        else
+        {
+            mini_map.container.addChildAt(mini_map.players[i],1);
+        }
     }
 
     //mini map view port

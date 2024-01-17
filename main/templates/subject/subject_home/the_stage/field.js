@@ -531,20 +531,16 @@ send_build_disc: function send_build_disc()
  */
 take_build_disc: function take_build_disc(message_data)
 {
-    var source_player_id = message_data.source_player_id;
+    let source_player_id = message_data.source_player_id;
+    let session_player = app.session.world_state.session_players[source_player_id];
+    let source_location =  session_player.current_location;
 
     if(message_data.status == "success")
     {
-
-        let session_player = app.session.world_state.session_players[source_player_id];
-
-        
         session_player.build_time_remaining =  message_data.build_time_remaining;
         session_player.frozen = message_data.frozen;
         session_player.state = message_data.state;
         session_player.interaction = message_data.interaction;
-
-        
 
         if(session_player.state == "open")
         {
@@ -557,7 +553,7 @@ take_build_disc: function take_build_disc(message_data)
             disc_graphic.alpha = 0.7;
             disc_graphic.tint = app.get_parameter_set_player_from_player_id(source_player_id).hex_color;
 
-            let source_location =  session_player.current_location;
+            
 
             app.add_text_emitters("+", 
                                 source_location.x, 
@@ -580,6 +576,15 @@ take_build_disc: function take_build_disc(message_data)
         if(app.is_subject && source_player_id == app.session_player.id)
         {
             app.working = false;
+
+            app.add_text_emitters(message_data.error_message[0].message,
+                source_location.x, 
+                source_location.y,
+                source_location.x,
+                source_location.y - 100,
+                'white',
+                28,
+                null)
         }
     }
 },
@@ -634,13 +639,13 @@ send_build_seeds: function send_build_seeds()
  */
 take_build_seeds: function take_build_seeds(message_data)
 {
-    var source_player_id = message_data.source_player_id;
+    let source_player_id = message_data.source_player_id;
+
+    let session_player = app.session.world_state.session_players[source_player_id];
+    let source_location =  session_player.current_location;
 
     if(message_data.status == "success")
     {
-
-        let session_player = app.session.world_state.session_players[source_player_id];
-
         session_player.seeds =  message_data.seeds;
         session_player.build_time_remaining =  message_data.build_time_remaining;
         session_player.frozen = message_data.frozen;
@@ -656,8 +661,6 @@ take_build_seeds: function take_build_seeds(message_data)
             seed_graphic.eventMode = 'none';
             seed_graphic.scale.set(0.4);
             seed_graphic.alpha = 0.7;
-
-            let source_location =  session_player.current_location;
 
             app.add_text_emitters("+" + message_data.build_seed_count, 
                                 source_location.x, 
@@ -680,6 +683,15 @@ take_build_seeds: function take_build_seeds(message_data)
         if(app.is_subject && source_player_id == app.session_player.id)
         {
             app.working = false;
+
+            app.add_text_emitters(message_data.error_message[0].message,
+                                source_location.x, 
+                                source_location.y,
+                                source_location.x,
+                                source_location.y - 100,
+                                'white',
+                                28,
+                                null)
         }
     }
 },
