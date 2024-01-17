@@ -637,6 +637,8 @@ take_cancel_interaction: function take_cancel_interaction(message_data)
         source_player.interaction = 0;
         target_player.interaction = 0;
 
+        source_player.cool_down = app.session.parameter_set.cool_down_length;
+
         if(app.is_subject)
         {
             if(source_player_id == app.session_player.id)
