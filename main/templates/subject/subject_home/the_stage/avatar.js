@@ -291,6 +291,7 @@ subject_avatar_click: function subject_avatar_click(target_player_id)
 start_send_seeds: function start_send_seeds()
 {
     app.selected_player.interaction_type = "send_seeds";
+    app.selected_player.interaction_amount = 0;
     app.interaction_start_modal.hide();
     app.interaction_modal.toggle();
 },
@@ -302,11 +303,29 @@ start_take_seeds: function start_take_seeds()
 {
     app.working = true;
     app.selected_player.interaction_type = "take_seeds";
+    app.selected_player.interaction_amount = 0;
     
     app.send_message("tractor_beam", 
                     {"target_player_id": app.selected_player.selected_player_id,
                      "interaction_type": app.selected_player.interaction_type},
                      "group");
+},
+
+/**
+ * select all seeds
+ */
+select_all_seeds: function select_all_seeds()
+{
+    if(app.selected_player.interaction_type == "send_seeds")
+    {
+        let session_player = app.session.world_state.session_players[app.session_player.id];
+        app.selected_player.interaction_amount = session_player.seeds;
+    }
+    else if(app.selected_player.interaction_type == "take_seeds")
+    {
+        let session_player = app.session.world_state.session_players[app.selected_player.selected_player_id];
+        app.selected_player.interaction_amount = session_player.seeds;
+    }
 },
 
 /**
@@ -389,6 +408,17 @@ start_take_disc: function start_take_disc()
                     {"target_player_id": app.selected_player.selected_player_id,
                      "interaction_type": app.selected_player.interaction_type},
                      "group");
+},
+
+/**
+ * select all discs
+ */
+select_all_discs: function select_all_discs()
+{
+   for(const i in app.selected_player.interaction_discs)
+   {
+       app.selected_player.interaction_discs[i] = true;
+   }
 },
 
 /**
@@ -523,6 +553,8 @@ take_interaction: function take_interaction(message_data)
         app.update_disc_wedges(source_player_id);
         app.update_disc_wedges(target_player_id);
 
+        app.update_player_inventory();
+
         //add transfer beam
         if(interaction_type == "take_seeds")
         {
@@ -636,6 +668,8 @@ take_cancel_interaction: function take_cancel_interaction(message_data)
 
         source_player.interaction = 0;
         target_player.interaction = 0;
+
+        source_player.cool_down = app.session.parameter_set.cool_down_length;
 
         if(app.is_subject)
         {

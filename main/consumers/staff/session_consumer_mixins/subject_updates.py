@@ -576,6 +576,8 @@ class SubjectUpdatesMixin():
             target_player["state"] = "open"
             target_player["state_payload"] = {}
 
+            source_player["cool_down"] = self.parameter_set_local["cool_down_length"]
+
             source_player['tractor_beam_target'] = None
 
             await Session.objects.filter(id=self.session_id).aupdate(world_state=self.world_state_local)

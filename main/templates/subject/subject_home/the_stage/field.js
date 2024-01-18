@@ -553,8 +553,6 @@ take_build_disc: function take_build_disc(message_data)
             disc_graphic.alpha = 0.7;
             disc_graphic.tint = app.get_parameter_set_player_from_player_id(source_player_id).hex_color;
 
-            
-
             app.add_text_emitters("+", 
                                 source_location.x, 
                                 source_location.y,
@@ -762,11 +760,13 @@ send_grant_field_access: function send_grant_field_access(target_player_id)
  */
 take_grant_field_access: function take_grant_field_access(message_data)
 {
-    var source_player_id = message_data.source_player_id;
+    let source_player_id = message_data.source_player_id;
 
     if(message_data.status == "success")
     {
         let field_id = message_data.field_id;
+        let target_player_id = message_data.target_player_id;
+
         app.session.world_state.fields[field_id] = message_data.field;
 
         app.destroy_pixi_fields();
@@ -776,6 +776,21 @@ take_grant_field_access: function take_grant_field_access(message_data)
         {
             app.field_manage_modal.hide();
             app.working = false;
+        }
+
+        if(app.is_subject && target_player_id == app.session_player.id)
+        {
+            let source_parameter_set_player = app.get_parameter_set_player_from_player_id(source_player_id);
+            let target_location = app.session.world_state.session_players[target_player_id].current_location;
+
+            app.add_text_emitters("Access granted to " + source_parameter_set_player.id_label + "'s field.",
+                                    target_location.x, 
+                                    target_location.y,
+                                    target_location.x,
+                                    target_location.y - 100,
+                                    0xFFFFFF,
+                                    28,
+                                    null)
         }
     }
     else
