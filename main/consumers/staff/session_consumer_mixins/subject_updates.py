@@ -426,7 +426,6 @@ class SubjectUpdatesMixin():
                     current_period.summary_data[target_player_id_s]["seeds_they_took_total"] += interaction_amount    
                     current_period.summary_data[player_id_s]["seeds_i_took_total"] += interaction_amount
 
-
             elif interaction_type == 'send_seeds':
                 #give to target
                 if source_player["seeds"] < interaction_amount:
@@ -452,6 +451,10 @@ class SubjectUpdatesMixin():
                 if not disc_found:
                     status = "fail"
                     error_message = "No discs selected."
+                
+                if status == "success":
+                    current_period.summary_data[target_player_id_s]["discs_they_took_total"] += 1
+                    current_period.summary_data[player_id_s]["discs_i_took_total"] += 1
 
             elif interaction_type == 'send_disc':
                 disc_found = False
@@ -464,12 +467,17 @@ class SubjectUpdatesMixin():
                 if not disc_found:
                     status = "fail"
                     error_message = "No discs selected."
-            
-            source_player["state"] = "open"
-            source_player["state_payload"] = {}
 
-            target_player["state"] = "open"
-            target_player["state_payload"] = {}
+                if status == "success":
+                    current_period.summary_data[player_id_s]["discs_i_sent_total"] += 1
+                    current_period.summary_data[target_player_id_s]["discs_they_sent_total"] += 1
+            
+            # if interaction_type == 'take_seeds' or interaction_type=='take_disc':
+            #     source_player["state"] = "open"
+            #     source_player["state_payload"] = {}
+
+            #     target_player["state"] = "open"
+            #     target_player["state_payload"] = {}
 
             await current_period.asave()
 
