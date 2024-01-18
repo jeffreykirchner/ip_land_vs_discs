@@ -4,6 +4,7 @@ import math
 
 from asgiref.sync import sync_to_async
 from textwrap import TextWrapper
+from decimal import Decimal
 
 from django.db import transaction
 from django.db.models.fields.json import KT
@@ -17,6 +18,7 @@ from django.utils.decorators import method_decorator
 from datetime import datetime, timedelta
 
 from main.globals import ExperimentPhase
+from main.globals import round_half_away_from_zero
 
 import main
 
@@ -941,7 +943,7 @@ class SubjectUpdatesMixin():
             error_message.append({"id":"build_seeds", "message": "No production during the break."})
 
         #check if player has enough proudction seconds remaining
-        if session_player["build_time_remaining"] < build_seed_count * self.parameter_set_local["seed_build_length"]:
+        if Decimal(session_player["build_time_remaining"]) < build_seed_count * Decimal(self.parameter_set_local["seed_build_length"]):
             status = "fail"
             error_message.append({"id":"build_seeds", "message": "Not enough production time remaining."})
 
@@ -959,7 +961,8 @@ class SubjectUpdatesMixin():
 
             if source == "server":
                 session_player["seeds"] += build_seed_count
-                session_player["build_time_remaining"] -= build_seed_count * self.parameter_set_local["seed_build_length"]
+                session_player["build_time_remaining"] = Decimal(session_player["build_time_remaining"] ) - (build_seed_count * Decimal(self.parameter_set_local["seed_build_length"]))
+                session_player["build_time_remaining"] = str(session_player["build_time_remaining"])
 
                 session_player["state"] = "open"
                 session_player["state_payload"] = {}
@@ -972,7 +975,7 @@ class SubjectUpdatesMixin():
                 session_player["state"] = "building_seeds"
                 session_player["state_payload"] = event
                 session_player["frozen"] = True
-                session_player["interaction"] = build_seed_count * self.parameter_set_local["seed_build_length"]
+                session_player["interaction"] = math.floor(round_half_away_from_zero(build_seed_count * Decimal(self.parameter_set_local["seed_build_length"]),1))
 
             result["seeds"] = session_player["seeds"]
             result["build_time_remaining"] = session_player["build_time_remaining"]

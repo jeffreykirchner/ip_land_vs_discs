@@ -46,7 +46,7 @@ class ParameterSet(models.Model):
     interaction_range = models.IntegerField(verbose_name='Interaction Range', default=300)                    #interaction range in pixels
 
     build_time = models.IntegerField(verbose_name='Build Time', default=35)                                   #build time in seconds
-    seed_build_length = models.IntegerField(verbose_name='Seed Build Length', default=1)                      #seed build length in seconds
+    seed_build_length = models.DecimalField(verbose_name='Seed Build Length', decimal_places=1, max_digits=3, default=0.5)   #seed build length in seconds
     field_build_length = models.IntegerField(verbose_name='Field Build Length', default=12)                   #field build length in seconds
     disc_build_length = models.IntegerField(verbose_name='Disc Build Length', default=12)                     #disc build length in seconds 
 
