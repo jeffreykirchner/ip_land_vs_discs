@@ -49,16 +49,28 @@
                     </div>
                 </div>
                 
-                <div class="row mt-4">
+                <div class="row mt-4 ">
                     <div v-if="selected_player.interaction_type=='send_seeds' ||
                                selected_player.interaction_type=='take_seeds'">
-                        <div class="col text-center" id="div_id_good_three_harvest">
-                            <input type="number" 
-                                class="transfer_model_input form-control-lg fw-bold"
-                                v-model="selected_player.interaction_amount"
-                                min="0"
-                                max="999"
-                                step="1">         
+                        <div class="row  justify-content-center">
+                            <div class="col-auto me-0 pe-1">
+                                <input type="number" 
+                                    class="form-control-lg fw-bold"
+                                    v-model="selected_player.interaction_amount"
+                                    min="0"
+                                    max="999"
+                                    step="1">    
+                            </div>
+
+                            <div class="col-auto ms-0 ps-1">
+                                <button type="button"
+                                    class="btn btn-outline-primary btn-lg"
+                                    v-on:click = "select_all_seeds()"
+                                    title="Select All Seeds"                       
+                                    v-bind:disabled="reconnecting || working">
+                                    <i class="fas fa-check-double"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <div v-else>
@@ -99,8 +111,22 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row"
-                            >
+
+                        <!-- select all -->
+                        <div class="row mt-4">
+                            <div class="col text-center">
+                                <button type="button"
+                                        class="btn btn-outline-primary"
+                                        v-on:click = "select_all_discs()"
+                                        title="Select All Discs"                       
+                                        v-bind:disabled="reconnecting || working">
+                                    Select All <i class="fas fa-check-double"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- empty -->
+                        <div class="row">
                             <div class="col text-center"
                                  v-if="JSON.stringify(selected_player.interaction_discs)==='{}'">
                                 <span v-if="selected_player.interaction_type=='send_disc'">
