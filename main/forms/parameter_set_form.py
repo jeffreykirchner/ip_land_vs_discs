@@ -99,11 +99,13 @@ class ParameterSetForm(forms.ModelForm):
                                                                             "step":"1",
                                                                             "min":"1"}))
     
-    seed_build_length = forms.IntegerField(label='Seed Build Length (seconds)',
-                                            min_value=1,
-                                            widget=forms.NumberInput(attrs={"v-model":"parameter_set.seed_build_length",
-                                                                            "step":"1",
-                                                                            "min":"1"}))
+    seed_build_length = forms.DecimalField(label='Seed Build Length (seconds)',
+                                        max_digits=3,
+                                        decimal_places=2,
+                                        min_value=0.1,
+                                        widget=forms.NumberInput(attrs={"v-model":"parameter_set.seed_build_length",
+                                                                        "step":"0.1",
+                                                                        "min":"0.1"}))
 
     field_build_length = forms.IntegerField(label='Field Build Length (seconds)',
                                             min_value=1,
