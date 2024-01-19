@@ -428,6 +428,9 @@ class SubjectUpdatesMixin():
                     current_period.summary_data[target_player_id_s]["seeds_they_took_total"] += interaction_amount    
                     current_period.summary_data[player_id_s]["seeds_i_took_total"] += interaction_amount
 
+                    current_period.summary_data[player_id_s]["interactions"][target_player_id_s]["seeds_i_took"] += interaction_amount
+                    current_period.summary_data[target_player_id_s]["interactions"][player_id_s]["seeds_they_took"] += interaction_amount
+
             elif interaction_type == 'send_seeds':
                 #give to target
                 if source_player["seeds"] < interaction_amount:
@@ -442,6 +445,10 @@ class SubjectUpdatesMixin():
 
                     current_period.summary_data[player_id_s]["seeds_i_sent_total"] += interaction_amount
                     current_period.summary_data[target_player_id_s]["seeds_they_sent_total"] += interaction_amount
+                    
+                    current_period.summary_data[player_id_s]["interactions"][target_player_id_s]["seeds_i_sent"] += interaction_amount
+                    current_period.summary_data[target_player_id_s]["interactions"][player_id_s]["seeds_they_sent"] += interaction_amount
+
             elif interaction_type == 'take_disc':
                 disc_found = False
 
@@ -449,6 +456,8 @@ class SubjectUpdatesMixin():
                     if interaction_discs[i] and target_player["disc_inventory"][i]:
                         source_player["disc_inventory"][i] = True
                         disc_found = True
+                        current_period.summary_data[player_id_s]["interactions"][target_player_id_s]["discs_i_took"][i] = True
+                        current_period.summary_data[target_player_id_s]["interactions"][player_id_s]["discs_they_took"][i] = True
                 
                 if not disc_found:
                     status = "fail"
@@ -465,6 +474,8 @@ class SubjectUpdatesMixin():
                     if interaction_discs[i] and source_player["disc_inventory"][i]:
                         target_player["disc_inventory"][i] = True
                         disc_found = True
+                        current_period.summary_data[player_id_s]["interactions"][target_player_id_s]["discs_i_sent"][i] = True
+                        current_period.summary_data[target_player_id_s]["interactions"][player_id_s]["discs_they_sent"][i] = True
                 
                 if not disc_found:
                     status = "fail"
