@@ -276,6 +276,13 @@ class TimerMixin():
             summary_data_player["in_field"] = v["field_label"]
             summary_data_player["admissions_total"] = v["admissions_total"]
 
+            summary_data_player["seeds"] = self.world_state_local["session_players"][i]["seeds"]
+            summary_data_player["discs"] = disc_count
+
+            for j in v["admitted_to"]:
+                j_s = str(j)
+                summary_data_player["interactions"][j_s]["admitted_to_field"] = True
+
             period_earnings = Decimal(self.world_state_local["session_players"][i]["seeds"])
             period_earnings *= summary_data_player["seed_multiplier"]
 
@@ -293,7 +300,7 @@ class TimerMixin():
 
             #reset locations
             session_player["current_location"] = {"x": parameter_set_player["start_x"],
-                                                    "y": parameter_set_player["start_y"]}
+                                                  "y": parameter_set_player["start_y"]}
             
             session_player["target_location"] = {"x": parameter_set_player["start_x"]+1,
                                                  "y": parameter_set_player["start_y"]+1}
@@ -334,6 +341,7 @@ class TimerMixin():
         multiplier = 1
         field_label = None
         admissions_total = 0
+        admitted_to = []
 
         #find total allowed players on field
         for i in self.world_state_local["fields"]:
@@ -341,6 +349,7 @@ class TimerMixin():
 
             if field["owner"] == int(player_id):
                 admissions_total = len(field["allowed_players"])
+                admitted_to = field["allowed_players"]
                 break
         
         #find number of players on field
@@ -356,4 +365,5 @@ class TimerMixin():
             
         return {"multiplier": multiplier, 
                 "field_label": field_label,
-                "admissions_total": admissions_total}
+                "admissions_total": admissions_total,
+                "admitted_to": admitted_to}

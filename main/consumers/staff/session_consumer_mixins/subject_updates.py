@@ -677,7 +677,7 @@ class SubjectUpdatesMixin():
         
         #check if player has enough proudction seconds remaining    
         if status == "success" and source == "client":
-            if source_player["build_time_remaining"] < self.parameter_set_local["field_build_length"]:
+            if Decimal(source_player["build_time_remaining"]) < Decimal(self.parameter_set_local["field_build_length"]):
                 status = "fail"
                 error_message.append({"id":"field_claim", "message": "Not enough production time to claim a field."})
 
@@ -694,7 +694,8 @@ class SubjectUpdatesMixin():
             if source == "client":
                 event["message_text"]["source"]="server"
 
-                session_player["build_time_remaining"] -=  self.parameter_set_local["field_build_length"]
+                session_player["build_time_remaining"] = Decimal(session_player["build_time_remaining"]) - Decimal(self.parameter_set_local["field_build_length"])
+                session_player["build_time_remaining"] = str(session_player["build_time_remaining"])
 
                 session_player["state"] = "claiming_field"
                 session_player["state_payload"] = event
@@ -861,7 +862,7 @@ class SubjectUpdatesMixin():
             error_message.append({"id":"build_disc", "message": "No production during the break."})
 
         #check if player has enough proudction seconds remaining
-        if session_player["build_time_remaining"] <  self.parameter_set_local["disc_build_length"]:
+        if Decimal(session_player["build_time_remaining"]) <  Decimal(self.parameter_set_local["disc_build_length"]):
             status = "fail"
             error_message.append({"id":"build_disc", "message": "Not enough production time remaining."})
 
@@ -880,7 +881,8 @@ class SubjectUpdatesMixin():
                 current_period.summary_data[player_id_s]["disc_produced"] = True
 
                 self.world_state_local["session_players"][player_id_s]["disc_inventory"][player_id_s] = True
-                session_player["build_time_remaining"] -= self.parameter_set_local["disc_build_length"]
+                session_player["build_time_remaining"] = Decimal(session_player["build_time_remaining"]) - Decimal(self.parameter_set_local["disc_build_length"])
+                session_player["build_time_remaining"] = str(session_player["build_time_remaining"])
 
                 session_player["state"] = "open"
                 session_player["state_payload"] = {}

@@ -326,8 +326,8 @@ class Session(models.Model):
             writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
 
             top_row = ["Session ID", "Period", "Client #", "Label", "Earnings ¢", "Seeds Total", "Discs Total",
-                       "Field Owner", "In Field",
-                       "Seed Multiplier", "Admissions Total", "Seeds Produced", "Seeds Taken From Me Total",
+                       "I Claimed Field", "I Am In Field",
+                       "Seed Multiplier I Received", "Total Admissions To My Field", "Seeds Produced", "Seeds Taken From Me Total",
                        "Seeds I Took Total", "Seeds I Sent Total", "Seeds Taken From Me Total",
                        "Disc Produced", "Discs Taken From Me Total", "Discs I Took Total", "Discs I Sent Total", "Discs Sent to Me Total"]
 
@@ -338,19 +338,19 @@ class Session(models.Model):
                 top_row.append(f'Has {i["parameter_set_player__id_label"]}\'s Disc')
 
                 for j in session_players_list:
-                    top_row.append(f'I Sent {j["parameter_set_player__id_label"]} Disc to {i["parameter_set_player__id_label"]}')
+                    top_row.append(f'I Sent {j["parameter_set_player__id_label"]} Disc To {i["parameter_set_player__id_label"]}')
                     top_row.append(f'I Took {j["parameter_set_player__id_label"]} Disc From {i["parameter_set_player__id_label"]}')
 
-                    top_row.append(f'{i["parameter_set_player__id_label"]} Sent {j["parameter_set_player__id_label"]} Disc to Me')
+                    top_row.append(f'{i["parameter_set_player__id_label"]} Sent {j["parameter_set_player__id_label"]} Disc To Me')
                     top_row.append(f'{i["parameter_set_player__id_label"]} Took {j["parameter_set_player__id_label"]} Disc From Me')
 
-                top_row.append(f'Seeds I Sent to {i["parameter_set_player__id_label"]}')
+                top_row.append(f'Seeds I Sent To {i["parameter_set_player__id_label"]}')
                 top_row.append(f'Seeds I Took From {i["parameter_set_player__id_label"]}')
 
-                top_row.append(f'Seeds {i["parameter_set_player__id_label"]} Sent to Me')
+                top_row.append(f'Seeds {i["parameter_set_player__id_label"]} Sent To Me')
                 top_row.append(f'Seeds {i["parameter_set_player__id_label"]} Took From Me')
 
-                top_row.append(f'Admitted {i["parameter_set_player__id_label"]} to Field')
+                top_row.append(f'Admitted {i["parameter_set_player__id_label"]} To Field')
 
             writer.writerow(top_row)
 
