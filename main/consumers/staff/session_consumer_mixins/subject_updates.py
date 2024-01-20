@@ -464,8 +464,8 @@ class SubjectUpdatesMixin():
                     error_message = "No discs selected."
                 
                 if status == "success":
-                    current_period.summary_data[target_player_id_s]["discs_they_took_total"] += 1
-                    current_period.summary_data[player_id_s]["discs_i_took_total"] += 1
+                    current_period.summary_data[target_player_id_s]["discs_they_took_total"] += len(interaction_discs)
+                    current_period.summary_data[player_id_s]["discs_i_took_total"] += len(interaction_discs)
 
             elif interaction_type == 'send_disc':
                 disc_found = False
@@ -482,8 +482,8 @@ class SubjectUpdatesMixin():
                     error_message = "No discs selected."
 
                 if status == "success":
-                    current_period.summary_data[player_id_s]["discs_i_sent_total"] += 1
-                    current_period.summary_data[target_player_id_s]["discs_they_sent_total"] += 1
+                    current_period.summary_data[player_id_s]["discs_i_sent_total"] += len(interaction_discs)
+                    current_period.summary_data[target_player_id_s]["discs_they_sent_total"] += len(interaction_discs)
             
             # if interaction_type == 'take_seeds' or interaction_type=='take_disc':
             #     source_player["state"] = "open"
