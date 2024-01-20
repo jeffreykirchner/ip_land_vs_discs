@@ -326,8 +326,8 @@ class Session(models.Model):
             writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
 
             top_row = ["Session ID", "Period", "Client #", "Label", "Earnings ¢", "Seeds Total", "Discs Total",
-                       "Field Owner", "In Field",
-                       "Seed Multiplier", "Admissions Total", "Seeds Produced", "Seeds Taken From Me Total",
+                       "I Claimed Field", "I Am In Field",
+                       "Seed Multiplier I Received", "Total Admissions To My Field", "Seeds Produced", "Seeds Taken From Me Total",
                        "Seeds I Took Total", "Seeds I Sent Total", "Seeds Taken From Me Total",
                        "Disc Produced", "Discs Taken From Me Total", "Discs I Took Total", "Discs I Sent Total", "Discs Sent to Me Total"]
 
@@ -338,19 +338,19 @@ class Session(models.Model):
                 top_row.append(f'Has {i["parameter_set_player__id_label"]}\'s Disc')
 
                 for j in session_players_list:
-                    top_row.append(f'I Sent {j["parameter_set_player__id_label"]} Disc to {i["parameter_set_player__id_label"]}')
+                    top_row.append(f'I Sent {j["parameter_set_player__id_label"]} Disc To {i["parameter_set_player__id_label"]}')
                     top_row.append(f'I Took {j["parameter_set_player__id_label"]} Disc From {i["parameter_set_player__id_label"]}')
 
-                    top_row.append(f'{i["parameter_set_player__id_label"]} Sent {j["parameter_set_player__id_label"]} Disc to Me')
+                    top_row.append(f'{i["parameter_set_player__id_label"]} Sent {j["parameter_set_player__id_label"]} Disc To Me')
                     top_row.append(f'{i["parameter_set_player__id_label"]} Took {j["parameter_set_player__id_label"]} Disc From Me')
 
-                top_row.append(f'Seeds I Sent to {i["parameter_set_player__id_label"]}')
+                top_row.append(f'Seeds I Sent To {i["parameter_set_player__id_label"]}')
                 top_row.append(f'Seeds I Took From {i["parameter_set_player__id_label"]}')
 
-                top_row.append(f'Seeds {i["parameter_set_player__id_label"]} Sent to Me')
+                top_row.append(f'Seeds {i["parameter_set_player__id_label"]} Sent To Me')
                 top_row.append(f'Seeds {i["parameter_set_player__id_label"]} Took From Me')
 
-                top_row.append(f'Admitted {i["parameter_set_player__id_label"]} to Field')
+                top_row.append(f'Admitted {i["parameter_set_player__id_label"]} To Field')
 
             writer.writerow(top_row)
 
@@ -435,7 +435,7 @@ class Session(models.Model):
                 parameter_set_players[str(i['id'])] = i
 
             session_players = {}
-            for i in self.session_players.all().values('id','player_number','parameter_set_player__id_label'):
+            for i in self.session_players.all().values('id','player_number','parameter_set_player__id_label','parameter_set_player__id'):
                 session_players[str(i['id'])] = i
 
             for p in self.session_events.exclude(type="time").exclude(type="world_state").exclude(type='target_location_update'):
@@ -459,7 +459,10 @@ class Session(models.Model):
         return plain text version of action
         '''
 
+        parameter_set = self.parameter_set.json()
+
         if type == "chat":
+
             nearby_text = ""
             for i in data["nearby_players"]:
                 if nearby_text != "":
@@ -468,6 +471,74 @@ class Session(models.Model):
 
             temp_s = re.sub("\n", " ", data["text"])
             return f'{temp_s} @  {nearby_text}'
+        elif type == "field_claim":
+
+            parameter_set_field = parameter_set["parameter_set_fields"][str(data["field"]["id"])]
+
+            if data["state"] == "claiming_field":
+                return f'Start claiming field {parameter_set_field["info"]}'
+            else:
+                return f'Complete claiming field {parameter_set_field["info"]}'
+            
+        elif type == "build_seeds":
+
+            if data["state"] == "building_seeds":
+                return f'Start growing {data["build_seed_count"]} seeds'
+            else:
+                return f'Complete growing {data["build_seed_count"]} seeds'
+            
+        elif type == "build_disc":
+
+            if data["state"] == "building_disc":
+                return f'Start building disc'
+            else:
+                return f'Complete building disc'
+        
+        elif type == "interaction":
+            target_player = session_players[str(data["target_player_id"])]
+            target_parameter_set_player = parameter_set["parameter_set_players"][str(target_player["parameter_set_player__id"])]
+
+            if data["interaction_type"] == "send_seeds":    
+                return f'Send {data["interaction_amount"]} seed(s) to {target_parameter_set_player["id_label"]}'
+            elif data["interaction_type"] == "take_seeds":
+                return f'Take {data["interaction_amount"]} seed(s) from {target_parameter_set_player["id_label"]}'
+            elif data["interaction_type"] == "send_disc":
+                discs_string = ""
+                for i in data["interaction_discs"]:
+                    if discs_string != "":
+                        discs_string += ", "
+                    
+                    if data["interaction_discs"][i]:
+                        disc_owner_parameter_set_player = parameter_set["parameter_set_players"][str(session_players[i]["parameter_set_player__id"])]
+                        discs_string += disc_owner_parameter_set_player["id_label"]
+
+                return f'Send {discs_string} disc(s) to {target_parameter_set_player["id_label"]}'
+            elif data["interaction_type"] == "take_disc":
+                discs_string = ""
+                for i in data["interaction_discs"]:
+                    if discs_string != "":
+                        discs_string += ", "
+                    
+                    if data["interaction_discs"][i]:
+                        disc_owner_parameter_set_player = parameter_set["parameter_set_players"][str(session_players[i]["parameter_set_player__id"])]
+                        discs_string += disc_owner_parameter_set_player["id_label"]
+                    
+                return f'Take {discs_string} disc(s) from {target_parameter_set_player["id_label"]}'
+        elif type == "tractor_beam":
+            target_player = session_players[str(data["target_player_id"])]
+            target_parameter_set_player = parameter_set["parameter_set_players"][str(target_player["parameter_set_player__id"])]
+
+            return f'@ {target_parameter_set_player["id_label"]}'
+
+        elif type == "grant_field_access":
+            parameter_set_field = parameter_set["parameter_set_fields"][str(data["field"]["id"])]
+
+            target_player = session_players[str(data["target_player_id"])]
+            target_parameter_set_player = parameter_set["parameter_set_players"][str(target_player["parameter_set_player__id"])]
+
+            return f'Grant {target_parameter_set_player["id_label"]} access to {parameter_set_field["info"]}'
+
+
         elif type == "help_doc":
             return data
 

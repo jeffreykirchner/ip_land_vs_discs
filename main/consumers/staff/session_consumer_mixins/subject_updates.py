@@ -428,6 +428,9 @@ class SubjectUpdatesMixin():
                     current_period.summary_data[target_player_id_s]["seeds_they_took_total"] += interaction_amount    
                     current_period.summary_data[player_id_s]["seeds_i_took_total"] += interaction_amount
 
+                    current_period.summary_data[player_id_s]["interactions"][target_player_id_s]["seeds_i_took"] += interaction_amount
+                    current_period.summary_data[target_player_id_s]["interactions"][player_id_s]["seeds_they_took"] += interaction_amount
+
             elif interaction_type == 'send_seeds':
                 #give to target
                 if source_player["seeds"] < interaction_amount:
@@ -442,6 +445,10 @@ class SubjectUpdatesMixin():
 
                     current_period.summary_data[player_id_s]["seeds_i_sent_total"] += interaction_amount
                     current_period.summary_data[target_player_id_s]["seeds_they_sent_total"] += interaction_amount
+                    
+                    current_period.summary_data[player_id_s]["interactions"][target_player_id_s]["seeds_i_sent"] += interaction_amount
+                    current_period.summary_data[target_player_id_s]["interactions"][player_id_s]["seeds_they_sent"] += interaction_amount
+
             elif interaction_type == 'take_disc':
                 disc_found = False
 
@@ -449,14 +456,16 @@ class SubjectUpdatesMixin():
                     if interaction_discs[i] and target_player["disc_inventory"][i]:
                         source_player["disc_inventory"][i] = True
                         disc_found = True
+                        current_period.summary_data[player_id_s]["interactions"][target_player_id_s]["discs_i_took"][i] = True
+                        current_period.summary_data[target_player_id_s]["interactions"][player_id_s]["discs_they_took"][i] = True
                 
                 if not disc_found:
                     status = "fail"
                     error_message = "No discs selected."
                 
                 if status == "success":
-                    current_period.summary_data[target_player_id_s]["discs_they_took_total"] += 1
-                    current_period.summary_data[player_id_s]["discs_i_took_total"] += 1
+                    current_period.summary_data[target_player_id_s]["discs_they_took_total"] += len(interaction_discs)
+                    current_period.summary_data[player_id_s]["discs_i_took_total"] += len(interaction_discs)
 
             elif interaction_type == 'send_disc':
                 disc_found = False
@@ -465,14 +474,16 @@ class SubjectUpdatesMixin():
                     if interaction_discs[i] and source_player["disc_inventory"][i]:
                         target_player["disc_inventory"][i] = True
                         disc_found = True
+                        current_period.summary_data[player_id_s]["interactions"][target_player_id_s]["discs_i_sent"][i] = True
+                        current_period.summary_data[target_player_id_s]["interactions"][player_id_s]["discs_they_sent"][i] = True
                 
                 if not disc_found:
                     status = "fail"
                     error_message = "No discs selected."
 
                 if status == "success":
-                    current_period.summary_data[player_id_s]["discs_i_sent_total"] += 1
-                    current_period.summary_data[target_player_id_s]["discs_they_sent_total"] += 1
+                    current_period.summary_data[player_id_s]["discs_i_sent_total"] += len(interaction_discs)
+                    current_period.summary_data[target_player_id_s]["discs_they_sent_total"] += len(interaction_discs)
             
             # if interaction_type == 'take_seeds' or interaction_type=='take_disc':
             #     source_player["state"] = "open"
@@ -666,7 +677,7 @@ class SubjectUpdatesMixin():
         
         #check if player has enough proudction seconds remaining    
         if status == "success" and source == "client":
-            if source_player["build_time_remaining"] < self.parameter_set_local["field_build_length"]:
+            if Decimal(source_player["build_time_remaining"]) < Decimal(self.parameter_set_local["field_build_length"]):
                 status = "fail"
                 error_message.append({"id":"field_claim", "message": "Not enough production time to claim a field."})
 
@@ -683,7 +694,8 @@ class SubjectUpdatesMixin():
             if source == "client":
                 event["message_text"]["source"]="server"
 
-                session_player["build_time_remaining"] -=  self.parameter_set_local["field_build_length"]
+                session_player["build_time_remaining"] = Decimal(session_player["build_time_remaining"]) - Decimal(self.parameter_set_local["field_build_length"])
+                session_player["build_time_remaining"] = str(session_player["build_time_remaining"])
 
                 session_player["state"] = "claiming_field"
                 session_player["state_payload"] = event
@@ -850,7 +862,7 @@ class SubjectUpdatesMixin():
             error_message.append({"id":"build_disc", "message": "No production during the break."})
 
         #check if player has enough proudction seconds remaining
-        if session_player["build_time_remaining"] <  self.parameter_set_local["disc_build_length"]:
+        if Decimal(session_player["build_time_remaining"]) <  Decimal(self.parameter_set_local["disc_build_length"]):
             status = "fail"
             error_message.append({"id":"build_disc", "message": "Not enough production time remaining."})
 
@@ -869,7 +881,8 @@ class SubjectUpdatesMixin():
                 current_period.summary_data[player_id_s]["disc_produced"] = True
 
                 self.world_state_local["session_players"][player_id_s]["disc_inventory"][player_id_s] = True
-                session_player["build_time_remaining"] -= self.parameter_set_local["disc_build_length"]
+                session_player["build_time_remaining"] = Decimal(session_player["build_time_remaining"]) - Decimal(self.parameter_set_local["disc_build_length"])
+                session_player["build_time_remaining"] = str(session_player["build_time_remaining"])
 
                 session_player["state"] = "open"
                 session_player["state_payload"] = {}
