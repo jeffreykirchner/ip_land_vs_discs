@@ -220,7 +220,16 @@ class InstructionSetAdmin(admin.ModelAdmin):
             base_instruction_set = queryset.first()
 
             instruction_set = InstructionSet()
+
+            instruction_set.action_page_move = base_instruction_set.action_page_move
+            instruction_set.action_page_disc = base_instruction_set.action_page_disc
+            instruction_set.action_page_seed = base_instruction_set.action_page_seed
+            instruction_set.action_page_field = base_instruction_set.action_page_field
+            instruction_set.action_page_interaction = base_instruction_set.action_page_interaction
+            instruction_set.action_page_chat = base_instruction_set.action_page_chat
+
             instruction_set.save()
+
             instruction_set.copy_pages(base_instruction_set.instructions)
             instruction_set.copy_help_docs_subject(base_instruction_set.help_docs_subject)
 

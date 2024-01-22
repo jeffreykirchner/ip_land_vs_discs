@@ -45,6 +45,13 @@ class InstructionsMixin():
         '''
         pass
 
+    async def current_instruction_complete(self, event):
+        '''
+        current instruction complete
+        '''
+        result = await sync_to_async(take_current_instruction_complete, thread_sensitive=self.thread_sensitive)(self.session_id, self.session_player_id, event["message_text"])
+        
+
 
 def take_next_instruction(session_id, session_player_id, data):
     '''
@@ -112,6 +119,30 @@ def take_finish_instructions(session_id, session_player_id, data):
             "result" : {"instructions_finished" : session_player.instructions_finished,
                         "id" : session_player_id,
                         "current_instruction_complete" : session_player.current_instruction_complete, 
+                        }}
+
+def take_current_instruction_complete(session_id, session_player_id, data):
+    '''
+    take current instruction complete
+    '''
+
+    logger = logging.getLogger(__name__) 
+    logger.info(f"Take current instruction complete: {session_id} {session_player_id} {data}")
+
+    try:       
+
+        session = Session.objects.get(id=session_id)
+        session_player = session.session_players.get(id=session_player_id)
+
+        session_player.current_instruction_complete = data["page_number"]
+        session_player.save()
+
+    except ObjectDoesNotExist:
+        logger.warning(f"take_current_instruction_complete : {session_player_id}")
+        return {"value" : "fail", "errors" : {}, "message" : "Error"}       
+    
+    return {"value" : "success",
+            "result" : {"current_instruction_complete" : session_player.current_instruction_complete, 
                         }}
 
 

@@ -79,23 +79,43 @@ take_finish_instructions: function take_finish_instructions(message_data){
 },
 
 /**
+ * send_current_instruction_complete
+ */
+send_current_instruction_complete: function current_instruction_complete()
+{
+    app.send_message("current_instruction_complete", {"page_number" : app.session_player.current_instruction_complete});
+},
+
+/**
  * process instruction page
  */
 process_instruction_page: function process_instruction_page(){
 
-    //update view when instructions changes
-    switch(app.session_player.current_instruction){
-        case 1:            
+     //update view when instructions changes
+     switch(app.session_player.current_instruction){
+        case app.instructions.action_page_move:      
+           
+            return;      
             break; 
-        case 2:
+        case app.instructions.action_page_disc:
+
+            return;
             break;
-        case 3:            
+        case app.instructions.action_page_seed:
+            
+            return;
+            break;        
+        case app.instructions.action_page_field:
+                
+            return;
+            break;        
+        case app.instructions.action_page_interaction:
+                
+            return;
             break;
-        case 4:
-            break; 
-        case 5:           
-            break;
-        case 6:
+        case app.instructions.action_page_chat:
+                    
+            return;
             break;
     }
 
@@ -155,4 +175,113 @@ simulate_chat_instructions: function simulate_chat_instructions(){
     app.take_update_chat(message_data);
 
     app.chat_text="";
+},
+
+/**
+ * simulate build disc
+ */
+simulate_build_disc: function simulate_build_disc(){
+
+    let session_player = app.session.world_state.session_players[app.session_player.id];
+    let parameter_set = app.session.parameter_set;
+
+    if(session_player.state=="open")
+    {
+        //start build disc
+        if(app.session_player.current_instruction != app.instructions.action_page_disc) return;
+        
+        message_data = {
+                "status": "success",
+                "error_message": [],
+                "source_player_id": app.session_player.id,
+                "disc_inventory": session_player.disc_inventory,
+                "build_time_remaining": session_player.build_time_remaining,
+                "state": "building_disc",
+                "frozen": true,
+                "interaction": parameter_set.disc_build_length,
+        };
+
+        app.take_build_disc(message_data);
+        setTimeout(app.simulate_build_disc, 1000);
+    }
+    else if(session_player.interaction>1)
+    {
+        //decrament interaction time
+        session_player.interaction--;
+        setTimeout(app.simulate_build_disc, 1000);
+    }
+    else
+    {
+        session_player.disc_inventory[app.session_player.id] = true;
+        message_data = { 
+            "status": "success",
+            "error_message": [],
+            "source_player_id": app.session_player.id,
+            "disc_inventory": session_player.disc_inventory,
+            "build_time_remaining": session_player.build_time_remaining - parameter_set.disc_build_length,
+            "state": "open",
+            "frozen": false,
+            "interaction": 0
+        }
+
+        app.take_build_disc(message_data);
+        app.session_player.current_instruction_complete=app.instructions.action_page_disc;
+        app.send_current_instruction_complete();
+    }
+
+    
+},
+
+/**
+ * simulate build seeds
+ */
+simulate_build_seeds: function simulate_build_seeds(){
+    
+        let session_player = app.session.world_state.session_players[app.session_player.id];
+        let parameter_set = app.session.parameter_set;
+    
+        if(session_player.state=="open")
+        {
+            //start build seeds
+            if(app.session_player.current_instruction != app.instructions.action_page_seed) return;
+            
+            message_data = {
+                "status": "success",
+                "error_message": [],
+                "source_player_id": 26,
+                "seeds": 0,
+                "build_time_remaining": 17,
+                "build_seed_count": 6,
+                "state": "building_seeds",
+                "frozen": true,
+                "interaction": 3
+            };
+    
+            app.take_build_seeds(message_data);
+            setTimeout(app.simulate_build_seeds, 1000);
+        }
+        else if(session_player.interaction>1)
+        {
+            //decrament interaction time
+            session_player.interaction--;
+            setTimeout(app.simulate_build_seeds, 1000);
+        }
+        else
+        {
+            session_player.seed_inventory[app.session_player.id] = true;
+            message_data = { 
+                "status": "success",
+                "error_message": [],
+                "source_player_id": app.session_player.id,
+                "seed_inventory": session_player.seed_inventory,
+                "build_time_remaining": session_player.build_time_remaining - parameter_set.seed_build_length,
+                "state": "open",
+                "frozen": false,
+                "interaction": 0
+            }
+    
+            app.take_build_seeds(message_data);
+            app.session_player.current_instruction_complete=app.instructions.action_page_seed;
+            app.send_current_instruction_complete();
+        }
 },

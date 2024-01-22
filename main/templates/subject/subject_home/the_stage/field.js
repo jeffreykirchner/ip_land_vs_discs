@@ -519,11 +519,19 @@ send_build_disc: function send_build_disc()
         return;
     }
 
-    app.working = true;
-        
-    app.send_message("build_disc", 
-                    {"source" : "client"},
-                    "group"); 
+    if(app.session.world_state.current_experiment_phase == 'Instructions')
+    {
+        app.simulate_build_disc();
+    }
+    else
+    {
+
+        app.working = true;
+            
+        app.send_message("build_disc", 
+                        {"source" : "client"},
+                        "group"); 
+    }
 },
 
 /**
@@ -624,12 +632,19 @@ send_build_seeds: function send_build_seeds()
         return;
     }
 
-    app.working = true;
-        
-    app.send_message("build_seeds", 
-                    {"build_seed_count" : app.build_seed_count,
-                     "source" : "client"},
-                    "group"); 
+    if(app.session.world_state.current_experiment_phase == 'Instructions')
+    {
+        app.simulate_build_seeds();
+    }
+    else
+    {
+        app.working = true;
+            
+        app.send_message("build_seeds", 
+                        {"build_seed_count" : app.build_seed_count,
+                        "source" : "client"},
+                        "group"); 
+    }
 },
 
 /**

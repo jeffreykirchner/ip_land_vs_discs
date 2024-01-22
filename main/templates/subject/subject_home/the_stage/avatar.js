@@ -696,6 +696,16 @@ take_cancel_interaction: function take_cancel_interaction(message_data)
  */
 target_location_update: function target_location_update()
 {
+    if(app.session.world_state.current_experiment_phase == 'Instructions')
+    {
+        if(app.session_player.current_instruction == app.instructions.action_page_move)
+        {
+            app.session_player.current_instruction_complete=app.instructions.action_page_move;
+        }
+
+        return;
+    }
+
 
     let session_player = app.session.world_state.session_players[app.session_player.id];
 
@@ -705,20 +715,6 @@ target_location_update: function target_location_update()
                      "group");                   
 },
 
-/**
- * take update from server about new location target for a player
- */
-take_target_location_update: function take_target_location_update(message_data)
-{
-    if(message_data.value == "success")
-    {
-        app.session.world_state.session_players[message_data.session_player_id].target_location = message_data.target_location;                 
-    } 
-    else
-    {
-        
-    }
-},
 
 /**
  * update tractor beam between two players
