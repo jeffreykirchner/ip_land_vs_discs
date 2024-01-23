@@ -639,6 +639,24 @@ send_build_seeds: function send_build_seeds()
         return;
     }
 
+
+    if(!Number.isInteger(app.build_seed_count) ||
+       app.build_seed_count<=0)
+    {
+        let obj = app.session.world_state.session_players[app.session_player.id];
+        app.add_text_emitters("Invalid entry.", 
+                                obj.current_location.x, 
+                                obj.current_location.y,
+                                obj.current_location.x,
+                                obj.current_location.y-100,
+                                0xFFFFFF,
+                                28,
+                                null);
+        return;
+    }
+
+    
+
     if(app.session.world_state.current_experiment_phase == 'Instructions')
     {
         app.simulate_build_seeds();

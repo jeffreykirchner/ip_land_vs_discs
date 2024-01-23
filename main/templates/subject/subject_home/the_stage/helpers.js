@@ -217,3 +217,7 @@ check_line_circle_intersection: function check_line_circle_intersection(line, ci
 
     return false;
 },
+
+is_number: function is_number(value) {
+    return typeof value === 'number';
+},

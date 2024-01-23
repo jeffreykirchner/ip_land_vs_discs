@@ -382,7 +382,7 @@ send_my_disc: function send_my_disc()
 
     if(!session_player.disc_inventory[app.session_player.id])
     {
-        app.interaction_error = "Your is not built.";
+        app.interaction_error = "Your disc is not built.";
         return;
     }
 
@@ -479,6 +479,17 @@ send_interaction: function send_interaction()
     }
     else
     {
+        if(app.selected_player.interaction_type == "send_seeds" || 
+           app.selected_player.interaction_type == "take_seeds")
+        {
+            if(!Number.isInteger(app.selected_player.interaction_amount) ||
+                app.selected_player.interaction_amount<=0)
+            {
+                app.interaction_error = "Invalid entry.";
+                return;
+            }
+
+        }
         app.working = true;
 
         app.send_message("interaction", 
