@@ -1051,3 +1051,30 @@ update_disc_wedges: function update_disc_wedges(player_id)
         disc_wedges.endFill();
     }
 },
+
+/**
+ * send for interaction help doc
+ */
+send_interaction_help: function send_interaction_help()
+{
+    let help_doc_name = ""
+
+    if(app.selected_player.interaction_type == "send_seeds")
+    {
+        help_doc_name = "subject_send_seeds";
+    }
+    else if(app.selected_player.interaction_type == "take_seeds")
+    {
+        help_doc_name = "subject_take_seeds";
+    }
+    else if(app.selected_player.interaction_type == "send_disc")
+    {
+        help_doc_name = "subject_send_disc";
+    }
+    else if(app.selected_player.interaction_type == "take_disc")
+    {
+        help_doc_name = "subject_take_disc";
+    }
+
+    app.send_load_help_doc_subject(help_doc_name);
+},
