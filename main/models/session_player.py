@@ -124,6 +124,7 @@ class SessionPlayer(models.Model):
         text = text.replace("#disc_value#", str(parameter_set["disc_value"]))
         text = text.replace("#seed_build_length#", str(parameter_set["seed_build_length"]))
         text = text.replace("#field_build_length#", str(parameter_set["field_build_length"]))
+        text = text.replace("#interaction_only_length#", str(parameter_set["interaction_only_length"]))
         
         return text
     

@@ -445,14 +445,22 @@ update_player_inventory: function update_player_inventory()
 send_interaction: function send_interaction()
 {
 
-    app.working = true;
+    if(app.session.world_state.current_experiment_phase == 'Instructions')
+    {
+        app.simulate_interaction();
+    }
+    else
+    {
+        app.working = true;
 
-    app.send_message("interaction", 
-                    {"target_player_id": app.selected_player.selected_player_id,
-                     "interaction_type": app.selected_player.interaction_type,
-                     "interaction_amount" : app.selected_player.interaction_amount,
-                     "interaction_discs": app.selected_player.interaction_discs},
-                     "group"); 
+        app.send_message("interaction", 
+                        {"target_player_id": app.selected_player.selected_player_id,
+                         "interaction_type": app.selected_player.interaction_type,
+                         "interaction_amount" : app.selected_player.interaction_amount,
+                         "interaction_discs": app.selected_player.interaction_discs},
+                         "group"); 
+    } 
+    
 },
 
 /**

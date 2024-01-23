@@ -313,6 +313,7 @@ var app = Vue.createApp({
                 Vue.nextTick(() => {
                     app.process_instruction_page();
                     app.instruction_display_scroll();
+                    app.send_present_players();
                 });
             }
 

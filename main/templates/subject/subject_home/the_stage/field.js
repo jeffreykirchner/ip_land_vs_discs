@@ -842,7 +842,14 @@ send_present_players: function send_present_players()
         }
     }
 
-    if(!field_id) return;
+    if(!field_id)
+    {
+        if(app.session.world_state.current_experiment_phase == 'Instructions')
+        {
+            app.simulate_present_players(null, []);
+        }
+        return;
+    };
 
     let field = app.session.world_state.fields[field_id];
     let parameter_set_field = app.session.parameter_set.parameter_set_fields[field.parameter_set_field];
@@ -870,10 +877,17 @@ send_present_players: function send_present_players()
             }
         }
     }
-        
-    app.send_message("present_players", 
-                    {"field_id" : field_id,
-                     "present_players" : present_players,
-                     "source" : "client"},
-                     "group"); 
+
+    if(app.session.world_state.current_experiment_phase == 'Instructions')
+    {
+        app.simulate_present_players(field_id, present_players);
+    }
+    else
+    {
+        app.send_message("present_players", 
+                        {"field_id" : field_id,
+                        "present_players" : present_players,
+                        "source" : "client"},
+                        "group"); 
+    }
 },

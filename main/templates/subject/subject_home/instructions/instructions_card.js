@@ -110,7 +110,11 @@ process_instruction_page: function process_instruction_page(){
             return;
             break;        
         case app.instructions.action_page_interaction:
-                
+            let session_player = app.session.world_state.session_players[app.session_player.id];
+            session_player.seeds = 10;
+            session_player.disc_inventory[app.session_player.id] = true;
+            app.setup_seed_inventory();
+            app.update_player_inventory();
             return;
             break;
         case app.instructions.action_page_chat:
@@ -370,4 +374,107 @@ simulate_field_claim: function simulate_field_claim(field_id, field){
         app.session_player.current_instruction_complete=app.instructions.action_page_field;
         app.send_current_instruction_complete();
     }
+},
+
+/**
+ * simulate send present players
+ */
+simulate_present_players: function simulate_present_players(field_id, present_players){
+
+    if(pixi_setup_complete)
+    {
+        let session_player = app.session.world_state.session_players[app.session_player.id];
+        if(field_id)
+        {
+            let field = app.session.world_state.fields[field_id];
+            let parameter_set_field = app.session.parameter_set.parameter_set_fields[field.parameter_set_field];
+            field.present_players = present_players;
+
+            app.destroy_pixi_fields();
+            app.setup_pixi_fields();
+
+            if(field.present_players.includes(app.session_player.id.toString()))
+            {
+                session_player.seed_multiplier = app.session.parameter_set.seed_multipliers.split('\n')[0];
+            }
+            else
+            {
+                session_player.seed_multiplier = 1;
+            }
+        }
+        else
+        {
+            session_player.seed_multiplier = 1;
+        }
+
+        app.setup_seed_inventory();
+    }
+
+    if(app.session.world_state.current_experiment_phase == 'Instructions')
+    {
+        setTimeout(app.send_present_players, 1000);
+    }
+},
+
+/**
+ * simulate interaction
+ */
+simulate_interaction: function simulate_interaction(){
+    
+    let session_player = app.session.world_state.session_players[app.session_player.id];
+    let target_player = app.session.world_state.session_players[app.selected_player.selected_player_id];
+    let parameter_set = app.session.parameter_set;
+
+    if(app.selected_player.interaction_type == "take_seeds" ||
+       app.selected_player.interaction_type == "take_disc")
+    {
+        app.add_text_emitters("Disabled during instructions.", 
+                session_player.current_location.x, 
+                session_player.current_location.y,
+                session_player.current_location.x,
+                session_player.current_location.y-100,
+                0xFFFFFF,
+                28,
+                null);
+        
+        return;
+    }
+
+    message_data = {
+        "source_player_id": app.session_player.id,
+        "source_player_change": "",
+        "target_player_change": "",
+        "status": "success",
+        "error_message": [],
+        "target_player_id": app.selected_player.selected_player_id,
+        "source_player_seeds": session_player.seeds,
+        "target_player_seeds": target_player.seeds,
+        "source_player_disc_inventory": session_player.disc_inventory,
+        "target_player_disc_inventory": target_player.disc_inventory,
+        "interaction_type": app.selected_player.interaction_type,
+        "interaction_amount": app.selected_player.interaction_amount,
+        "interaction_discs":  app.selected_player.interaction_discs,
+        "source_player_interaction": 0,
+        "target_player_interaction": 0,
+        "source_player_frozen": false,
+        "target_player_frozen": false,
+        "source_player_cool_down": 0,
+        "target_player_cool_down": 0
+    }
+
+    if(app.selected_player.interaction_type == "send_seeds")
+    {
+        message_data.source_player_change = "-" + app.selected_player.interaction_amount;
+        message_data.target_player_change = "+" + app.selected_player.interaction_amount;
+        message_data.source_player_seeds =  message_data.source_player_seeds - app.selected_player.interaction_amount;
+        message_data.target_player_seeds =  message_data.target_player_seeds + app.selected_player.interaction_amount;
+    }
+    else if(app.selected_player.interaction_type == "send_disc")
+    {
+        message_data.target_player_disc_inventory[app.session_player.id] = true;
+    }
+
+    app.take_interaction(message_data);
+    app.session_player.current_instruction_complete=app.instructions.action_page_interaction;
+    app.send_current_instruction_complete();
 },
