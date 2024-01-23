@@ -472,6 +472,27 @@ update_player_inventory: function update_player_inventory()
  */
 send_interaction: function send_interaction()
 {
+    let session_player = app.session.world_state.session_players[app.session_player.id];
+    if(app.selected_player.interaction_type == "send_seeds" || 
+           app.selected_player.interaction_type == "take_seeds")
+    {
+        if(!Number.isInteger(app.selected_player.interaction_amount) ||
+            app.selected_player.interaction_amount<=0)
+        {
+            app.interaction_error = "Invalid entry.";
+            return;
+        }
+
+        if(app.selected_player.interaction_type == "send_seeds")
+        {
+            if(app.selected_player.interaction_amount > session_player.seeds)
+            {
+                app.interaction_error = "You do not have enough seeds.";
+                return;
+            }
+        }
+
+    }
 
     if(app.session.world_state.current_experiment_phase == 'Instructions')
     {
@@ -479,17 +500,7 @@ send_interaction: function send_interaction()
     }
     else
     {
-        if(app.selected_player.interaction_type == "send_seeds" || 
-           app.selected_player.interaction_type == "take_seeds")
-        {
-            if(!Number.isInteger(app.selected_player.interaction_amount) ||
-                app.selected_player.interaction_amount<=0)
-            {
-                app.interaction_error = "Invalid entry.";
-                return;
-            }
-
-        }
+        
         app.working = true;
 
         app.send_message("interaction", 

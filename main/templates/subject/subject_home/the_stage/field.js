@@ -656,7 +656,6 @@ send_build_seeds: function send_build_seeds()
     }
 
     
-
     if(app.session.world_state.current_experiment_phase == 'Instructions')
     {
         app.simulate_build_seeds();
