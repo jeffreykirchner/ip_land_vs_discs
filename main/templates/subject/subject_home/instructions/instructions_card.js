@@ -242,19 +242,46 @@ simulate_build_seeds: function simulate_build_seeds(){
     
         if(session_player.state=="open")
         {
+            if(app.build_seed_count != 10) 
+            {
+                app.add_text_emitters("Invalid entry.", 
+                                        session_player.current_location.x, 
+                                        session_player.current_location.y,
+                                        session_player.current_location.x,
+                                        session_player.current_location.y-100,
+                                        0xFFFFFF,
+                                        28,
+                                        null);
+                return;
+            }
+            
+            if(session_player.seeds > 0)
+            {
+                app.add_text_emitters("Continue to next page.", 
+                                    session_player.current_location.x, 
+                                    session_player.current_location.y,
+                                    session_player.current_location.x,
+                                    session_player.current_location.y-100,
+                                        0xFFFFFF,
+                                        28,
+                                        null);
+                
+                return;
+            }
+
             //start build seeds
             if(app.session_player.current_instruction != app.instructions.action_page_seed) return;
             
             message_data = {
                 "status": "success",
                 "error_message": [],
-                "source_player_id": 26,
+                "source_player_id": app.session_player.id,
                 "seeds": 0,
-                "build_time_remaining": 17,
-                "build_seed_count": 6,
+                "build_time_remaining": session_player.build_time_remaining,
+                "build_seed_count": app.build_seed_count,
                 "state": "building_seeds",
                 "frozen": true,
-                "interaction": 3
+                "interaction": app.build_seed_count * parameter_set.seed_build_length,
             };
     
             app.take_build_seeds(message_data);
@@ -268,20 +295,79 @@ simulate_build_seeds: function simulate_build_seeds(){
         }
         else
         {
-            session_player.seed_inventory[app.session_player.id] = true;
-            message_data = { 
+            message_data = {
                 "status": "success",
                 "error_message": [],
                 "source_player_id": app.session_player.id,
-                "seed_inventory": session_player.seed_inventory,
-                "build_time_remaining": session_player.build_time_remaining - parameter_set.seed_build_length,
+                "seeds": app.build_seed_count,
+                "build_time_remaining": session_player.build_time_remaining - (app.build_seed_count * parameter_set.seed_build_length),
+                "build_seed_count": app.build_seed_count,
                 "state": "open",
                 "frozen": false,
-                "interaction": 0
-            }
+                "interaction": 0,
+            };
     
             app.take_build_seeds(message_data);
             app.session_player.current_instruction_complete=app.instructions.action_page_seed;
             app.send_current_instruction_complete();
         }
+},
+
+/**
+ * simulate build field
+ */
+simulate_field_claim: function simulate_field_claim(field_id, field){
+
+    let session_player = app.session.world_state.session_players[app.session_player.id];
+    let parameter_set = app.session.parameter_set;
+
+    if(session_player.state=="open")
+    {
+        //start build field
+        if(app.session_player.current_instruction != app.instructions.action_page_field) return;
+        
+        field.status = "building"
+        field.owner = app.session_player.id;
+        message_data = {
+            "status": "success",
+            "error_message": [],
+            "source_player_id": app.session_player.id,
+            "field_id": field_id,
+            "field": field,
+            "build_time_remaining": session_player.build_time_remaining,
+            "state": "claiming_field",
+            "frozen": true,
+            "interaction": parameter_set.field_build_length,
+        }
+
+        app.take_field_claim(message_data);
+        setTimeout(app.simulate_field_claim, 1000, field_id, field);
+    }
+    else if(session_player.interaction>1)
+    {
+        //decrament interaction time
+        session_player.interaction--;
+        setTimeout(app.simulate_field_claim, 1000, field_id, field);
+    }
+    else
+    {
+       
+        field.status = "claimed";
+        field.allowed_players = [app.session_player.id];
+        message_data = {
+            "status": "success",
+            "error_message": [],
+            "source_player_id": app.session_player.id,
+            "field_id": field_id,
+            "field": field,
+            "build_time_remaining": session_player.build_time_remaining - parameter_set.field_build_length,
+            "state": "open",
+            "frozen": false,
+            "interaction": 0
+        }
+
+        app.take_field_claim(message_data);
+        app.session_player.current_instruction_complete=app.instructions.action_page_field;
+        app.send_current_instruction_complete();
+    }
 },

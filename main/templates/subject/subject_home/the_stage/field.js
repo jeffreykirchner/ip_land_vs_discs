@@ -343,11 +343,18 @@ send_field_claim: function send_field_claim()
     let field_id = app.selected_field.field.id;
     let field = app.session.world_state.fields[field_id];
 
-    app.working = true;
-        
-    app.send_message("field_claim", 
-                    {"field_id" : field_id, "source" : "client"},
-                     "group"); 
+    if(app.session.world_state.current_experiment_phase == 'Instructions')
+    {
+        app.simulate_field_claim(field_id, field);
+    }
+    else
+    {    
+        app.working = true;
+            
+        app.send_message("field_claim", 
+                        {"field_id" : field_id, "source" : "client"},
+                        "group"); 
+    }
 },
 
 /**
