@@ -830,15 +830,19 @@ take_grant_field_access: function take_grant_field_access(message_data)
  */
 send_present_players: function send_present_players()
 {
+
     let field_id = null;
     let present_players = [];
 
-    for(const i in app.session.world_state.fields)
+    if(pixi_setup_complete)
     {
-        if(app.session.world_state.fields[i].owner == app.session_player.id)
+        for(const i in app.session.world_state.fields)
         {
-            field_id = i;
-            break;
+            if(app.session.world_state.fields[i].owner == app.session_player.id)
+            {
+                field_id = i;
+                break;
+            }
         }
     }
 

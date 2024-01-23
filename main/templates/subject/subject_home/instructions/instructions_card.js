@@ -162,23 +162,33 @@ scroll_update: function scroll_update()
     }
 },
 
-/**
- * simulate goods transfer on page 4
- */
-simulate_chat_instructions: function simulate_chat_instructions(){
+send_chat_instructions: function send_chat_instructions()
+{
 
-    if(app.chat_text.trim() == "") return;
-    if(app.chat_text.trim().length > 200) return;
+    if(app.session_player.current_instruction != app.instructions.action_page_chat) return;
 
-    message_data = {chat: {text : app.chat_text.trim(),
-                            sender_label :  app.get_parameter_set_player_from_player_id(app.session_player.id).id_label,
-                            sender_id : app.session_player.id,
-                            id : random_number(1, 1000000),},
-                    chat_type:chat_type}
-   
+    // {
+    //     "value": "success",
+    //     "text": "asdfasdf",
+    //     "text_limited": "BSDtBSDt",
+    //     "sender_id": 273,
+    //     "nearby_players": [
+    //         "274"
+    //     ]
+    // }
+
+    let message_data = {
+        "status": "success",
+        "text": app.chat_text.trim(),
+        "text_limited": app.chat_text.trim(),
+        "sender_id": app.session_player.id,       
+        "nearby_players": [],
+    };
+
     app.take_update_chat(message_data);
 
-    app.chat_text="";
+    app.session_player.current_instruction_complete = app.instructions.action_page_chat;
+    app.send_current_instruction_complete();
 },
 
 /**

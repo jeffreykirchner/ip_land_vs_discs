@@ -274,6 +274,7 @@ var app = Vue.createApp({
             app.setup_pixi_fields();
             app.setup_pixi_minimap();
             app.setup_disc_inventory();
+            app.setup_seed_inventory();
 
             app.update_subject_status_overlay();
         },
@@ -308,15 +309,6 @@ var app = Vue.createApp({
                                 
             }
 
-            if(app.session.world_state.current_experiment_phase == 'Instructions')
-            {
-                Vue.nextTick(() => {
-                    app.process_instruction_page();
-                    app.instruction_display_scroll();
-                    app.send_present_players();
-                });
-            }
-
             if(!app.first_load_done)
             {
                 Vue.nextTick(() => {
@@ -327,6 +319,15 @@ var app = Vue.createApp({
             {
                 Vue.nextTick(() => {
                     app.do_reload();
+                });
+            }
+
+            if(app.session.world_state.current_experiment_phase == 'Instructions')
+            {
+                Vue.nextTick(() => {
+                    app.process_instruction_page();
+                    app.instruction_display_scroll();
+                    app.send_present_players();
                 });
             }
         },
@@ -354,6 +355,8 @@ var app = Vue.createApp({
 
             app.setup_pixi_minimap();
             app.remove_all_notices();
+
+            app.working = false;
         },
 
         /**
@@ -591,6 +594,8 @@ var app = Vue.createApp({
                 app.do_reload();
                 app.remove_all_notices();
             }
+
+            app.working = false;
         },
 
         /** hide choice grid modal modal

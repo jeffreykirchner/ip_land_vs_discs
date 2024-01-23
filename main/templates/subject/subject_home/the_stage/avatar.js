@@ -301,6 +301,21 @@ start_send_seeds: function start_send_seeds()
  */
 start_take_seeds: function start_take_seeds()
 {
+    let session_player = app.session.world_state.session_players[app.session_player.id];
+
+    if(app.session.world_state.current_experiment_phase == 'Instructions')
+    {
+        app.add_text_emitters("Disabled during instructions.", 
+                session_player.current_location.x, 
+                session_player.current_location.y,
+                session_player.current_location.x,
+                session_player.current_location.y-100,
+                0xFFFFFF,
+                28,
+                null);
+        return;
+    }
+
     app.working = true;
     app.selected_player.interaction_type = "take_seeds";
     app.selected_player.interaction_amount = 0;
@@ -389,12 +404,25 @@ send_my_disc: function send_my_disc()
  */ 
 start_take_disc: function start_take_disc()
 {
+    let session_player = app.session.world_state.session_players[app.selected_player.selected_player_id];
+
+    if(app.session.world_state.current_experiment_phase == 'Instructions')
+    {
+        app.add_text_emitters("Disabled during instructions.", 
+                session_player.current_location.x, 
+                session_player.current_location.y,
+                session_player.current_location.x,
+                session_player.current_location.y-100,
+                0xFFFFFF,
+                28,
+                null);
+        return;
+    }
+
     app.working = true;
     app.selected_player.interaction_type = "take_disc";
 
     app.selected_player.interaction_discs={};
-
-    let session_player = app.session.world_state.session_players[app.selected_player.selected_player_id];
 
     for(const i in session_player.disc_inventory)
     {
