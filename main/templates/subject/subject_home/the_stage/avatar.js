@@ -301,6 +301,21 @@ start_send_seeds: function start_send_seeds()
  */
 start_take_seeds: function start_take_seeds()
 {
+    let session_player = app.session.world_state.session_players[app.session_player.id];
+
+    if(app.session.world_state.current_experiment_phase == 'Instructions')
+    {
+        app.add_text_emitters("Disabled during instructions.", 
+                session_player.current_location.x, 
+                session_player.current_location.y,
+                session_player.current_location.x,
+                session_player.current_location.y-100,
+                0xFFFFFF,
+                28,
+                null);
+        return;
+    }
+
     app.working = true;
     app.selected_player.interaction_type = "take_seeds";
     app.selected_player.interaction_amount = 0;
@@ -367,7 +382,7 @@ send_my_disc: function send_my_disc()
 
     if(!session_player.disc_inventory[app.session_player.id])
     {
-        app.interaction_error = "Your is not built.";
+        app.interaction_error = "Your disc is not built.";
         return;
     }
 
@@ -389,12 +404,25 @@ send_my_disc: function send_my_disc()
  */ 
 start_take_disc: function start_take_disc()
 {
+    let session_player = app.session.world_state.session_players[app.selected_player.selected_player_id];
+
+    if(app.session.world_state.current_experiment_phase == 'Instructions')
+    {
+        app.add_text_emitters("Disabled during instructions.", 
+                session_player.current_location.x, 
+                session_player.current_location.y,
+                session_player.current_location.x,
+                session_player.current_location.y-100,
+                0xFFFFFF,
+                28,
+                null);
+        return;
+    }
+
     app.working = true;
     app.selected_player.interaction_type = "take_disc";
 
     app.selected_player.interaction_discs={};
-
-    let session_player = app.session.world_state.session_players[app.selected_player.selected_player_id];
 
     for(const i in session_player.disc_inventory)
     {
@@ -445,14 +473,33 @@ update_player_inventory: function update_player_inventory()
 send_interaction: function send_interaction()
 {
 
-    app.working = true;
+    if(app.session.world_state.current_experiment_phase == 'Instructions')
+    {
+        app.simulate_interaction();
+    }
+    else
+    {
+        if(app.selected_player.interaction_type == "send_seeds" || 
+           app.selected_player.interaction_type == "take_seeds")
+        {
+            if(!Number.isInteger(app.selected_player.interaction_amount) ||
+                app.selected_player.interaction_amount<=0)
+            {
+                app.interaction_error = "Invalid entry.";
+                return;
+            }
 
-    app.send_message("interaction", 
-                    {"target_player_id": app.selected_player.selected_player_id,
-                     "interaction_type": app.selected_player.interaction_type,
-                     "interaction_amount" : app.selected_player.interaction_amount,
-                     "interaction_discs": app.selected_player.interaction_discs},
-                     "group"); 
+        }
+        app.working = true;
+
+        app.send_message("interaction", 
+                        {"target_player_id": app.selected_player.selected_player_id,
+                         "interaction_type": app.selected_player.interaction_type,
+                         "interaction_amount" : app.selected_player.interaction_amount,
+                         "interaction_discs": app.selected_player.interaction_discs},
+                         "group"); 
+    } 
+    
 },
 
 /**
@@ -696,6 +743,16 @@ take_cancel_interaction: function take_cancel_interaction(message_data)
  */
 target_location_update: function target_location_update()
 {
+    if(app.session.world_state.current_experiment_phase == 'Instructions')
+    {
+        if(app.session_player.current_instruction == app.instructions.action_page_move)
+        {
+            app.session_player.current_instruction_complete=app.instructions.action_page_move;
+        }
+
+        return;
+    }
+
 
     let session_player = app.session.world_state.session_players[app.session_player.id];
 
@@ -705,20 +762,6 @@ target_location_update: function target_location_update()
                      "group");                   
 },
 
-/**
- * take update from server about new location target for a player
- */
-take_target_location_update: function take_target_location_update(message_data)
-{
-    if(message_data.value == "success")
-    {
-        app.session.world_state.session_players[message_data.session_player_id].target_location = message_data.target_location;                 
-    } 
-    else
-    {
-        
-    }
-},
 
 /**
  * update tractor beam between two players
@@ -1007,4 +1050,31 @@ update_disc_wedges: function update_disc_wedges(player_id)
 
         disc_wedges.endFill();
     }
+},
+
+/**
+ * send for interaction help doc
+ */
+send_interaction_help: function send_interaction_help()
+{
+    let help_doc_name = ""
+
+    if(app.selected_player.interaction_type == "send_seeds")
+    {
+        help_doc_name = "subject_send_seeds";
+    }
+    else if(app.selected_player.interaction_type == "take_seeds")
+    {
+        help_doc_name = "subject_take_seeds";
+    }
+    else if(app.selected_player.interaction_type == "send_disc")
+    {
+        help_doc_name = "subject_send_disc";
+    }
+    else if(app.selected_player.interaction_type == "take_disc")
+    {
+        help_doc_name = "subject_take_disc";
+    }
+
+    app.send_load_help_doc_subject(help_doc_name);
 },

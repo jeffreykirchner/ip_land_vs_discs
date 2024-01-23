@@ -43,6 +43,8 @@ setup_pixi: function setup_pixi(){
             app.setup_seed_inventory();
             // app.setup_subject_status_overlay();
         }
+
+        pixi_setup_complete = true;
     });
 
     pixi_text_emitter = {};

@@ -343,11 +343,18 @@ send_field_claim: function send_field_claim()
     let field_id = app.selected_field.field.id;
     let field = app.session.world_state.fields[field_id];
 
-    app.working = true;
-        
-    app.send_message("field_claim", 
-                    {"field_id" : field_id, "source" : "client"},
-                     "group"); 
+    if(app.session.world_state.current_experiment_phase == 'Instructions')
+    {
+        app.simulate_field_claim(field_id, field);
+    }
+    else
+    {    
+        app.working = true;
+            
+        app.send_message("field_claim", 
+                        {"field_id" : field_id, "source" : "client"},
+                        "group"); 
+    }
 },
 
 /**
@@ -519,11 +526,19 @@ send_build_disc: function send_build_disc()
         return;
     }
 
-    app.working = true;
-        
-    app.send_message("build_disc", 
-                    {"source" : "client"},
-                    "group"); 
+    if(app.session.world_state.current_experiment_phase == 'Instructions')
+    {
+        app.simulate_build_disc();
+    }
+    else
+    {
+
+        app.working = true;
+            
+        app.send_message("build_disc", 
+                        {"source" : "client"},
+                        "group"); 
+    }
 },
 
 /**
@@ -624,12 +639,37 @@ send_build_seeds: function send_build_seeds()
         return;
     }
 
-    app.working = true;
-        
-    app.send_message("build_seeds", 
-                    {"build_seed_count" : app.build_seed_count,
-                     "source" : "client"},
-                    "group"); 
+
+    if(!Number.isInteger(app.build_seed_count) ||
+       app.build_seed_count<=0)
+    {
+        let obj = app.session.world_state.session_players[app.session_player.id];
+        app.add_text_emitters("Invalid entry.", 
+                                obj.current_location.x, 
+                                obj.current_location.y,
+                                obj.current_location.x,
+                                obj.current_location.y-100,
+                                0xFFFFFF,
+                                28,
+                                null);
+        return;
+    }
+
+    
+
+    if(app.session.world_state.current_experiment_phase == 'Instructions')
+    {
+        app.simulate_build_seeds();
+    }
+    else
+    {
+        app.working = true;
+            
+        app.send_message("build_seeds", 
+                        {"build_seed_count" : app.build_seed_count,
+                        "source" : "client"},
+                        "group"); 
+    }
 },
 
 /**
@@ -808,19 +848,30 @@ take_grant_field_access: function take_grant_field_access(message_data)
  */
 send_present_players: function send_present_players()
 {
+
     let field_id = null;
     let present_players = [];
 
-    for(const i in app.session.world_state.fields)
+    if(pixi_setup_complete)
     {
-        if(app.session.world_state.fields[i].owner == app.session_player.id)
+        for(const i in app.session.world_state.fields)
         {
-            field_id = i;
-            break;
+            if(app.session.world_state.fields[i].owner == app.session_player.id)
+            {
+                field_id = i;
+                break;
+            }
         }
     }
 
-    if(!field_id) return;
+    if(!field_id)
+    {
+        if(app.session.world_state.current_experiment_phase == 'Instructions')
+        {
+            app.simulate_present_players(null, []);
+        }
+        return;
+    };
 
     let field = app.session.world_state.fields[field_id];
     let parameter_set_field = app.session.parameter_set.parameter_set_fields[field.parameter_set_field];
@@ -848,10 +899,17 @@ send_present_players: function send_present_players()
             }
         }
     }
-        
-    app.send_message("present_players", 
-                    {"field_id" : field_id,
-                     "present_players" : present_players,
-                     "source" : "client"},
-                     "group"); 
+
+    if(app.session.world_state.current_experiment_phase == 'Instructions')
+    {
+        app.simulate_present_players(field_id, present_players);
+    }
+    else
+    {
+        app.send_message("present_players", 
+                        {"field_id" : field_id,
+                        "present_players" : present_players,
+                        "source" : "client"},
+                        "group"); 
+    }
 },

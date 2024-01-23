@@ -1,5 +1,6 @@
 var pixi_app = null;
 var pixi_container_main = null;              //main container
+var pixi_setup_complete = false;             //setup complete flag
 
 var pixi_text_emitter = {};                  //text pop-ups
 var pixi_text_emitter_key = 0;

@@ -385,10 +385,14 @@ class SubjectUpdatesMixin():
         session = await Session.objects.aget(id=self.session_id)
         current_period = await session.aget_current_session_period()
 
+        if not str(interaction_amount).isnumeric():
+            status = "fail"
+            error_message = "Invalid entry."
+
         #check if on break
         if self.world_state_local["time_remaining"] > self.parameter_set_local["period_length"]:
             status = "fail"
-            error_message.append({"id":"field_claim", "message": "You cannot claim a field during the break."})
+            error_message = "No interactions on break."
 
         if status == "success":
             if (interaction_type=='take_seeds' or interaction_type == 'take_disc') and \
@@ -418,6 +422,9 @@ class SubjectUpdatesMixin():
                 if target_player["seeds"] < interaction_amount:
                     status = "fail"
                     error_message = "They do not have enough seeds."
+                elif interaction_amount <= 0:
+                    status = "fail"
+                    error_message = "Invalid entry."
                 else:
                     target_player["seeds"] -= interaction_amount
                     source_player["seeds"] += interaction_amount
@@ -436,6 +443,9 @@ class SubjectUpdatesMixin():
                 if source_player["seeds"] < interaction_amount:
                     status = "fail"
                     error_message = "You do not have enough seeds."
+                elif interaction_amount <= 0:
+                    status = "fail"
+                    error_message = "Invalid entry."
                 else:
                     source_player["seeds"] -= interaction_amount
                     target_player["seeds"] += interaction_amount
@@ -949,6 +959,14 @@ class SubjectUpdatesMixin():
 
         session = await Session.objects.aget(id=self.session_id)
         current_period = await session.aget_current_session_period()
+
+        if not str(build_seed_count).isnumeric():
+            status = "fail"
+            error_message.append({"id":"build_seeds", "message": "Invalid entry."})
+        
+        if build_seed_count <= 0:
+            status = "fail"
+            error_message.append({"id":"build_seeds", "message": "Invalid entry."})
 
         #check if on break
         if self.world_state_local["time_remaining"] > self.parameter_set_local["period_length"]:

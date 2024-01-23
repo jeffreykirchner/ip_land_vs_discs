@@ -14,7 +14,7 @@
             <div class="modal-header fw-bold">
                 Field
                 <span class="float-end">
-                    <button type="button" class="btn btn-link" title="Show Help" v-on:click="send_load_help_doc_subject('Field')">
+                    <button type="button" class="btn btn-link" title="Show Help" v-on:click="send_load_help_doc_subject('subject_field')">
                         <i class="far fa-question-circle"></i> 
                     </button>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -41,7 +41,7 @@
                                 title="Claim the selected field."                       
                                 v-bind:disabled="reconnecting || 
                                                  working || 
-                                                 (session.world_state.current_experiment_phase == 'Instructions' && session_player.current_instruction != instructions.action_page_harvest)">
+                                                 (session.world_state.current_experiment_phase == 'Instructions' && session_player.current_instruction != instructions.action_page_field)">
                             Claim <i class="fas fa-sign-in-alt"></i>
                         </button>
                     </div>

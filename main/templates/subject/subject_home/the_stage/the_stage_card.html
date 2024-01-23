@@ -30,10 +30,6 @@
                         </label>
                     </div>
                 {%endif%}
-
-                <button type="button" class="btn btn-link" title="Show Help" v-on:click="send_load_help_doc_subject('subject_stage')">
-                    <i class="far fa-question-circle"></i> 
-                </button>
             </div>
         </div>           
 
@@ -116,7 +112,11 @@
                 </button>
                 
                 <div class="fw-bold">
-                    [[session.parameter_set.disc_build_length]] seconds
+                    [[session.parameter_set.disc_build_length]] seconds 
+
+                    <button type="button" class="btn btn-link" title="Show Help" v-on:click="send_load_help_doc_subject('subject_disc')">
+                        <i class="far fa-question-circle"></i> 
+                    </button>
                 </div>
                 
             </div>
@@ -143,7 +143,12 @@
                                              session.world_state.finished"
                             v-on:click="send_build_seeds()">Grow Seeds <i class="fas fa-seedling"></i></button>
                 </div>
-                <div class="fw-bold">[[session.parameter_set.seed_build_length]] seconds per seed</div>
+                <div class="fw-bold">
+                    [[session.parameter_set.seed_build_length]] seconds per seed
+                    <button type="button" class="btn btn-link" title="Show Help" v-on:click="send_load_help_doc_subject('subject_seeds')">
+                        <i class="far fa-question-circle"></i> 
+                    </button>
+                </div>
                 
             </div>
 
@@ -175,13 +180,13 @@
                            placeholder="Chat Text" 
                            v-model="chat_text"
                            aria-label="Chat Text"                           
-                           v-on:keyup.enter="(session.world_state.current_experiment_phase == 'Instructions') ? simulate_chat_instructions() : send_chat()"
+                           v-on:keyup.enter="send_chat()"
                            aria-describedby="send_chat_id">
                     <button class="btn btn-outline-primary btn-lg"
                             type="button" 
                             id="send_chat_id" 
                             v-bind:disabled="reconnecting || working || session.started===false || session.world_state.finished"
-                            v-on:click="(session.world_state.current_experiment_phase == 'Instructions') ? simulate_chat_instructions() : send_chat()">Chat <i class="far fa-comments"></i></button>
+                            v-on:click="send_chat()">Chat <i class="far fa-comments"></i></button>
                 </div>
             </div>
         </div>
