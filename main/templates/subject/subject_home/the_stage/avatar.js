@@ -532,6 +532,25 @@ send_interaction: function send_interaction()
 
     }
 
+    if(app.selected_player.interaction_type == "send_disc" ||
+         app.selected_player.interaction_type == "take_disc")
+    {
+        let disc_count = 0;
+        for(const i in app.selected_player.interaction_discs)
+        {
+            if(app.selected_player.interaction_discs[i])
+            {
+                disc_count++;
+            }
+        }
+
+        if(disc_count == 0)
+        {
+            app.interaction_error = "Select at least one disc.";
+            return;
+        }
+    }
+
 
     if(app.session.world_state.current_experiment_phase == 'Instructions')
     {
