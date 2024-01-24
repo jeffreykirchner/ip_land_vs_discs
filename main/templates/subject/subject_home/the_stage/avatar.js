@@ -1098,3 +1098,18 @@ send_interaction_help: function send_interaction_help()
 
     app.send_load_help_doc_subject(help_doc_name);
 },
+
+/**
+ * take update from client for new location target
+ */
+take_target_location_update: function take_target_location_update(message_data)
+{
+    if(message_data.value == "success")
+    {
+        app.session.world_state.session_players[message_data.session_player_id].target_location = message_data.target_location;          
+    } 
+    else
+    {
+        
+    }
+},
