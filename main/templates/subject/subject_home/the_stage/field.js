@@ -785,13 +785,20 @@ get_manage_field_players_that_could_be_allowed: function get_manage_field_player
  */
 send_grant_field_access: function send_grant_field_access(target_player_id)
 {
-    app.working = true;
-        
-    app.send_message("grant_field_access", 
-                    {"target_player_id" : target_player_id,
-                     "field_id" : app.selected_field.field.id,
-                     "source" : "client"},
-                     "group"); 
+    if(app.session.world_state.current_experiment_phase == 'Instructions')
+    {
+        app.simulate_grant_field_access(target_player_id);
+    }
+    else
+    {
+        app.working = true;
+            
+        app.send_message("grant_field_access", 
+                        {"target_player_id" : target_player_id,
+                        "field_id" : app.selected_field.field.id,
+                        "source" : "client"},
+                        "group"); 
+    }
 },
 
 /**

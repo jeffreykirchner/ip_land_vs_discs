@@ -388,15 +388,24 @@ send_my_disc: function send_my_disc()
 
     app.selected_player.interaction_discs={};
     app.selected_player.interaction_discs[app.session_player.id] = true;
+    app.selected_player.interaction_type = "send_disc";
 
-    app.working = true;
+    if(app.session.world_state.current_experiment_phase == 'Instructions')
+    {
+        app.simulate_interaction();
+    }
+    else
+    {
+        app.working = true;
 
-    app.send_message("interaction", 
-                    {"target_player_id": app.selected_player.selected_player_id,
-                     "interaction_type": "send_disc",
-                     "interaction_amount" : 0,
-                     "interaction_discs": app.selected_player.interaction_discs},
-                     "group"); 
+        app.send_message("interaction", 
+                        {"target_player_id": app.selected_player.selected_player_id,
+                        "interaction_type": app.selected_player.interaction_type,
+                        "interaction_amount" : 0,
+                        "interaction_discs": app.selected_player.interaction_discs},
+                        "group"); 
+    }
+   
 },
 
 /**
@@ -1088,4 +1097,19 @@ send_interaction_help: function send_interaction_help()
     }
 
     app.send_load_help_doc_subject(help_doc_name);
+},
+
+/**
+ * take update from client for new location target
+ */
+take_target_location_update: function take_target_location_update(message_data)
+{
+    if(message_data.value == "success")
+    {
+        app.session.world_state.session_players[message_data.session_player_id].target_location = message_data.target_location;          
+    } 
+    else
+    {
+        
+    }
 },

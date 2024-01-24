@@ -109,7 +109,7 @@ get_offset:function get_offset()
                 }
 
                 app.subject_avatar_click(i);              
-                break;
+                return;
             }
         }
 
