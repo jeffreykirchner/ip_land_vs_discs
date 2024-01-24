@@ -488,3 +488,22 @@ simulate_interaction: function simulate_interaction(){
     app.session_player.current_instruction_complete=app.instructions.action_page_interaction;
     app.send_current_instruction_complete();
 },
+
+/**
+ * simulate grant field access
+ */
+simulate_grant_field_access : function simulate_grant_field_access(target_player_id){
+
+    message_data = {
+        "status": "success",
+        "error_message": [],
+        "source_player_id": app.session_player.id,
+        "field_id": app.selected_field.field.id,
+        "field": app.clone_json(app.selected_field.field),
+        "target_player_id": target_player_id
+    }
+
+    message_data.field.allowed_players.push(target_player_id);
+
+    app.take_grant_field_access(message_data);
+},
