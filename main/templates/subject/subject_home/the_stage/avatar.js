@@ -302,6 +302,7 @@ start_send_seeds: function start_send_seeds()
 start_take_seeds: function start_take_seeds()
 {
     let session_player = app.session.world_state.session_players[app.session_player.id];
+    let target_player = app.session.world_state.session_players[app.selected_player.selected_player_id];
 
     if(app.session.world_state.current_experiment_phase == 'Instructions')
     {
@@ -316,6 +317,19 @@ start_take_seeds: function start_take_seeds()
         return;
     }
 
+
+    if(session_player.cool_down > 0 || target_player.cool_down > 0)
+    {
+        app.interaction_error = "No takes while cooling down.";
+        return;
+    }
+
+    if(session_player.interaction > 0 || target_player.interaction > 0)
+    {
+        app.interaction_error = "No takes while interacting.";
+        return;
+    }
+    
     app.working = true;
     app.selected_player.interaction_type = "take_seeds";
     app.selected_player.interaction_amount = 0;
@@ -413,7 +427,8 @@ send_my_disc: function send_my_disc()
  */ 
 start_take_disc: function start_take_disc()
 {
-    let session_player = app.session.world_state.session_players[app.selected_player.selected_player_id];
+    let session_player = app.session.world_state.session_players[app.session_player.id];
+    let target_player = app.session.world_state.session_players[app.selected_player.selected_player_id];
 
     if(app.session.world_state.current_experiment_phase == 'Instructions')
     {
@@ -428,14 +443,26 @@ start_take_disc: function start_take_disc()
         return;
     }
 
+    if(session_player.cool_down > 0 || target_player.cool_down > 0)
+    {
+        app.interaction_error = "No takes while cooling down.";
+        return;
+    }
+
+    if(session_player.interaction > 0 || target_player.interaction > 0)
+    {
+        app.interaction_error = "No takes while interacting.";
+        return;
+    }
+    
     app.working = true;
     app.selected_player.interaction_type = "take_disc";
 
     app.selected_player.interaction_discs={};
 
-    for(const i in session_player.disc_inventory)
+    for(const i in target_player.disc_inventory)
     {
-        if(session_player.disc_inventory[i])
+        if(target_player.disc_inventory[i])
         {
             app.selected_player.interaction_discs[i] = false;
         }
@@ -482,8 +509,10 @@ update_player_inventory: function update_player_inventory()
 send_interaction: function send_interaction()
 {
     let session_player = app.session.world_state.session_players[app.session_player.id];
+    let target_player = app.session.world_state.session_players[app.selected_player.selected_player_id];
+    
     if(app.selected_player.interaction_type == "send_seeds" || 
-           app.selected_player.interaction_type == "take_seeds")
+       app.selected_player.interaction_type == "take_seeds")
     {
         if(!Number.isInteger(app.selected_player.interaction_amount) ||
             app.selected_player.interaction_amount<=0)
@@ -502,6 +531,7 @@ send_interaction: function send_interaction()
         }
 
     }
+
 
     if(app.session.world_state.current_experiment_phase == 'Instructions')
     {
@@ -531,7 +561,7 @@ take_tractor_beam: function take_tractor_beam(message_data)
 
     if(message_data.status == "success")
     {
-        if(app.is_subject && source_player_id == app.session_player.id)
+        if(app.is_subject)
         {
             let player_id = message_data.player_id;
             let target_player_id = message_data.target_player_id;

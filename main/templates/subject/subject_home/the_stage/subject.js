@@ -72,18 +72,18 @@ get_offset:function get_offset()
             return;
         }
 
-        if(local_player.cool_down > 0)
-        {
-            app.add_text_emitters("No actions cooling down.", 
-                            local_player.current_location.x, 
-                            local_player.current_location.y,
-                            local_player.current_location.x,
-                            local_player.current_location.y-100,
-                            0xFFFFFF,
-                            28,
-                            null);
-            return;
-        }
+        // if(local_player.cool_down > 0)
+        // {
+        //     app.add_text_emitters("No actions cooling down.", 
+        //                     local_player.current_location.x, 
+        //                     local_player.current_location.y,
+        //                     local_player.current_location.x,
+        //                     local_player.current_location.y-100,
+        //                     0xFFFFFF,
+        //                     28,
+        //                     null);
+        //     return;
+        // }
         
         //avatars
         for(i in app.session.world_state.session_players)
