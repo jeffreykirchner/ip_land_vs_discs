@@ -1,7 +1,7 @@
 <div class="card" id="graph_card" style="width: 1885px;">                  
     <div class="card-header fw-bold">   
 
-        <div class="row align-items-center" v-if="session && session.started && is_subject">
+        <div class="row justify-content-center" v-if="session && session.started && is_subject">
             <div class="col-auto m-0">
                 Current Period: [[session.world_state.current_period]]
             </div>
@@ -12,11 +12,13 @@
                 Total Earnings: [[session.world_state.session_players[session_player.id].earnings]]¢
             </div>
 
-            <div class="col text-end">
+            <div class="col-auto text-end">
                 <span v-show="reconnecting" class="me-1">
                     Connecting <i class="fas fa-cog fa-spin fa-1x"></i>
                 </span>
+            </div>
 
+            <div class="col-auto">
                 {%if session.parameter_set.test_mode%}
                     <div class="form-check" v-if="is_subject">
                         <input class="form-check-input"
@@ -26,7 +28,7 @@
                             v-model="test_mode"
                             >
                         <label class="form-check-label" for="testModeCheckBox">
-                        Test Mode On
+                            Test Mode On
                         </label>
                     </div>
                 {%endif%}

@@ -38,7 +38,8 @@
                         <button type="button"
                                 class="btn btn-outline-primary"
                                 v-on:click = "send_field_claim()"
-                                title="Claim the selected field."                       
+                                title="Claim the selected field."        
+                                id="id_claim_field_button"               
                                 v-bind:disabled="reconnecting || 
                                                  working || 
                                                  (session.world_state.current_experiment_phase == 'Instructions' && session_player.current_instruction != instructions.action_page_field)">
