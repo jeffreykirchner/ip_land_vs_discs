@@ -112,11 +112,15 @@ do_test_mode_run: function do_test_mode_run()
                 app.test_mode_go_to_field();
                 break;
             case "grow_seeds":
-                    
+                app.test_mode_grow_seeds();
                 break;
             case "build_disk":
-                        
+                app.test_mode_build_discs();
                 break;
+            case "go_to_player":
+                app.test_mode_go_to_player();
+                break;
+
         }
     }
         
@@ -124,7 +128,9 @@ do_test_mode_run: function do_test_mode_run()
 
 find_test_mode_task: function find_test_mode_task()
 {
-    switch (app.random_number(1, 4)){
+    let v = app.random_number(1, 7);
+    v=7;
+    switch (v){
         case 1:
             app.test_mode_info.task = "chat";
             break;        
@@ -137,6 +143,13 @@ find_test_mode_task: function find_test_mode_task()
         case 4:
             app.test_mode_info.task = "go_to_field";
             break;
+        case 5:
+            app.test_mode_info.task = "grow_seeds";
+            break;
+        case 6:
+            app.test_mode_info.task = "build_disk";
+        case 7:
+            app.test_mode_info.task = "go_to_player";
     }
 },
 
@@ -166,10 +179,13 @@ test_mode_claim_field: function test_mode_claim_field(){
     let local_player = app.session.world_state.session_players[app.session_player.id];
 
     //check if player has enough production time
-    if(local_player.build_time_remaining < app.session.parameter_set.field_build_length)
+    if(local_player.state == "open")
     {
-        app.test_mode_reset_info();
-        return;
+        if(local_player.build_time_remaining < app.session.parameter_set.field_build_length)
+        {
+            app.test_mode_reset_info();
+            return;
+        }
     }
 
     //check if player has a field
@@ -245,6 +261,9 @@ test_mode_claim_field: function test_mode_claim_field(){
     app.test_mode_move();    
 },
 
+/**
+ * test mode manage field
+ */
 test_mode_manage_field: function test_mode_manage_field(){
     let local_player = app.session.world_state.session_players[app.session_player.id];
     const parameter_set_period = app.get_current_parameter_set_period();
@@ -359,6 +378,96 @@ test_mode_go_to_field: function test_mode_go_to_field(){
     app.test_mode_move(); 
 },
 
+/**
+ * grow seeds
+ */
+test_mode_grow_seeds: function test_mode_grow_seeds(){
+
+    let local_player = app.session.world_state.session_players[app.session_player.id];
+
+     //check if player has enough production time
+    if(local_player.state == "open")
+    {
+         if(local_player.build_time_remaining == 0)
+         {
+             app.test_mode_reset_info();
+             return;
+         }
+    }
+
+    if(local_player.state != "open")
+    {
+       return;
+    }
+
+    app.build_seed_count = app.random_number(1, 5);
+
+    document.getElementById("id_send_build_seeds").click();
+},
+
+/**
+ * build discs
+ */
+test_mode_build_discs: function test_mode_build_discs(){
+
+    let local_player = app.session.world_state.session_players[app.session_player.id];
+
+    //check if player has enough production time
+    if(local_player.state == "open")
+    {
+        if(local_player.build_time_remaining < app.session.parameter_set.disc_build_length)
+        {
+            app.test_mode_reset_info();
+            return;
+        }
+    }
+
+    if(local_player.state != "open")
+    {
+       return;
+    }
+
+    document.getElementById("id_send_build_disc").click();
+},
+
+/**
+ * go to player
+ */
+test_mode_go_to_player: function test_mode_go_to_player(){
+    let local_player = app.session.world_state.session_players[app.session_player.id];
+
+    //find a player to go to
+    if(app.test_mode_info.target == null)
+    {
+        let v = app.random_number(0, app.session.session_players_order.length-1);
+        let target_player = app.session.world_state.session_players[app.session.session_players_order[v]];
+
+        if(target_player.id == app.session_player.id) return;
+
+        app.test_mode_info.target_location = {x:target_player.current_location.x, y:target_player.current_location.y};
+        app.test_mode_info.target = target_player;
+    }
+
+    //check if near any
+    for(let i in app.session.world_state.session_players)
+    {
+        if(i == app.session_player.id) continue;
+
+        let temp_player = app.session.world_state.session_players[i];
+        let temp_circle = {x:local_player.current_location.x, 
+                           y:local_player.current_location.y, 
+                           radius:app.session.parameter_set.interaction_range}
+
+        if(app.check_point_in_circle(temp_player.current_location, temp_circle))
+        {
+            app.subject_avatar_click(i);
+            app.test_mode_info.task = "choose_interaction";
+            return;
+        }
+    }
+
+    app.test_mode_move();
+},
 
 /**
  * reset test mode info

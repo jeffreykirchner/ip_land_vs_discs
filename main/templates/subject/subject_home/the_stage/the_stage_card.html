@@ -100,6 +100,7 @@
                 <button type="button" 
                         title="Build Disc"
                         class="btn btn-outline-primary btn-lg"
+                        id="id_send_build_disc"
                         v-bind:disabled="reconnecting || 
                                          working || 
                                          session.world_state.session_players[session_player.id].interaction > 0 ||
@@ -132,7 +133,7 @@
                             aria-describedby="send_build_seeds_id">
                     <button class="btn btn-outline-primary btn-lg"
                             type="button" 
-                            id="send_build_seeds" 
+                            id="id_send_build_seeds" 
                             title="Grow Seeds"
                             v-bind:disabled="reconnecting || 
                                              working || 

@@ -93,6 +93,17 @@ check_point_in_rectagle: function check_point_in_rectagle(point, rect)
 },
 
 /**
+ * check if point in circle
+ */
+check_point_in_circle: function check_point_in_circle(point, circle)
+{
+    let distance = app.get_distance(point, circle);
+    if(distance <= circle.radius) return true;
+
+    return false;
+},
+
+/**
  * degrees to radians
  */
 degrees_to_radians(degrees)
@@ -159,20 +170,6 @@ check_for_circle_rect_intersection: function check_for_circle_rect_intersection(
     if(app.check_line_circle_intersection({p1:pt1, p2:pt3}, circle)) return true;
     if(app.check_line_circle_intersection({p1:pt2, p2:pt4}, circle)) return true;
     if(app.check_line_circle_intersection({p1:pt3, p2:pt4}, circle)) return true;
-
-    return false;
-},
-
-/**
- * check if point is in rectangle
- */
-check_point_in_rectagle: function check_point_in_rectagle(point, rect)
-{
-    if(point.x >= rect.x && point.x <= rect.x + rect.width &&
-         point.y >= rect.y && point.y <= rect.y + rect.height)
-    {
-        return true;
-    }
 
     return false;
 },
