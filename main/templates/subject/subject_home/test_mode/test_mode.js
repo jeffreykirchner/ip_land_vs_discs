@@ -120,6 +120,21 @@ do_test_mode_run: function do_test_mode_run()
             case "go_to_player":
                 app.test_mode_go_to_player();
                 break;
+            case "choose_interaction":
+                app.test_mode_choose_interaction();
+                break;
+            case "send_seeds":
+                app.test_mode_send_seeds();
+                break;
+            case "take_seeds":
+                app.test_mode_take_seeds();
+                break;
+            case "send_discs":
+                app.test_mode_send_discs();
+                break;
+            case "take_discs":
+                app.test_mode_take_discs();
+                break;
 
         }
     }
@@ -434,7 +449,11 @@ test_mode_build_discs: function test_mode_build_discs(){
  * go to player
  */
 test_mode_go_to_player: function test_mode_go_to_player(){
+
     let local_player = app.session.world_state.session_players[app.session_player.id];
+
+    if(local_player.interaction > 0) return;
+    if(local_player.state != "open") return;
 
     //find a player to go to
     if(app.test_mode_info.target == null)
@@ -444,7 +463,8 @@ test_mode_go_to_player: function test_mode_go_to_player(){
 
         if(target_player.id == app.session_player.id) return;
 
-        app.test_mode_info.target_location = {x:target_player.current_location.x, y:target_player.current_location.y};
+        app.test_mode_info.target_location = {x:target_player.current_location.x + app.random_number(-100, 100),
+                                              y:target_player.current_location.y + app.random_number(-100, 100)};
         app.test_mode_info.target = target_player;
     }
 
@@ -467,6 +487,150 @@ test_mode_go_to_player: function test_mode_go_to_player(){
     }
 
     app.test_mode_move();
+},
+
+/**
+ * test mode choose interaction
+ * */
+test_mode_choose_interaction: function test_mode_choose_interaction()
+{
+    if(!app.interaction_start_modal_open)
+    {
+        app.test_mode_reset_info();
+        return;
+    }
+
+    let v = app.random_number(1, 4);
+    v=3;
+    switch (v){
+        case 1:
+            document.getElementById("id_start_send_seeds_button").click();
+            app.test_mode_info.task = "send_seeds";
+            break;
+        case 2:
+            if(app.get_current_parameter_set_period().seed_pr=='False')
+            {
+                document.getElementById("id_start_take_seeds_button").click();
+                app.test_mode_info.task = "take_seeds";
+            }
+            break;
+        case 3:
+            if(app.get_current_parameter_set_period().disc_pr=='False')
+            {
+                document.getElementById("id_start_send_disc_button").click();
+                app.test_mode_info.task = "send_discs";
+            }
+            else
+            {
+                document.getElementById("id_send_my_disc_button").click();
+                app.test_mode_reset_info();
+                app.interaction_start_modal.hide();
+            }
+            break;
+        case 4:
+            if(app.get_current_parameter_set_period().disc_pr=='False')
+            {
+                document.getElementById("id_start_take_disc_button").click();
+                app.test_mode_info.task = "take_discs";
+            }
+            break;
+    }
+},
+
+/**
+ * test mode send seeds
+ */
+test_mode_send_seeds: function test_mode_send_seeds(){
+    let local_player = app.session.world_state.session_players[app.session_player.id];
+
+    //check if player can send seeds
+    if(local_player.seeds == 0 ||
+       !app.interaction_modal_open ||
+       local_player.interaction > 0)
+    {
+        app.test_mode_reset_info();
+        document.getElementById("id_cancel_interaction_button").click();
+        return;
+    }
+
+    app.selected_player.interaction_amount = app.random_number(1, local_player.seeds);
+    document.getElementById("id_submit_interaction_button").click();
+
+    app.test_mode_reset_info();
+},
+
+/**
+ * test mode take seeds
+ */
+test_mode_take_seeds: function test_mode_take_seeds(){
+    let local_player = app.session.world_state.session_players[app.session_player.id];
+    let target_player = app.session.world_state.session_players[app.selected_player.selected_player_id];
+
+    //check if player can send seeds
+    if(target_player.seeds == 0 ||
+        !app.interaction_modal_open ||
+        local_player.cool_down > 0 ||
+        target_player.cool_down > 0 ||
+        local_player.interaction > 0 ||
+        target_player.interaction > 0)
+    {
+        app.test_mode_reset_info();
+        document.getElementById("id_cancel_interaction_button").click();
+        return;
+    }
+
+    app.selected_player.interaction_amount = app.random_number(1, target_player.seeds);
+    document.getElementById("id_submit_interaction_button").click();
+
+    app.test_mode_reset_info();
+},
+
+/**
+ * test mode send discs
+ */
+test_mode_send_discs: function test_mode_send_discs(){
+    let local_player = app.session.world_state.session_players[app.session_player.id];
+
+    //check if player can send discs
+    if(Object.keys(app.selected_player.interaction_discs).length == 0 ||
+       !app.interaction_modal_open ||
+       local_player.interaction > 0)
+    {
+        app.test_mode_reset_info();
+        document.getElementById("id_cancel_interaction_button").click();
+        return;
+    }
+
+    let first = true;
+    for(let i in app.selected_player.interaction_discs)
+    {
+        if(first)
+        {
+            app.selected_player.interaction_discs[i] = true;
+            first = false;
+        }
+        else
+        {
+        if(random_number(1, 2) == 1)
+            {
+                app.selected_player.interaction_discs[i] = true;
+            }
+            else
+            {
+                app.selected_player.interaction_discs[i] = false;
+            }
+        }
+    }
+
+    document.getElementById("id_submit_interaction_button").click();
+    app.test_mode_reset_info();
+},
+
+/**
+ * test mode take discs
+ */
+test_mode_take_discs: function test_mode_take_discs(){
+    let local_player = app.session.world_state.session_players[app.session_player.id];
 },
 
 /**

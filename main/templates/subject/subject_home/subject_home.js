@@ -57,6 +57,8 @@ var app = Vue.createApp({
 
                     field_modal_open : false,
                     field_manage_modal_open : false,
+                    interaction_modal_open : false,
+                    interaction_start_modal_open : false,
 
                     test_mode : {%if session.parameter_set.test_mode%}true{%else%}false{%endif%},
                     test_mode_info : {target_location : null,

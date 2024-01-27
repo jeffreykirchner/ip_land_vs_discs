@@ -283,6 +283,7 @@ subject_avatar_click: function subject_avatar_click(target_player_id)
     app.selected_player.parameter_set_player = app.get_parameter_set_player_from_player_id(target_player_id);
 
     app.interaction_start_modal.toggle();
+    app.interaction_start_modal_open = true;
 },
 
 /**
@@ -294,6 +295,7 @@ start_send_seeds: function start_send_seeds()
     app.selected_player.interaction_amount = 0;
     app.interaction_start_modal.hide();
     app.interaction_modal.toggle();
+    app.interaction_modal_open = true;
 },
 
 /**
@@ -385,6 +387,7 @@ start_send_disc: function start_send_disc()
 
     app.interaction_start_modal.hide();
     app.interaction_modal.toggle();
+    app.interaction_modal_open = true;
 },
 
 /**
@@ -602,6 +605,7 @@ take_tractor_beam: function take_tractor_beam(message_data)
                     app.field_manage_modal.hide();
 
                     app.interaction_modal.toggle();
+                    app.interaction_modal_open = true;
 
                     app.working = false;
                 }
@@ -738,6 +742,7 @@ take_interaction: function take_interaction(message_data)
 hide_interaction_modal: function hide_interaction_modal(){
     app.interaction_error = null;
     app.working = false;
+    app.interaction_modal_open = false;
 },
 
 /**
@@ -745,6 +750,7 @@ hide_interaction_modal: function hide_interaction_modal(){
  */
 hide_interaction_start_modal: function hide_interaction_start_modal(){
     app.interaction_error = null;
+    app.interaction_start_modal_open = false;
     app.working = false;
 },
 
