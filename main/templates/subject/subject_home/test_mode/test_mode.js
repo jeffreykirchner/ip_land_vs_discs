@@ -501,7 +501,7 @@ test_mode_choose_interaction: function test_mode_choose_interaction()
     }
 
     let v = app.random_number(1, 4);
-    v=3;
+    v=4;
     switch (v){
         case 1:
             document.getElementById("id_start_send_seeds_button").click();
@@ -570,9 +570,7 @@ test_mode_take_seeds: function test_mode_take_seeds(){
     if(target_player.seeds == 0 ||
         !app.interaction_modal_open ||
         local_player.cool_down > 0 ||
-        target_player.cool_down > 0 ||
-        local_player.interaction > 0 ||
-        target_player.interaction > 0)
+        target_player.cool_down > 0)
     {
         app.test_mode_reset_info();
         document.getElementById("id_cancel_interaction_button").click();
@@ -597,6 +595,7 @@ test_mode_send_discs: function test_mode_send_discs(){
        local_player.interaction > 0)
     {
         app.test_mode_reset_info();
+        app.interaction_start_modal.hide();
         document.getElementById("id_cancel_interaction_button").click();
         return;
     }
@@ -631,6 +630,43 @@ test_mode_send_discs: function test_mode_send_discs(){
  */
 test_mode_take_discs: function test_mode_take_discs(){
     let local_player = app.session.world_state.session_players[app.session_player.id];
+    let target_player = app.session.world_state.session_players[app.selected_player.selected_player_id];
+
+    //check if player can send seeds
+    if(Object.keys(app.selected_player.interaction_discs).length == 0 ||
+       !app.interaction_modal_open ||
+       local_player.cool_down > 0 ||
+       target_player.cool_down > 0 )
+    {
+        app.test_mode_reset_info();
+        app.interaction_start_modal.hide();
+        document.getElementById("id_cancel_interaction_button").click();
+        return;
+    }
+
+    let first = true;
+    for(let i in app.selected_player.interaction_discs)
+    {
+        if(first)
+        {
+            app.selected_player.interaction_discs[i] = true;
+            first = false;
+        }
+        else
+        {
+            if(random_number(1, 2) == 1)
+            {
+                app.selected_player.interaction_discs[i] = true;
+            }
+            else
+            {
+                app.selected_player.interaction_discs[i] = false;
+            }
+        }
+    }
+
+    document.getElementById("id_submit_interaction_button").click();
+    app.test_mode_reset_info();
 },
 
 /**
