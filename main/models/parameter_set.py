@@ -97,7 +97,7 @@ class ParameterSet(models.Model):
             self.survey_required = True if new_ps.get("survey_required") == "True" else False
             self.survey_link = new_ps.get("survey_link")
 
-            self.prolific_mode = new_ps.get("prolific_mode", False)
+            self.prolific_mode = True if new_ps.get("prolific_mode") == "True" else False
             self.prolific_completion_link = new_ps.get("prolific_completion_link", None)
 
             self.world_width = new_ps.get("world_width", 1000)

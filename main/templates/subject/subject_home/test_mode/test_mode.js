@@ -53,28 +53,49 @@ do_test_mode_instructions: function do_test_mode_instructions()
     if(app.session_player.current_instruction == app.session_player.current_instruction_complete)
     {
 
-        if(app.session_player.current_instruction == app.instruction_pages.length)
+        if(app.session_player.current_instruction == app.instructions.instruction_pages.length)
             document.getElementById("instructions_start_id").click();
         else
             document.getElementById("instructions_next_id").click();
 
-    }else
+    }
     {
+        let session_player = app.session.world_state.session_players[app.session_player.id];
         //take action if needed to complete page
-        switch (app.session_player.current_instruction)
-        {
-            case 1:
+        switch(app.session_player.current_instruction){
+            case app.instructions.action_page_move:      
+                session_player.target_location = {x:session_player.current_location.x + app.random_number(-100, 100),
+                                                    y:session_player.current_location.y + app.random_number(-100, 100)};    
+                app.target_location_update();
+                return;      
+                break; 
+            case app.instructions.action_page_disc:
+                if(session_player.state == "open")
+                {
+                    document.getElementById("id_send_build_disc").click();
+                }
+                return;
                 break;
-            case 2:
+            case app.instructions.action_page_seed:
+                if(session_player.state == "open")
+                {
+                    app.build_seed_count = 10;
+                    document.getElementById("id_send_build_seeds").click();
+                }    
+
+                return;
+                break;        
+            case app.instructions.action_page_field:
+                    
+                return;
+                break;        
+            case app.instructions.action_page_interaction:
                 
+                return;
                 break;
-            case 3:
-                
-                break;
-            case 4:
-                
-                break;
-            case 5:
+            case app.instructions.action_page_chat:
+                        
+                return;
                 break;
         }   
     }
