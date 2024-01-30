@@ -887,7 +887,7 @@ send_present_players: function send_present_players()
         let session_player = app.session.world_state.session_players[i];
         let container=pixi_avatars[i].bounding_box;
 
-        if(!field.allowed_players.includes(parseInt(session_player.id)))
+        if(field.allowed_players.includes(parseInt(session_player.id)))
         {
             let rect1={x:session_player.current_location.x - container.width/2,
                        y:session_player.current_location.y - container.height/2,
