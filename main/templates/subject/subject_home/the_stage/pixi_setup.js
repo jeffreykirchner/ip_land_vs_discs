@@ -64,7 +64,7 @@ reset_pixi_app: function reset_pixi_app(){
     pixi_app = new PIXI.Application({resizeTo : canvas,
                                         backgroundColor : 0xFFFFFF,
                                         autoResize: true,
-                                        antialias: false,
+                                        antialias: true,
                                         resolution: 1,
                                         view: canvas });
 
@@ -172,7 +172,6 @@ game_loop: function game_loop(delta)
     {   
         app.update_offsets_player(delta);
         app.update_mini_map(delta);
-        app.check_for_collisions();
     }
     
     if(app.pixi_mode=="staff")
@@ -194,28 +193,6 @@ game_loop: function game_loop(delta)
         else
             app.pixi_tick_tock.value = "tick";
     }
-},
-
-
-
-/**
- * check for collisions between local player and other objects
- */
-check_for_collisions: function check_for_collisions(delta)
-{
-    //no harvesting during breaks
-    if(app.session.world_state.time_remaining > app.session.parameter_set.period_length &&
-        app.session.world_state.current_period % app.session.parameter_set.break_frequency == 0)
-    {
-        return;
-    }
-
-    if(Date.now() - app.last_collision_check < 100) return;
-    app.last_collision_check = Date.now();
-
-    const obj = app.session.world_state.session_players[app.session_player.id];
-    let collision_found = false;
-
 },
 
 /**
