@@ -68,7 +68,7 @@ take_finish_instructions: function take_finish_instructions(message_data){
     if(message_data.value == "success")
     {
         result = message_data.result;       
-        
+        app.working = false;
         app.session_player.instructions_finished = result.instructions_finished;
         app.session_player.current_instruction_complete = result.current_instruction_complete;
     } 
