@@ -59,6 +59,7 @@ do_test_mode_instructions: function do_test_mode_instructions()
             document.getElementById("instructions_next_id").click();
 
     }
+    else
     {
         let session_player = app.session.world_state.session_players[app.session_player.id];
         //take action if needed to complete page
@@ -130,7 +131,7 @@ do_test_mode_instructions: function do_test_mode_instructions()
                 return;
                 break;
             case app.instructions.action_page_chat:
-                        
+                app.do_test_mode_chat();        
                 return;
                 break;
         }   
