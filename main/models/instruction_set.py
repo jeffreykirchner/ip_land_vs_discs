@@ -18,8 +18,8 @@ class InstructionSet(models.Model):
     action_page_move = models.IntegerField(verbose_name='Required Action: Move', default=1)
     action_page_disc = models.IntegerField(verbose_name='Required Action: Disc', default=2)
     action_page_seed = models.IntegerField(verbose_name='Required Action: Seed', default=3)
-    action_page_field = models.IntegerField(verbose_name='Required Action: Move', default=4)
-    action_page_interaction = models.IntegerField(verbose_name='Required Action: Move', default=5)
+    action_page_field = models.IntegerField(verbose_name='Required Action: Field', default=4)
+    action_page_interaction = models.IntegerField(verbose_name='Required Action: Interaction', default=5)
     action_page_chat = models.IntegerField(verbose_name='Required Action: Chat', default=6)
         
     timestamp = models.DateTimeField(auto_now_add=True)

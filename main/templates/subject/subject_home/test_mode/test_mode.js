@@ -50,7 +50,7 @@ do_test_mode_instructions: function do_test_mode_instructions()
     if(app.working) return;
     
    
-    if(app.session_player.current_instruction == app.session_player.current_instruction_complete)
+    if( app.session_player.current_instruction_complete >= app.session_player.current_instruction)
     {
 
         if(app.session_player.current_instruction == app.instructions.instruction_pages.length)
@@ -86,11 +86,47 @@ do_test_mode_instructions: function do_test_mode_instructions()
                 return;
                 break;        
             case app.instructions.action_page_field:
-                    
+                if(session_player.state == "open")
+                {
+                    if(!app.field_modal_open)
+                    {   
+                        let field = null;
+                        //check if player has a field
+                        for(let i in app.session.world_state.fields)
+                        {
+                            let temp_field = app.session.world_state.fields[i];
+                            app.subject_field_click(temp_field.id);
+                            break;
+                        }                    
+                    }
+                    else 
+                    {                    
+                        document.getElementById("id_claim_field_button").click();
+                    }    
+                }
                 return;
                 break;        
             case app.instructions.action_page_interaction:
-                
+                if(app.interaction_modal_open)
+                {
+                    app.selected_player.interaction_amount = 1;
+                    document.getElementById("id_submit_interaction_button").click();
+                }
+                else if(!app.interaction_start_modal_open)
+                {
+                    for(let i in app.session.world_state.session_players)
+                    {
+                        let temp_player = app.session.world_state.session_players[i];
+                       
+                        if(temp_player.id == app.session_player.id) continue;
+
+                        app.subject_avatar_click(temp_player.id);
+                    }
+                }
+                else if(app.interaction_start_modal_open)
+                {
+                    document.getElementById("id_start_send_seeds_button").click();
+                }
                 return;
                 break;
             case app.instructions.action_page_chat:
