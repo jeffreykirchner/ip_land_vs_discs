@@ -202,7 +202,7 @@ do_test_mode_run: function do_test_mode_run()
 find_test_mode_task: function find_test_mode_task()
 {
     let v = app.random_number(1, 7);
-    v=7;
+
     switch (v){
         case 1:
             app.test_mode_info.task = "chat";
@@ -341,7 +341,11 @@ test_mode_manage_field: function test_mode_manage_field(){
     let local_player = app.session.world_state.session_players[app.session_player.id];
     const parameter_set_period = app.get_current_parameter_set_period();
 
-    if(parameter_set_period.field_pr == "False") return
+    if(parameter_set_period.field_pr == "False")
+    {
+        app.test_mode_reset_info();
+        return;
+    }
 
     let field = null;
     //check if player has a field
