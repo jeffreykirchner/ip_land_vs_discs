@@ -6,18 +6,18 @@
 setup_pixi: function setup_pixi(){    
     app.reset_pixi_app();
 
-    PIXI.Assets.add('sprite_sheet', '{% static "gear_3_animated.json" %}');
-    PIXI.Assets.add('sprite_sheet_2', '{% static "sprite_sheet.json" %}');
-    PIXI.Assets.add('bg_tex', '{% static "background_tile_low.jpg"%}');
-    PIXI.Assets.add('wall_tex', '{% static "wall.png"%}');
-    PIXI.Assets.add('barrier_tex', '{% static "barrier.png"%}');
-    PIXI.Assets.add('bridge_tex', '{% static "bridge.jpg"%}');
-    PIXI.Assets.add('seed_tex', '{% static "seed_1.png"%}');
-    PIXI.Assets.add('disc_tex', '{% static "disc_1.png"%}');
-    PIXI.Assets.add('dash_tex', '{% static "dash_1.png"%}');
-    PIXI.Assets.add('left_click_tex', '{% static "left_click.png"%}');
-    PIXI.Assets.add('right_click_tex', '{% static "right_click.png"%}');
-    PIXI.Assets.add('cone_tex', '{% static "cone_1.png"%}');
+    PIXI.Assets.add({alias:'sprite_sheet', src:'{% static "gear_3_animated.json" %}'});
+    PIXI.Assets.add({alias:'sprite_sheet_2', src:'{% static "sprite_sheet.json" %}'});
+    PIXI.Assets.add({alias:'bg_tex', src:'{% static "background_tile_low.jpg"%}'});
+    PIXI.Assets.add({alias:'wall_tex', src:'{% static "wall.png"%}'});
+    PIXI.Assets.add({alias:'barrier_tex', src:'{% static "barrier.png"%}'});
+    PIXI.Assets.add({alias:'bridge_tex', src:'{% static "bridge.jpg"%}'});
+    PIXI.Assets.add({alias:'seed_tex', src:'{% static "seed_1.png"%}'});
+    PIXI.Assets.add({alias:'disc_tex', src:'{% static "disc_1.png"%}'});
+    PIXI.Assets.add({alias:'dash_tex', src:'{% static "dash_1.png"%}'});
+    PIXI.Assets.add({alias:'left_click_tex', src:'{% static "left_click.png"%}'});
+    PIXI.Assets.add({alias:'right_click_tex', src:'{% static "right_click.png"%}'});
+    PIXI.Assets.add({alias:'cone_tex', src:'{% static "cone_1.png"%}'});
 
     const textures_promise = PIXI.Assets.load(['sprite_sheet', 'bg_tex', 'sprite_sheet_2', 'seed_tex', 'disc_tex',
                                                'wall_tex', 'barrier_tex', 'bridge_tex','dash_tex'
