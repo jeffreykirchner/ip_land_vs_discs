@@ -27,6 +27,7 @@
                         <button type="button"
                                 class="btn btn-outline-primary mr-2"
                                 v-on:click = "start_send_seeds()"
+                                id="id_start_send_seeds_button"
                                 title="Send Seeds"                       
                                 v-bind:disabled="reconnecting || working">
                             Send Seeds to [[selected_player.parameter_set_player.id_label]] <i class="fas fa-seedling"></i>
@@ -39,7 +40,8 @@
                     <div class="col text-center">
                         <button type="button"
                                 class="btn btn-outline-primary mr-2"
-                                v-on:click = "start_take_seeds()"                                
+                                v-on:click = "start_take_seeds()"      
+                                id="id_start_take_seeds_button"                          
                                 title="Take Seeds"                       
                                 v-bind:disabled="reconnecting || working">
                             Take Seeds from [[selected_player.parameter_set_player.id_label]] <i class="fas fa-seedling"></i>
@@ -53,7 +55,7 @@
                         <button type="button"
                                 class="btn btn-outline-primary mr-2"
                                 v-on:click = "start_send_disc()"
-                               
+                                id="id_start_send_disc_button" 
                                 title="Send Disc Copies"                       
                                 v-bind:disabled="reconnecting || working">
                             Send Disc Copies to [[selected_player.parameter_set_player.id_label]] <i class="fas fa-compact-disc"></i>
@@ -67,6 +69,7 @@
                         <button type="button"
                                 class="btn btn-outline-primary mr-2"
                                 v-on:click = "send_my_disc()"
+                                id="id_send_my_disc_button"
                                 title="Send Disc Copy"                      
                                 v-bind:disabled="reconnecting || working">
                             Send My Disc Copy to [[selected_player.parameter_set_player.id_label]] <i class="fas fa-compact-disc"></i>
@@ -80,6 +83,7 @@
                         <button type="button"
                                 class="btn btn-outline-primary mr-2"
                                 v-on:click = "start_take_disc()"
+                                id="id_start_take_disc_button"
                                 title="Take Disc Copies"                 
                                 v-bind:disabled="reconnecting || working">
                             Take Disc Copies from [[selected_player.parameter_set_player.id_label]] <i class="fas fa-compact-disc"></i>

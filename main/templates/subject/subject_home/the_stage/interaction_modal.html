@@ -147,6 +147,7 @@
                 <button type="button"
                         class="btn btn-outline-primary mr-2"
                         v-on:click = "cancel_interaction()"
+                        id = "id_cancel_interaction_button"
                         title="Cancel Interaction"                       
                         v-bind:disabled="reconnecting || working">
                     Cancel <i class="fas fa-ban"></i>
@@ -155,6 +156,7 @@
                 <button type="button"
                         class="btn btn-outline-primary"
                         v-on:click = "send_interaction()"
+                        id = "id_submit_interaction_button"
                         title="Submit Interaction"                       
                         v-bind:disabled="reconnecting || working">
                     <span v-if="selected_player.interaction_type=='send_seeds' || selected_player.interaction_type=='send_disc'">

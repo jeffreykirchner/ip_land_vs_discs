@@ -57,8 +57,13 @@ var app = Vue.createApp({
 
                     field_modal_open : false,
                     field_manage_modal_open : false,
+                    interaction_modal_open : false,
+                    interaction_start_modal_open : false,
 
                     test_mode : {%if session.parameter_set.test_mode%}true{%else%}false{%endif%},
+                    test_mode_info : {target_location : null,
+                                      task:null,
+                                      target:null},
 
                     //pixi
                     canvas_width  : null,
@@ -92,9 +97,6 @@ var app = Vue.createApp({
                     field_error: null,
                     field_manage_error: null,
                     interaction_error: null,
-
-                    //test mode
-                    test_mode_location_target : null,
                 }},
     methods: {
 
@@ -472,7 +474,8 @@ var app = Vue.createApp({
             //update on screen inventory
             if(message_data.period_is_over)
             {
-                app.setup_disc_inventory();                
+                app.setup_disc_inventory();     
+                if(app.session.parameter_set.test_mode) app.test_mode_reset_info();    
             }
 
             app.setup_seed_inventory();
