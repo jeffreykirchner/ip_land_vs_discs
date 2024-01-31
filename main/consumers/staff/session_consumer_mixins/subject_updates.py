@@ -495,12 +495,12 @@ class SubjectUpdatesMixin():
                     current_period.summary_data[player_id_s]["discs_i_sent_total"] += len(interaction_discs)
                     current_period.summary_data[target_player_id_s]["discs_they_sent_total"] += len(interaction_discs)
             
-            # if interaction_type == 'take_seeds' or interaction_type=='take_disc':
-            #     source_player["state"] = "open"
-            #     source_player["state_payload"] = {}
+            if interaction_type == 'take_seeds' or interaction_type=='take_disc':
+                source_player["state"] = "open"
+                source_player["state_payload"] = {}
 
-            #     target_player["state"] = "open"
-            #     target_player["state_payload"] = {}
+                target_player["state"] = "open"
+                target_player["state_payload"] = {}
 
             await current_period.asave()
 
