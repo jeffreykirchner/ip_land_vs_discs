@@ -358,7 +358,7 @@ class TimerMixin():
 
             if player_id_s in field["present_players"]:
                 present_player_count = len(field["present_players"])
-                multiplier = Decimal(parameter_set_multipliers[present_player_count-1])
+                multiplier = Decimal(parameter_set_multipliers[min(present_player_count-1,len(parameter_set_multipliers)-1)])
                 field_label = self.parameter_set_local["parameter_set_fields"][str(field["parameter_set_field"])]["info"]
 
                 break
