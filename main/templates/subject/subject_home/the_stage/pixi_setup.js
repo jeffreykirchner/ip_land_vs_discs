@@ -159,7 +159,7 @@ setup_pixi_sheets: function setup_pixi_sheets(textures){
 
     //start game loop
     pixi_app.ticker.maxFPS = 60;
-    pixi_app.ticker.minFPS = 30;
+    pixi_app.ticker.minFPS = 60;
     pixi_app.ticker.add(app.game_loop);
 },
 
