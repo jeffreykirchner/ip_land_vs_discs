@@ -475,7 +475,7 @@ var app = Vue.createApp({
             if(message_data.period_is_over)
             {
                 app.setup_disc_inventory();     
-                if(app.session.parameter_set.test_mode) app.test_mode_reset_info();    
+                if(app.session.parameter_set.test_mode=="True") app.test_mode_reset_info();    
             }
 
             app.setup_seed_inventory();
