@@ -52,6 +52,8 @@ setup_pixi: function setup_pixi(){
     app.pixi_tick_tock = {value:"tick", time:Date.now()};
     pixi_transfer_beams = {};
     pixi_transfer_beams_key = 0;
+
+    PIXI.ticker
 },
 
 reset_pixi_app: function reset_pixi_app(){    
@@ -156,6 +158,8 @@ setup_pixi_sheets: function setup_pixi_sheets(textures){
     {%endif%}
 
     //start game loop
+    pixi_app.ticker.maxFPS = 60;
+    pixi_app.ticker.minFPS = 60;
     pixi_app.ticker.add(app.game_loop);
 },
 
@@ -180,13 +184,14 @@ game_loop: function game_loop(delta)
         app.scroll_staff(delta);
     }  
     
-    {%if DEBUG or session.parameter_set.test_mode%}
-    pixi_fps_label.text = Math.round(pixi_app.ticker.FPS) + " FPS";
-    {%endif%}
 
     //tick tock
     if(Date.now() - app.pixi_tick_tock.time >= 200)
     {
+        {%if DEBUG or session.parameter_set.test_mode%}
+        pixi_fps_label.text = Math.round(pixi_app.ticker.FPS) + " FPS";
+        {%endif%}
+
         app.pixi_tick_tock.time = Date.now();
         if(app.pixi_tick_tock.value == "tick") 
             app.pixi_tick_tock.value = "tock";

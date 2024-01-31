@@ -293,21 +293,21 @@ class SubjectUpdatesMixin():
         # check if players are frozen
         if status == "success":
             if source_player['frozen'] or target_player['frozen']:
-                logger.info(f"tractor_beam: players frozen, {event['message_text']}")
+                # logger.info(f"tractor_beam: players frozen, {event['message_text']}")
                 status = "fail"
                 error_message.append({"id":"tractor_beam", "message": "The avatar is not available for an interaction."})
 
         #check if either player has tractor beam enabled
         if status == "success":
             if source_player['tractor_beam_target'] or target_player['tractor_beam_target']:
-                logger.info(f"tractor_beam: already in an interaction, {event['message_text']}")
+                # logger.info(f"tractor_beam: already in an interaction, {event['message_text']}")
                 status = "fail"
                 error_message.append({"id":"tractor_beam", "message": "The avatar is not available for an interaction."})
         
         #check if player is already interacting or cooling down.
         if status == "success":
             if source_player['interaction'] > 0 or source_player['cool_down'] > 0:
-                logger.info(f"tractor_beam: cooling down, {event['message_text']}")
+                # logger.info(f"tractor_beam: cooling down, {event['message_text']}")
                 status = "fail"
                 error_message.append({"id":"tractor_beam", "message": "The avatar is not available for an interaction."})
         
