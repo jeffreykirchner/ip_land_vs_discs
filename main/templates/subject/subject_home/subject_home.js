@@ -516,6 +516,15 @@ var app = Vue.createApp({
                 }
             }
 
+            if(app.session.world_state.time_remaining == 10)
+            {
+                let notice_text = "The period is about end.";
+
+                app.add_notice(notice_text,
+                               app.session.world_state.current_period,
+                               0);
+            }
+
             //update any notices on screen
             app.update_notices();
 
