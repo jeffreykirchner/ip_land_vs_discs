@@ -248,6 +248,10 @@ setup_pixi_fields: function setup_pixi_fields()
 
         multiplier_table_container.addChild(multiplier_label);
 
+        present_players_length = field.present_players.length;
+
+        if(present_players_length > multiplier_list.length) present_players_length = multiplier_list.length;
+
         //list
         let temp_y = multiplier_label.position.y + multiplier_label.height+2;
         for(const i in multiplier_list)
@@ -256,7 +260,7 @@ setup_pixi_fields: function setup_pixi_fields()
             let multiplier_text_left = "";
             let multiplier_text_right = "";
 
-            if(field.present_players.length == v)
+            if(present_players_length == v)
             {
                 text_style_multiplier.fill = 'yellow';
             }
