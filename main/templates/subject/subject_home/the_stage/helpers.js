@@ -150,6 +150,12 @@ get_parameter_set_group_from_player_id: function get_parameter_set_group_from_pl
 get_current_parameter_set_period: function get_current_parameter_set_period()
 {
     let current_period = app.session.world_state.current_period;
+
+    if(current_period > app.session.parameter_set.period_count)
+    {
+        current_period = app.session.parameter_set.period_count;
+    }
+
     let parameter_set_period_id = app.session.parameter_set.parameter_set_periods_order[current_period-1];
     return app.session.parameter_set.parameter_set_periods[parameter_set_period_id];
 },
