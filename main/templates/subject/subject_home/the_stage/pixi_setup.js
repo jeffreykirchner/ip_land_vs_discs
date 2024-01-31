@@ -139,7 +139,7 @@ setup_pixi_sheets: function setup_pixi_sheets(textures){
         
     }
 
-    {%if DEBUG%}
+    {%if DEBUG or session.parameter_set.test_mode%}
     //fps counter
     let text_style = {
         fontFamily: 'Arial',
@@ -180,7 +180,7 @@ game_loop: function game_loop(delta)
         app.scroll_staff(delta);
     }  
     
-    {%if DEBUG%}
+    {%if DEBUG or session.parameter_set.test_mode%}
     pixi_fps_label.text = Math.round(pixi_app.ticker.FPS) + " FPS";
     {%endif%}
 

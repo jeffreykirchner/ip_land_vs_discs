@@ -1,7 +1,7 @@
 {%if session.parameter_set.test_mode%}
 
 do_test_mode: function do_test_mode(){
-    {%if DEBUG%}
+    {%if DEBUG or session.parameter_set.test_mode%}
     console.log("Do Test Mode");
     {%endif%}
 

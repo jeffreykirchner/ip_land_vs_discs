@@ -129,7 +129,7 @@ var app = Vue.createApp({
         */
         take_message: function take_message(data) {
 
-            {%if DEBUG%}
+            {%if DEBUG or session.parameter_set.test_mode%}
             console.log(data);
             {%endif%}
 
