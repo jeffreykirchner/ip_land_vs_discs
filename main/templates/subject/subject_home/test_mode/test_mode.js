@@ -221,8 +221,10 @@ find_test_mode_task: function find_test_mode_task()
             break;
         case 6:
             app.test_mode_info.task = "build_disk";
+            break;
         case 7:
             app.test_mode_info.task = "go_to_player";
+            break;
     }
 },
 
@@ -248,6 +250,12 @@ do_test_mode_chat: function do_test_mode_chat(){
  * test mode claim field
  */
 test_mode_claim_field: function test_mode_claim_field(){
+
+    if(app.session.world_state.time_remaining>app.session.parameter_set.period_length)
+    {
+        app.test_mode_reset_info();
+        return;
+    }
 
     let local_player = app.session.world_state.session_players[app.session_player.id];
 
@@ -460,6 +468,12 @@ test_mode_go_to_field: function test_mode_go_to_field(){
  */
 test_mode_grow_seeds: function test_mode_grow_seeds(){
 
+    if(app.session.world_state.time_remaining>app.session.parameter_set.period_length)
+    {
+        app.test_mode_reset_info();
+        return;
+    }
+
     let local_player = app.session.world_state.session_players[app.session_player.id];
 
      //check if player has enough production time
@@ -487,6 +501,12 @@ test_mode_grow_seeds: function test_mode_grow_seeds(){
  */
 test_mode_build_discs: function test_mode_build_discs(){
 
+    if(app.session.world_state.time_remaining>app.session.parameter_set.period_length)
+    {
+        app.test_mode_reset_info();
+        return;
+    }
+
     let local_player = app.session.world_state.session_players[app.session_player.id];
 
     //check if player has enough production time
@@ -511,6 +531,12 @@ test_mode_build_discs: function test_mode_build_discs(){
  * go to player
  */
 test_mode_go_to_player: function test_mode_go_to_player(){
+
+    if(app.session.world_state.time_remaining>app.session.parameter_set.period_length)
+    {
+        app.test_mode_reset_info();
+        return;
+    }
 
     let local_player = app.session.world_state.session_players[app.session_player.id];
 
@@ -559,6 +585,13 @@ test_mode_choose_interaction: function test_mode_choose_interaction()
     if(!app.interaction_start_modal_open)
     {
         app.test_mode_reset_info();
+        return;
+    }
+
+    if(app.session.world_state.time_remaining>app.session.parameter_set.period_length)
+    {
+        app.test_mode_reset_info();
+        app.interaction_start_modal.hide();
         return;
     }
 
@@ -649,6 +682,7 @@ test_mode_take_seeds: function test_mode_take_seeds(){
  * test mode send discs
  */
 test_mode_send_discs: function test_mode_send_discs(){
+
     let local_player = app.session.world_state.session_players[app.session_player.id];
 
     //check if player can send discs
