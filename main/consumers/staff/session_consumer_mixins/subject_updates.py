@@ -583,6 +583,9 @@ class SubjectUpdatesMixin():
             player_id = self.session_players_local[event["player_key"]]["id"]
             interaction_type =  event["message_text"]["interaction_type"]
             source_player = self.world_state_local['session_players'][str(player_id)]
+
+            target_player_id = source_player['tractor_beam_target']
+            target_player = self.world_state_local['session_players'][str(target_player_id)]
         except:
             logger.error(f"interaction: invalid data, {event['message_text']}")
             status = "fail"
@@ -590,9 +593,6 @@ class SubjectUpdatesMixin():
 
         if source_player['interaction'] == 0:
             return
-        
-        target_player_id = source_player['tractor_beam_target']
-        target_player = self.world_state_local['session_players'][str(target_player_id)]
         
         if status == "success":
             source_player['interaction'] = 0
