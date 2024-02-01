@@ -248,18 +248,24 @@ destory_pixi_subjects: function destory_pixi_subjects()
 
         if(pixi_objects)
         {
-            pixi_objects.avatar_container.destroy();
-            pixi_objects.chat.container.destroy();
-            pixi_objects.interaction_container.destroy();
+            pixi_container_main.removeChild(pixi_objects.avatar_container);
+            pixi_container_main.removeChild(pixi_objects.chat.container);
+            pixi_container_main.removeChild(pixi_objects.interaction_container);
+
+            pixi_objects.avatar_container.destroy({children:true, baseTexture:true});
+            pixi_objects.chat.container.destroy({children:true, baseTexture:true});
+            pixi_objects.interaction_container.destroy({children:true, baseTexture:true});
 
             if(app.pixi_mode != "subject")
             {
-                pixi_objects.view_container.destroy();
+                pixi_container_main.removeChild(pixi_objects.view_container);
+                pixi_objects.view_container.destroy({children:true, baseTexture:true});
             }
 
             for(let j=0; j<pixi_objects.tractor_beam.length; j++)
             {
-                pixi_objects.tractor_beam[j].destroy();
+                pixi_container_main.removeChild(pixi_objects.tractor_beam[j]);
+                pixi_objects.tractor_beam[j].destroy({children:true, baseTexture:true});
             }
         }
     }

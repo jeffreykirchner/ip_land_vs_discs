@@ -3,7 +3,11 @@
  * */
 setup_disc_inventory: function setup_disc_inventory()
 {
-    if(pixi_inventory.disc_container) pixi_inventory.disc_container.destroy();
+    if(pixi_inventory.disc_container)
+    {
+        pixi_app.stage.removeChild(pixi_inventory.disc_container);
+        pixi_inventory.disc_container.destroy({children:true, baseTexture:true});
+    }
 
     if(!app.session) return;
     if(!app.session.started) return;
@@ -94,7 +98,10 @@ setup_disc_inventory: function setup_disc_inventory()
  */
 setup_seed_inventory: function setup_seed_inventory()
 {
-    if(pixi_inventory.seed_container) pixi_inventory.seed_container.destroy();
+    if(pixi_inventory.seed_container){
+        pixi_app.stage.removeChild(pixi_inventory.seed_container);
+        pixi_inventory.seed_container.destroy({children:true, baseTexture:true});
+    }
 
     if(!app.session) return;
     if(!app.session.started) return;

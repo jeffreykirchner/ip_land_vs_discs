@@ -3,7 +3,11 @@
  * */
 setup_pixi_minimap: function setup_pixi_minimap()
 {
-    if(mini_map.container) mini_map.container.destroy();
+    if(mini_map.container)
+    {
+        pixi_app.stage.removeChild(mini_map.container);
+        mini_map.container.destroy({children:true, baseTexture:true});
+    } 
 
     if(!app.session) return;
     if(!app.session.started) return;
