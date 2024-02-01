@@ -14,7 +14,8 @@ update_notices: function update_notices()
 {
     if(pixi_notices.container)
     {
-        pixi_notices.container.destroy();
+        pixi_app.stage.removeChild(pixi_notices.container);
+        pixi_notices.container.destroy({children:true, baseTexture:true}));
     }
 
     let container = new PIXI.Container();
