@@ -596,7 +596,7 @@ test_mode_choose_interaction: function test_mode_choose_interaction()
     }
 
     let v = app.random_number(1, 4);
-    v=4;
+    // v=4;
     switch (v){
         case 1:
             document.getElementById("id_start_send_seeds_button").click();

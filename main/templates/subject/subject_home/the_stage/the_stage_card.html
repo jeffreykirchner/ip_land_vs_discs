@@ -129,7 +129,8 @@
                             v-model="build_seed_count"
                             min="1"
                             max="99"
-                            aria-label="Seed Count"                           
+                            aria-label="Seed Count"
+                            id="id_build_seed_count"                           
                             aria-describedby="send_build_seeds_id">
                     <button class="btn btn-outline-primary btn-lg"
                             type="button" 
@@ -180,6 +181,7 @@
                            class="form-control form-control-lg" 
                            placeholder="Chat Text" 
                            v-model="chat_text"
+                           id="id_chat_text"
                            aria-label="Chat Text"                           
                            v-on:keyup.enter="send_chat()"
                            aria-describedby="send_chat_id">
