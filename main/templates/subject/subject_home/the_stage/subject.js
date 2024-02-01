@@ -12,144 +12,143 @@ get_offset:function get_offset()
 /**
  *pointer up on subject screen
  */
- subject_pointer_up: function subject_pointer_up(event)
+ subject_pointer_click: function subject_pointer_click(event)
 {
     if(!app.session.world_state.hasOwnProperty('started')) return;
     let local_pos = event.data.getLocalPosition(event.currentTarget);
     let local_player = app.session.world_state.session_players[app.session_player.id];
 
-    if(event.button == 0)
+    if(event.data.detail>1)
     {
-
-        if(local_player.frozen)
-        {
-            let frozen_text = "No movement while interacting.";
-
-            if(local_player.state == "building_seeds" || 
-               local_player.state == "claiming_field" ||
-               local_player.state == "building_disc")
-            {
-                frozen_text = "No movement while working.";
-            }
-
-            app.add_text_emitters(frozen_text, 
-                            local_player.current_location.x, 
-                            local_player.current_location.y,
-                            local_player.current_location.x,
-                            local_player.current_location.y-100,
-                            0xFFFFFF,
-                            28,
-                            null);
-            return;
-        }
-        
-        local_player.target_location.x = local_pos.x;
-        local_player.target_location.y = local_pos.y;
-
-        app.target_location_update();
+        app.subject_pointer_right_click(event);
+        return;
     }
-    else if(event.button == 2)
+
+    if(local_player.frozen)
     {
-        if(local_player.frozen)
+        let frozen_text = "No movement while interacting.";
+
+        if(local_player.state == "building_seeds" || 
+            local_player.state == "claiming_field" ||
+            local_player.state == "building_disc")
         {
-            let frozen_text = "No actions while interacting.";
-
-            if(local_player.state == "building_seeds" || 
-               local_player.state == "claiming_field" ||
-               local_player.state == "building_disc")
-            {
-                frozen_text = "No actions while working.";
-            }
-
-            app.add_text_emitters(frozen_text, 
-                            local_player.current_location.x, 
-                            local_player.current_location.y,
-                            local_player.current_location.x,
-                            local_player.current_location.y-100,
-                            0xFFFFFF,
-                            28,
-                            null);
-            return;
+            frozen_text = "No movement while working.";
         }
 
-        // if(local_player.cool_down > 0)
-        // {
-        //     app.add_text_emitters("No actions cooling down.", 
-        //                     local_player.current_location.x, 
-        //                     local_player.current_location.y,
-        //                     local_player.current_location.x,
-        //                     local_player.current_location.y-100,
-        //                     0xFFFFFF,
-        //                     28,
-        //                     null);
-        //     return;
-        // }
-        
-        //avatars
-        for(i in app.session.world_state.session_players)
+        app.add_text_emitters(frozen_text, 
+                        local_player.current_location.x, 
+                        local_player.current_location.y,
+                        local_player.current_location.x,
+                        local_player.current_location.y-100,
+                        0xFFFFFF,
+                        28,
+                        null);
+        return;
+    }
+    
+    local_player.target_location.x = local_pos.x;
+    local_player.target_location.y = local_pos.y;
+
+    app.target_location_update();    
+},
+
+/**
+ *pointer up on subject screen
+ */
+ subject_pointer_right_click: function subject_pointer_right_click(event)
+{
+    if(!app.session.world_state.hasOwnProperty('started')) return;
+    let local_pos = event.data.getLocalPosition(event.currentTarget);
+    let local_player = app.session.world_state.session_players[app.session_player.id];
+
+
+    if(local_player.frozen)
+    {
+        let frozen_text = "No actions while interacting.";
+
+        if(local_player.state == "building_seeds" || 
+            local_player.state == "claiming_field" ||
+            local_player.state == "building_disc")
         {
-            let obj = app.session.world_state.session_players[i];
+            frozen_text = "No actions while working.";
+        }
 
-            if(app.get_distance(obj.current_location, local_pos) < 100 &&
-               app.get_distance(obj.current_location, local_player.current_location) <= app.session.parameter_set.interaction_range+125)
+        app.add_text_emitters(frozen_text, 
+                        local_player.current_location.x, 
+                        local_player.current_location.y,
+                        local_player.current_location.x,
+                        local_player.current_location.y-100,
+                        0xFFFFFF,
+                        28,
+                        null);
+        return;
+    }
+
+    //avatars
+    for(i in app.session.world_state.session_players)
+    {
+        let obj = app.session.world_state.session_players[i];
+
+        if(app.get_distance(obj.current_location, local_pos) < 100 &&
+            app.get_distance(obj.current_location, local_player.current_location) <= app.session.parameter_set.interaction_range+125)
+        {
+
+            if(app.session.world_state.time_remaining > app.session.parameter_set.period_length &&
+                app.session.world_state.current_period % app.session.parameter_set.break_frequency == 0)
             {
+                app.add_text_emitters("No interactions while on break.", 
+                                        obj.current_location.x, 
+                                        obj.current_location.y,
+                                        obj.current_location.x,
+                                        obj.current_location.y-100,
+                                        0xFFFFFF,
+                                        28,
+                                        null);
+                return;
+            }
 
-                if(app.session.world_state.time_remaining > app.session.parameter_set.period_length &&
-                    app.session.world_state.current_period % app.session.parameter_set.break_frequency == 0)
-                {
-                    app.add_text_emitters("No interactions while on break.", 
-                                            obj.current_location.x, 
-                                            obj.current_location.y,
-                                            obj.current_location.x,
-                                            obj.current_location.y-100,
-                                            0xFFFFFF,
-                                            28,
-                                            null);
-                    return;
-                }
+            app.subject_avatar_click(i);              
+            return;
+        }
+    }
 
-                app.subject_avatar_click(i);              
+    //fields
+    for(i in app.session.world_state.fields)
+    {
+        let obj = app.session.parameter_set.parameter_set_fields[i];
+        let rect={x:obj.x-obj.width/2, y:obj.y-obj.height/2, width:obj.width, height:obj.height};
+        let pt={x:local_pos.x, y:local_pos.y};
+
+        
+        if(app.check_point_in_rectagle(pt, rect))
+        {
+            if(app.session.world_state.time_remaining > app.session.parameter_set.period_length &&
+                app.session.world_state.current_period % app.session.parameter_set.break_frequency == 0)
+            {
+                app.add_text_emitters("No claims while on break.", 
+                                        local_pos.x, 
+                                        local_pos.y,
+                                        local_pos.x,
+                                        local_pos.y-100,
+                                        0xFFFFFF,
+                                        28,
+                                        null);
+                return;
+            }
+
+            //check subject close enough for interaction
+            if(app.check_for_circle_rect_intersection({x:local_player.current_location.x, 
+                                                        y:local_player.current_location.y, 
+                                                        radius:app.session.parameter_set.interaction_range},
+                                                    rect))
+            {
+                app.subject_field_click(i);              
                 return;
             }
         }
 
-        //fields
-        for(i in app.session.world_state.fields)
-        {
-            let obj = app.session.parameter_set.parameter_set_fields[i];
-            let rect={x:obj.x-obj.width/2, y:obj.y-obj.height/2, width:obj.width, height:obj.height};
-            let pt={x:local_pos.x, y:local_pos.y};
-
-            
-            if(app.check_point_in_rectagle(pt, rect))
-            {
-                if(app.session.world_state.time_remaining > app.session.parameter_set.period_length &&
-                    app.session.world_state.current_period % app.session.parameter_set.break_frequency == 0)
-                {
-                    app.add_text_emitters("No claims while on break.", 
-                                            local_pos.x, 
-                                            local_pos.y,
-                                            local_pos.x,
-                                            local_pos.y-100,
-                                            0xFFFFFF,
-                                            28,
-                                            null);
-                    return;
-                }
-
-                //check subject close enough for interaction
-                if(app.check_for_circle_rect_intersection({x:local_player.current_location.x, 
-                                                           y:local_player.current_location.y, 
-                                                           radius:app.session.parameter_set.interaction_range},
-                                                      rect))
-                {
-                    app.subject_field_click(i);              
-                    return;
-                }
-            }
-
-        }
     }
+    
 },
 
 /**
