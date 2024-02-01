@@ -403,7 +403,7 @@ var app = Vue.createApp({
             //update fields
             app.session.world_state.fields = message_data.fields;
 
-            app.destroy_pixi_fields();
+            // app.destroy_pixi_fields();
             app.setup_pixi_fields();
 
             //period has changed

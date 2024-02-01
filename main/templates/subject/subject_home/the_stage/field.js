@@ -5,7 +5,19 @@ setup_pixi_fields: function setup_pixi_fields()
 {
     for(const i in app.session.world_state.fields)
     {
-        pixi_fields[i] = {};
+        // pixi_objects.field_container.destroy({children:true, texture:true, baseTexture:true});
+        if(pixi_fields[i])
+        {
+            if(pixi_fields[i].hasOwnProperty('field_container'))
+            {
+                pixi_container_main.removeChild(pixi_fields[i].field_container);
+                pixi_fields[i].field_container.destroy({children:true, baseTexture:true});
+            }
+        }
+        else
+        {
+            pixi_fields[i] = {};
+        }
 
         const field = app.session.world_state.fields[i];
         const parameter_set_field = app.session.parameter_set.parameter_set_fields[i];
@@ -323,20 +335,21 @@ setup_pixi_fields: function setup_pixi_fields()
 /**
  * destory pixi field objects in world state
  */
-destroy_pixi_fields: function destory_setup_pixi_fields()
-{
-    if(!app.session) return;
+// destroy_pixi_fields: function destory_setup_pixi_fields()
+// {
+//     return;
+//     if(!app.session) return;
 
-    for(const i in app.session.world_state.fields){
+//     for(const i in app.session.world_state.fields){
 
-        let pixi_objects = pixi_fields[i];
+//         let pixi_objects = pixi_fields[i];
 
-        if(pixi_objects)
-        {
-            pixi_objects.field_container.destroy();
-        }
-    }
-},
+//         if(pixi_objects)
+//         {
+//             pixi_objects.field_container.destroy({children:true, texture:true, baseTexture:true});
+//         }
+//     }
+// },
 
 /**
  * send field claim
@@ -373,7 +386,7 @@ take_field_claim: function take_field_claim(message_data)
         let field_id = message_data.field_id;
         app.session.world_state.fields[field_id] = message_data.field;
 
-        app.destroy_pixi_fields();
+        // app.destroy_pixi_fields();
         app.setup_pixi_fields();
 
         if(app.is_subject)
@@ -819,7 +832,7 @@ take_grant_field_access: function take_grant_field_access(message_data)
 
         app.session.world_state.fields[field_id] = message_data.field;
 
-        app.destroy_pixi_fields();
+        // app.destroy_pixi_fields();
         app.setup_pixi_fields();
 
         if(app.is_subject && source_player_id == app.session_player.id)
