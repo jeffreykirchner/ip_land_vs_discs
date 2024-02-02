@@ -12,6 +12,8 @@ var pixi_inventory = {disc_container:null, seed_container:null};                
 var pixi_notices = {container:null, notices:{}};                         //notices
 var pixi_notices_key = 0;
 
+var pixi_fps_counter = 0;
+
 {%include "subject/subject_home/the_stage/pixi_globals.js"%}
 
 //prevent right click
@@ -292,7 +294,6 @@ var app = Vue.createApp({
         */
         take_get_session: function take_get_session(message_data){
 
-            app.destroy_pixi_objects();
             
             app.session = message_data.session;
             app.session_player = message_data.session_player;
@@ -602,7 +603,6 @@ var app = Vue.createApp({
             {
                 app.session.world_state = message_data.world_state;
                 
-                app.destroy_pixi_objects();
                 app.do_reload();
                 app.remove_all_notices();
             }
@@ -626,10 +626,7 @@ var app = Vue.createApp({
 
         {%include "subject/subject_home/the_stage/includes.js"%}
         {%include "subject/subject_home/the_stage/subject.js"%}
-        {%include "subject/subject_home/the_stage/mini_map.js"%}
-        {%include "subject/subject_home/the_stage/subject_overlay.js"%}
         {%include "subject/subject_home/the_stage/notices.js"%}
-        {%include "subject/subject_home/the_stage/inventory.js"%}
         {%include "subject/subject_home/help_doc_subject.js"%}
 
         /** clear form error messages

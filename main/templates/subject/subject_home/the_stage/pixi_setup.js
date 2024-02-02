@@ -25,10 +25,6 @@ setup_pixi: function setup_pixi(){
 
     textures_promise.then((textures) => {
         app.setup_pixi_sheets(textures);
-        app.setup_pixi_ground();
-
-        app.setup_pixi_wall();
-        app.setup_pixi_barrier();
         
         if(app.pixi_mode!="subject")
         {
@@ -37,9 +33,7 @@ setup_pixi: function setup_pixi(){
         }
         else
         {
-            app.setup_pixi_minimap();
-            app.setup_disc_inventory();
-            app.setup_seed_inventory();
+
             // app.setup_subject_status_overlay();
         }
 
@@ -166,35 +160,38 @@ setup_pixi_sheets: function setup_pixi_sheets(textures){
 game_loop: function game_loop(delta)
 {
 
-    app.move_text_emitters(delta);
-    app.animate_transfer_beams(delta);
+    // app.move_text_emitters(delta);
 
-    if(app.pixi_mode=="subject" && app.session.started)
-    {   
-        app.update_offsets_player(delta);
-        app.update_mini_map(delta);
+    // if(app.pixi_mode=="subject" && app.session.started)
+    // {   
+    //     app.update_offsets_player(delta);
+    // }
+    
+    // if(app.pixi_mode=="staff")
+    // {
+    //     app.update_offsets_staff(delta);
+    //     app.scroll_staff(delta);
+    // }  
+    
+    pixi_fps_counter++;
+    if(pixi_fps_counter >= 20)
+    {
+    pixi_fps_label.text = Math.round(pixi_app.ticker.FPS) + " FPS";
+    pixi_fps_counter = 0;
     }
-    
-    if(app.pixi_mode=="staff")
-    {
-        app.update_offsets_staff(delta);
-        app.scroll_staff(delta);
-    }  
-    
-
     //tick tock
-    if(Date.now() - app.pixi_tick_tock.time >= 200)
-    {
+    // if(Date.now() - app.pixi_tick_tock.time >= 200)
+    // {
         {%if DEBUG or session.parameter_set.test_mode%}
-        pixi_fps_label.text = Math.round(pixi_app.ticker.FPS) + " FPS";
+        
         {%endif%}
 
-        app.pixi_tick_tock.time = Date.now();
-        if(app.pixi_tick_tock.value == "tick") 
-            app.pixi_tick_tock.value = "tock";
-        else
-            app.pixi_tick_tock.value = "tick";
-    }
+        //app.pixi_tick_tock.time = Date.now();
+        // if(app.pixi_tick_tock.value == "tick") 
+        //     app.pixi_tick_tock.value = "tock";
+        // else
+        //     app.pixi_tick_tock.value = "tick";
+    // }
 },
 
 /**

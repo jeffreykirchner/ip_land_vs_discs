@@ -297,8 +297,6 @@ var app = Vue.createApp({
         */
         take_get_session: function take_get_session(message_data){
             
-            app.destroy_pixi_objects();
-
 
             app.session = message_data;
 
