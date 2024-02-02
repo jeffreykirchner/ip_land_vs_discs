@@ -236,7 +236,7 @@ var app = Vue.createApp({
             document.getElementById('field_modal').addEventListener('hidden.bs.modal', app.hide_field_modal);
             document.getElementById('field_manage_modal').addEventListener('hidden.bs.modal', app.hide_field_manage_modal);
 
-            {%if session.parameter_set.test_mode%} setTimeout(app.do_test_mode, app.random_number(1000 , 1500)); {%endif%}
+      
 
             // if game is finished show modal
             if( app.session.world_state.current_experiment_phase == 'Names')
@@ -623,7 +623,7 @@ var app = Vue.createApp({
         
         {%include "subject/subject_home/chat/chat_card.js"%}
         {%include "subject/subject_home/summary/summary_card.js"%}
-        {%include "subject/subject_home/test_mode/test_mode.js"%}
+
         {%include "subject/subject_home/instructions/instructions_card.js"%}
         {%include "subject/subject_home/the_stage/includes.js"%}
         {%include "subject/subject_home/the_stage/subject.js"%}
