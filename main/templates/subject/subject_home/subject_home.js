@@ -12,8 +12,6 @@ var pixi_inventory = {disc_container:null, seed_container:null};                
 var pixi_notices = {container:null, notices:{}};                         //notices
 var pixi_notices_key = 0;
 
-var pixi_fps_counter = 0;
-
 {%include "subject/subject_home/the_stage/pixi_globals.js"%}
 
 //prevent right click

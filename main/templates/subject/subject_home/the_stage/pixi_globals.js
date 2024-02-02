@@ -9,6 +9,7 @@ var pixi_transfer_beams = {};                //transfer beams
 var pixi_transfer_beams_key = 0;
 
 var pixi_fps_label = null;                     //fps label
+var pixi_fps_counter = 0;
 
 var pixi_avatars = {};                         //avatars
 var pixi_walls = {};                           //walls
