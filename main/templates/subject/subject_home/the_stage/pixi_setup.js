@@ -209,7 +209,7 @@ move_object: function move_object(delta, obj, move_speed)
 
     let target_location_local = Object.assign({}, obj.target_location);
     if("nav_point" in obj && obj.nav_point) 
-    target_location_local = Object.assign({}, obj.nav_point);
+        target_location_local = Object.assign({}, obj.nav_point);
 
     let temp_angle = Math.atan2(target_location_local.y - obj.current_location.y,
                                 target_location_local.x - obj.current_location.x)
