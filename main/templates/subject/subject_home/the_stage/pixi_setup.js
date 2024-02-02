@@ -182,20 +182,22 @@ game_loop: function game_loop(delta)
         app.scroll_staff(delta);
     }  
     
-
-    //tick tock
-    if(Date.now() - app.pixi_tick_tock.time >= 200)
-    {
-        {%if DEBUG or session.parameter_set.test_mode%}
+    {%if DEBUG or session.parameter_set.test_mode%}
         pixi_fps_label.text = Math.round(pixi_app.ticker.FPS) + " FPS";
-        {%endif%}
+    {%endif%}
+    //tick tock
+    // if(Date.now() - app.pixi_tick_tock.time >= 200)
+    // {
+    //     {%if DEBUG or session.parameter_set.test_mode%}
+    //     pixi_fps_label.text = Math.round(pixi_app.ticker.FPS) + " FPS";
+    //     {%endif%}
 
-        app.pixi_tick_tock.time = Date.now();
-        if(app.pixi_tick_tock.value == "tick") 
-            app.pixi_tick_tock.value = "tock";
-        else
-            app.pixi_tick_tock.value = "tick";
-    }
+    //     app.pixi_tick_tock.time = Date.now();
+    //     if(app.pixi_tick_tock.value == "tick") 
+    //         app.pixi_tick_tock.value = "tock";
+    //     else
+    //         app.pixi_tick_tock.value = "tick";
+    // }
 },
 
 /**
@@ -209,7 +211,7 @@ move_object: function move_object(delta, obj, move_speed)
 
     let target_location_local = Object.assign({}, obj.target_location);
     if("nav_point" in obj && obj.nav_point) 
-    target_location_local = Object.assign({}, obj.nav_point);
+        target_location_local = Object.assign({}, obj.nav_point);
 
     let temp_angle = Math.atan2(target_location_local.y - obj.current_location.y,
                                 target_location_local.x - obj.current_location.x)
