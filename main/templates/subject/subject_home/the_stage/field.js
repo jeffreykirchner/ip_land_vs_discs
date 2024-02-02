@@ -173,7 +173,7 @@ setup_pixi_fields: function setup_pixi_fields()
                     //management label
                     if(app.is_subject && field.owner == app.session_player.id)
                     {
-                        management_label = new PIXI.Text("Right click to manage.", text_style);
+                        management_label = new PIXI.Text("Right click to admit others.", text_style);
                     }                   
                 }
             }
