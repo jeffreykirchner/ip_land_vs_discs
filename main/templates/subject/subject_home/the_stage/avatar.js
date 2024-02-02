@@ -236,9 +236,9 @@ setup_pixi_subjects: function setup_pixi_subjects(){
 },
 
 /**
- * destory pixi subject objects in world state
+ * destroy pixi subject objects in world state
  */
-destory_pixi_subjects: function destory_pixi_subjects()
+destroy_pixi_subjects: function destroy_pixi_subjects()
 {
     if(!app.session) return;
 
