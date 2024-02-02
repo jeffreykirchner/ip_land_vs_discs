@@ -74,8 +74,6 @@ reset_pixi_app: function reset_pixi_app(){
 
     app.canvas_width = canvas.width;
     app.canvas_height = canvas.height;
-
-    app.last_collision_check = Date.now();
 },
 
 /** load pixi sprite sheets
@@ -111,6 +109,7 @@ setup_pixi_sheets: function setup_pixi_sheets(textures){
         pixi_target.alpha = 0.33;
         pixi_target.drawCircle(0, 0, 10);
         pixi_target.eventMode='static';
+        pixi_target.zIndex = 100;
 
         //pixi_target.scale.set(app.pixi_scale, app.pixi_scale);
         pixi_container_main.addChild(pixi_target)
@@ -204,24 +203,26 @@ game_loop: function game_loop(delta)
  */
 move_object: function move_object(delta, obj, move_speed)
 {
-    let noX = false;
-    let noY = false;
     let temp_move_speed = (move_speed * delta);
 
-    let temp_angle = Math.atan2(obj.target_location.y - obj.current_location.y,
-                                obj.target_location.x - obj.current_location.x)
+    let temp_current_location = Object.assign({}, obj.current_location);
 
-    if(!noY){
-        if(Math.abs(obj.target_location.y - obj.current_location.y) < temp_move_speed)
-            obj.current_location.y = obj.target_location.y;
-        else
-            obj.current_location.y += temp_move_speed * Math.sin(temp_angle);
-    }
+    let target_location_local = Object.assign({}, obj.target_location);
+    if("nav_point" in obj && obj.nav_point) 
+    target_location_local = Object.assign({}, obj.nav_point);
 
-    if(!noX){
-        if(Math.abs(obj.target_location.x - obj.current_location.x) < temp_move_speed)
-            obj.current_location.x = obj.target_location.x;
-        else
-            obj.current_location.x += temp_move_speed * Math.cos(temp_angle);        
-    }
+    let temp_angle = Math.atan2(target_location_local.y - obj.current_location.y,
+                                target_location_local.x - obj.current_location.x)
+
+    //y
+    if(Math.abs(target_location_local.y - obj.current_location.y) < temp_move_speed)
+        obj.current_location.y = target_location_local.y;
+    else
+        obj.current_location.y += temp_move_speed * Math.sin(temp_angle);
+ 
+    //x
+    if(Math.abs(target_location_local.x - obj.current_location.x) < temp_move_speed)
+        obj.current_location.x = target_location_local.x;
+    else
+        obj.current_location.x += temp_move_speed * Math.cos(temp_angle);
 },
