@@ -174,7 +174,7 @@ game_loop: function game_loop(delta)
     // }  
     
     pixi_fps_counter++;
-    if(pixi_fps_counter >= 20)
+    if(pixi_fps_counter >= 10)
     {
     pixi_fps_label.text = Math.round(pixi_app.ticker.FPS) + " FPS";
     pixi_fps_counter = 0;
