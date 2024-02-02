@@ -136,15 +136,7 @@ get_offset:function get_offset()
                 return;
             }
 
-            //check subject close enough for interaction
-            if(app.check_for_circle_rect_intersection({x:local_player.current_location.x, 
-                                                        y:local_player.current_location.y, 
-                                                        radius:app.session.parameter_set.interaction_range},
-                                                    rect))
-            {
-                app.subject_field_click(i);              
-                return;
-            }
+           
         }
 
     }

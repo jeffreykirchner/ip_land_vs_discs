@@ -400,8 +400,7 @@ simulate_present_players: function simulate_present_players(field_id, present_pl
             let parameter_set_field = app.session.parameter_set.parameter_set_fields[field.parameter_set_field];
             field.present_players = present_players;
 
-            // app.destroy_pixi_fields();
-            app.setup_pixi_fields();
+
 
             if(field.present_players.includes(app.session_player.id.toString()))
             {
@@ -420,10 +419,7 @@ simulate_present_players: function simulate_present_players(field_id, present_pl
         app.setup_seed_inventory();
     }
 
-    if(app.session.world_state.current_experiment_phase == 'Instructions')
-    {
-        setTimeout(app.send_present_players, 1000);
-    }
+
 },
 
 /**

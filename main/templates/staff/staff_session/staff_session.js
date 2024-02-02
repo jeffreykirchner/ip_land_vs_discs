@@ -284,7 +284,6 @@ var app = Vue.createApp({
         do_reload: function do_reload()
         {
             app.setup_pixi_subjects();
-            app.setup_pixi_fields();
         },
 
         /** send winsock request to get session info
@@ -412,7 +411,7 @@ var app = Vue.createApp({
 
             app.session.world_state.fields = message_data.fields;  
             // app.destroy_pixi_fields();
-            app.setup_pixi_fields();
+
 
             //update player status
             for(p in message_data.session_player_status)

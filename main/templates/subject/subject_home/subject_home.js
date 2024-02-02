@@ -273,7 +273,7 @@ var app = Vue.createApp({
         do_reload: function do_reload()
         {
             app.setup_pixi_subjects();
-            app.setup_pixi_fields();
+
             app.setup_pixi_minimap();
             app.setup_disc_inventory();
             app.setup_seed_inventory();
@@ -329,7 +329,7 @@ var app = Vue.createApp({
                 Vue.nextTick(() => {
                     app.process_instruction_page();
                     app.instruction_display_scroll();
-                    app.send_present_players();
+
                 });
             }
         },
@@ -404,7 +404,7 @@ var app = Vue.createApp({
             app.session.world_state.fields = message_data.fields;
 
             // app.destroy_pixi_fields();
-            app.setup_pixi_fields();
+
 
             //period has changed
             if(message_data.period_is_over)
@@ -444,7 +444,7 @@ var app = Vue.createApp({
             else
             {
                 //send update about fields
-                app.send_present_players();
+
             }
 
             //update player states

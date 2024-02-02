@@ -96,7 +96,7 @@ do_test_mode_instructions: function do_test_mode_instructions()
                         for(let i in app.session.world_state.fields)
                         {
                             let temp_field = app.session.world_state.fields[i];
-                            app.subject_field_click(temp_field.id);
+                           
                             break;
                         }                    
                     }
@@ -328,15 +328,7 @@ test_mode_claim_field: function test_mode_claim_field(){
         return;
     }
     
-    //check if avatar within range of field
-    if(app.check_for_circle_rect_intersection({x:local_player.current_location.x, 
-                                               y:local_player.current_location.y, 
-                                               radius:app.session.parameter_set.interaction_range},
-                                               field_rect))
-    {
-        app.subject_field_click(field.id);              
-        return;
-    }
+    
 
     //move to field
     app.test_mode_move();    
@@ -407,7 +399,7 @@ test_mode_manage_field: function test_mode_manage_field(){
         radius:app.session.parameter_set.interaction_range},
         field_rect))
     {
-        app.subject_field_click(field.id);              
+           
         return;
     }
 

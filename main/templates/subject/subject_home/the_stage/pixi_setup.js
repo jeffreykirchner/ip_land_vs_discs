@@ -14,19 +14,19 @@ setup_pixi: function setup_pixi(){
     PIXI.Assets.add({alias:'bridge_tex', src:'{% static "bridge.jpg"%}'});
     PIXI.Assets.add({alias:'seed_tex', src:'{% static "seed_1.png"%}'});
     PIXI.Assets.add({alias:'disc_tex', src:'{% static "disc_1.png"%}'});
-    PIXI.Assets.add({alias:'dash_tex', src:'{% static "dash_1.png"%}'});
+
     PIXI.Assets.add({alias:'left_click_tex', src:'{% static "left_click.png"%}'});
     PIXI.Assets.add({alias:'right_click_tex', src:'{% static "right_click.png"%}'});
     PIXI.Assets.add({alias:'cone_tex', src:'{% static "cone_1.png"%}'});
 
     const textures_promise = PIXI.Assets.load(['sprite_sheet', 'bg_tex', 'sprite_sheet_2', 'seed_tex', 'disc_tex',
-                                               'wall_tex', 'barrier_tex', 'bridge_tex','dash_tex'
+                                               'wall_tex', 'barrier_tex', 'bridge_tex',
                                                ,'left_click_tex', 'right_click_tex', 'cone_tex']);
 
     textures_promise.then((textures) => {
         app.setup_pixi_sheets(textures);
         app.setup_pixi_ground();
-        app.setup_pixi_fields();
+
         app.setup_pixi_subjects();
         app.setup_pixi_wall();
         app.setup_pixi_barrier();
