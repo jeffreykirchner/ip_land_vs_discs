@@ -52,8 +52,6 @@ setup_pixi: function setup_pixi(){
     app.pixi_tick_tock = {value:"tick", time:Date.now()};
     pixi_transfer_beams = {};
     pixi_transfer_beams_key = 0;
-
-    PIXI.ticker
 },
 
 reset_pixi_app: function reset_pixi_app(){    
