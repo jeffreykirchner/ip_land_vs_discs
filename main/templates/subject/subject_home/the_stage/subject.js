@@ -48,8 +48,6 @@ get_offset:function get_offset()
     
     local_player.target_location.x = local_pos.x;
     local_player.target_location.y = local_pos.y;
-
-    app.target_location_update();    
 },
 
 /**

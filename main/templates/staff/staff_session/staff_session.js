@@ -283,7 +283,7 @@ var app = Vue.createApp({
          */
         do_reload: function do_reload()
         {
-            app.setup_pixi_subjects();
+
         },
 
         /** send winsock request to get session info

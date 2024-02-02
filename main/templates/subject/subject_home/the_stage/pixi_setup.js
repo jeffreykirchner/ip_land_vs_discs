@@ -27,7 +27,6 @@ setup_pixi: function setup_pixi(){
         app.setup_pixi_sheets(textures);
         app.setup_pixi_ground();
 
-        app.setup_pixi_subjects();
         app.setup_pixi_wall();
         app.setup_pixi_barrier();
         
