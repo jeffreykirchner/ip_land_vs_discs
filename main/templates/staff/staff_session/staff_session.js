@@ -431,7 +431,7 @@ var app = Vue.createApp({
                     session_player_local.state = session_player.state;
                     session_player_local.build_time_remaining = session_player.build_time_remaining;
 
-                    app.update_disc_wedges(p);
+
                 }
                
                 session_player_local.seed_multiplier = session_player.seed_multiplier;                

@@ -166,7 +166,7 @@ setup_pixi_sheets: function setup_pixi_sheets(textures){
  */
 game_loop: function game_loop(delta)
 {
-    app.move_player(delta);
+
     app.move_text_emitters(delta);
     app.animate_transfer_beams(delta);
 
