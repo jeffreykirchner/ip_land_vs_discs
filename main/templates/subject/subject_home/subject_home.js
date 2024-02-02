@@ -255,12 +255,12 @@ var app = Vue.createApp({
                 document.getElementById('instructions_frame_a').addEventListener('scroll',
                     function()
                     {
-                        app.scroll_update();
+                        
                     },
                     false
                 )
 
-                app.scroll_update();
+                
             }
 
             app.setup_pixi();
@@ -624,7 +624,6 @@ var app = Vue.createApp({
         {%include "subject/subject_home/chat/chat_card.js"%}
         {%include "subject/subject_home/summary/summary_card.js"%}
 
-        {%include "subject/subject_home/instructions/instructions_card.js"%}
         {%include "subject/subject_home/the_stage/includes.js"%}
         {%include "subject/subject_home/the_stage/subject.js"%}
         {%include "subject/subject_home/the_stage/mini_map.js"%}
