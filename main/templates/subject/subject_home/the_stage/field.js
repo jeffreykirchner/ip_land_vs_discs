@@ -333,9 +333,9 @@ setup_pixi_fields: function setup_pixi_fields()
 },
 
 /**
- * destory pixi field objects in world state
+ * destroy pixi field objects in world state
  */
-// destroy_pixi_fields: function destory_setup_pixi_fields()
+// destroy_pixi_fields: function destroy_setup_pixi_fields()
 // {
 //     return;
 //     if(!app.session) return;
