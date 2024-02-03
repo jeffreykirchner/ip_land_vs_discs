@@ -6,36 +6,17 @@
 setup_pixi: function setup_pixi(){    
     app.reset_pixi_app();
 
-    PIXI.Assets.add({alias:'sprite_sheet', src:'{% static "gear_3_animated.json" %}'});
-    PIXI.Assets.add({alias:'sprite_sheet_2', src:'{% static "sprite_sheet.json" %}'});
-    PIXI.Assets.add({alias:'bg_tex', src:'{% static "background_tile_low.jpg"%}'});
-    PIXI.Assets.add({alias:'wall_tex', src:'{% static "wall.png"%}'});
-    PIXI.Assets.add({alias:'barrier_tex', src:'{% static "barrier.png"%}'});
-    PIXI.Assets.add({alias:'bridge_tex', src:'{% static "bridge.jpg"%}'});
-    PIXI.Assets.add({alias:'seed_tex', src:'{% static "seed_1.png"%}'});
-    PIXI.Assets.add({alias:'disc_tex', src:'{% static "disc_1.png"%}'});
+    PIXI.Assets.add('grass_tex', '{% static "background_tile_low.jpg"%}');
 
-    PIXI.Assets.add({alias:'left_click_tex', src:'{% static "left_click.png"%}'});
-    PIXI.Assets.add({alias:'right_click_tex', src:'{% static "right_click.png"%}'});
-    PIXI.Assets.add({alias:'cone_tex', src:'{% static "cone_1.png"%}'});
+    let asset_names = ['grass_tex',];
 
-    const textures_promise = PIXI.Assets.load(['sprite_sheet', 'bg_tex', 'sprite_sheet_2', 'seed_tex', 'disc_tex',
-                                               'wall_tex', 'barrier_tex', 'bridge_tex',
-                                               ,'left_click_tex', 'right_click_tex', 'cone_tex']);
+    const textures_promise = PIXI.Assets.load(asset_names);
+
 
     textures_promise.then((textures) => {
         app.setup_pixi_sheets(textures);
         
-        if(app.pixi_mode!="subject")
-        {
-            app.update_zoom();
-            app.fit_to_screen();
-        }
-        else
-        {
-
-            // app.setup_subject_status_overlay();
-        }
+        
 
         pixi_setup_complete = true;
     });
@@ -83,7 +64,7 @@ setup_pixi_sheets: function setup_pixi_sheets(textures){
     pixi_app.stage.addChild(pixi_container_main);
    
     let tiling_sprite = new PIXI.TilingSprite(
-        textures.bg_tex,
+        app.pixi_textures["grass_tex"],
         app.stage_width,
         app.stage_height,
     );
@@ -94,9 +75,7 @@ setup_pixi_sheets: function setup_pixi_sheets(textures){
     if(app.pixi_mode=="subject")
     {
         tiling_sprite.eventMode ='static';
-        tiling_sprite.on("click", app.subject_pointer_click);     
-        tiling_sprite.on("rightclick", app.subject_pointer_right_click);   
-               
+        
         pixi_target = new PIXI.Graphics();
         pixi_target.lineStyle(3, 0x000000);
         pixi_target.alpha = 0.33;
@@ -149,8 +128,6 @@ setup_pixi_sheets: function setup_pixi_sheets(textures){
     {%endif%}
 
     //start game loop
-    // pixi_app.ticker.maxFPS = 60;
-    // pixi_app.ticker.minFPS = 60;
     pixi_app.ticker.add(app.game_loop);
 },
 
@@ -160,38 +137,19 @@ setup_pixi_sheets: function setup_pixi_sheets(textures){
 game_loop: function game_loop(delta)
 {
 
-    // app.move_text_emitters(delta);
-
-    // if(app.pixi_mode=="subject" && app.session.started)
-    // {   
-    //     app.update_offsets_player(delta);
-    // }
-    
-    // if(app.pixi_mode=="staff")
-    // {
-    //     app.update_offsets_staff(delta);
-    //     app.scroll_staff(delta);
-    // }  
-    
-    pixi_fps_counter++;
-    if(pixi_fps_counter >= 12)
-    {
-    pixi_fps_label.text = Math.round(pixi_app.ticker.FPS) + " FPS";
-    pixi_fps_counter = 0;
-    }
     //tick tock
-    // if(Date.now() - app.pixi_tick_tock.time >= 200)
-    // {
+    if(Date.now() - app.pixi_tick_tock.time >= 200)
+    {
         {%if DEBUG or session.parameter_set.test_mode%}
-        
+        pixi_fps_label.text = Math.round(pixi_app.ticker.FPS) + " FPS";
         {%endif%}
 
-        //app.pixi_tick_tock.time = Date.now();
-        // if(app.pixi_tick_tock.value == "tick") 
-        //     app.pixi_tick_tock.value = "tock";
-        // else
-        //     app.pixi_tick_tock.value = "tick";
-    // }
+        app.pixi_tick_tock.time = Date.now();
+        if(app.pixi_tick_tock.value == "tick") 
+            app.pixi_tick_tock.value = "tock";
+        else
+            app.pixi_tick_tock.value = "tick";
+    }
 },
 
 /**
