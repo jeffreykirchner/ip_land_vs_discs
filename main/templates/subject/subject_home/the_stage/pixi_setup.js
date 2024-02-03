@@ -6,19 +6,35 @@
 setup_pixi: function setup_pixi(){    
     app.reset_pixi_app();
 
+    PIXI.Assets.add('sprite_sheet', '{% static "gear_3_animated.json" %}');
+    PIXI.Assets.add('sprite_sheet_2', '{% static "sprite_sheet_trade_gifts.json" %}');
+    PIXI.Assets.add('sprite_sheet_hf', '{% static "sprite_sheet_hf_trade_gifts.json" %}');
     PIXI.Assets.add('grass_tex', '{% static "background_tile_low.jpg"%}');
+    PIXI.Assets.add('wall_tex', '{% static "wall.png"%}');
+    PIXI.Assets.add('barrier_tex', '{% static "barrier.png"%}');
+    PIXI.Assets.add('water_tex', '{% static "water_tile.jpg"%}');
+    PIXI.Assets.add('bridge_tex', '{% static "bridge.jpg"%}');
 
-    let asset_names = ['grass_tex',];
+    let asset_names = ['sprite_sheet', 'sprite_sheet_hf', 'grass_tex', 'wall_tex', 'barrier_tex', 'water_tex',
+                       'bridge_tex', 'sprite_sheet_2',];
+
 
     const textures_promise = PIXI.Assets.load(asset_names);
 
-
     textures_promise.then((textures) => {
         app.setup_pixi_sheets(textures);
-        
-        
 
-        pixi_setup_complete = true;
+       
+        if(app.pixi_mode!="subject")
+        {
+            app.update_zoom();
+            app.fit_to_screen();
+        }
+        else
+        {
+
+
+        }
     });
 
     pixi_text_emitter = {};
@@ -48,6 +64,8 @@ reset_pixi_app: function reset_pixi_app(){
 
     app.canvas_width = canvas.width;
     app.canvas_height = canvas.height;
+
+    app.last_collision_check = Date.now();
 },
 
 /** load pixi sprite sheets
@@ -64,7 +82,7 @@ setup_pixi_sheets: function setup_pixi_sheets(textures){
     pixi_app.stage.addChild(pixi_container_main);
    
     let tiling_sprite = new PIXI.TilingSprite(
-        app.pixi_textures["grass_tex"],
+        app.pixi_textures["water_tex"],
         app.stage_width,
         app.stage_height,
     );
@@ -75,7 +93,8 @@ setup_pixi_sheets: function setup_pixi_sheets(textures){
     if(app.pixi_mode=="subject")
     {
         tiling_sprite.eventMode ='static';
-        
+        // tiling_sprite.on("pointerup", app.subject_pointer_up);        
+               
         pixi_target = new PIXI.Graphics();
         pixi_target.lineStyle(3, 0x000000);
         pixi_target.alpha = 0.33;
@@ -136,7 +155,23 @@ setup_pixi_sheets: function setup_pixi_sheets(textures){
  */
 game_loop: function game_loop(delta)
 {
+    // app.move_player(delta);
+    // app.move_text_emitters(delta);
+    // app.animate_transfer_beams(delta);
 
+    // if(app.pixi_mode=="subject" && app.session.started)
+    // {   
+    //     app.update_offsets_player(delta);
+    //     app.update_mini_map(delta);
+    //     // app.check_for_collisions();
+    // }
+    
+    // if(app.pixi_mode=="staff")
+    // {
+    //     app.update_offsets_staff(delta);
+    //     app.scroll_staff(delta);
+    // }  
+    
     //tick tock
     if(Date.now() - app.pixi_tick_tock.time >= 200)
     {
@@ -153,30 +188,81 @@ game_loop: function game_loop(delta)
 },
 
 /**
- * move the object towards its target location
+ * check for collisions between local player and other objects
  */
-move_object: function move_object(delta, obj, move_speed)
+check_for_collisions: function check_for_collisions(delta)
 {
-    let temp_move_speed = (move_speed * delta);
+    // if(Date.now() - app.last_collision_check < 100) return;
+    // app.last_collision_check = Date.now();
 
-    let temp_current_location = Object.assign({}, obj.current_location);
+    // const obj = app.session.world_state_avatars.session_players[app.session_player.id];
+    // let collision_found = false;
 
-    let target_location_local = Object.assign({}, obj.target_location);
-    if("nav_point" in obj && obj.nav_point) 
-        target_location_local = Object.assign({}, obj.nav_point);
+},
 
-    let temp_angle = Math.atan2(target_location_local.y - obj.current_location.y,
-                                target_location_local.x - obj.current_location.x)
+/**
+ * update tractor beam between two players
+ */
+setup_tractor_beam: function setup_tractor_beam(source_id, target_id)
+{
+    let source_player = app.session.world_state_avatars.session_players[source_id];
+    let target_player = app.session.world_state_avatars.session_players[target_id];
 
-    //y
-    if(Math.abs(target_location_local.y - obj.current_location.y) < temp_move_speed)
-        obj.current_location.y = target_location_local.y;
-    else
-        obj.current_location.y += temp_move_speed * Math.sin(temp_angle);
- 
-    //x
-    if(Math.abs(target_location_local.x - obj.current_location.x) < temp_move_speed)
-        obj.current_location.x = target_location_local.x;
-    else
-        obj.current_location.x += temp_move_speed * Math.cos(temp_angle);
+    let parameter_set_player = app.session.parameter_set.parameter_set_players[source_player.parameter_set_player_id];
+
+    let dY = source_player.current_location.y - target_player.current_location.y;
+    let dX = source_player.current_location.x - target_player.current_location.x;
+
+    let myX = source_player.current_location.x;
+    let myY = source_player.current_location.y;
+    let targetX = target_player.current_location.x;
+    let targetY = target_player.current_location.y;
+    
+    let tempAngle = Math.atan2(dY, dX);
+    let tempSlope = (myY - targetY) / (myX - targetX);
+
+    if (myX - targetX == 0) tempSlope = 0.999999999999;
+
+    let tempYIntercept = myY - tempSlope * myX;
+
+    // Rectangle rectTractor;
+    let tractorCircles = pixi_avatars[source_id].tractor_beam.length;
+    let tempScale = 1 / tractorCircles;
+
+    let xIncrement = Math.sqrt(Math.pow(myX - targetX, 2) + Math.pow(myY - targetY, 2)) / tractorCircles;
+
+    for (let i=0; i<tractorCircles; i++)
+    {
+        let temp_x = (myX - Math.cos(tempAngle) * xIncrement * i);
+        let temp_y = (myY - Math.sin(tempAngle) * xIncrement * i);
+
+        tb_sprite = pixi_avatars[source_id].tractor_beam[i];
+        tb_sprite.position.set(temp_x, temp_y)
+        tb_sprite.scale.set(tempScale * i );
+        tb_sprite.visible = true;
+        
+        if (app.pixi_tick_tock.value == 'tick')
+        {
+            if (i%2 == 0)
+            {
+                tb_sprite.tint = parameter_set_player.hex_color;
+            }
+            else
+            {
+                tb_sprite.tint = 0xFFFFFF;
+            }
+        }
+        else
+        {
+            if (i%2 == 0)
+            {
+               tb_sprite.tint = 0xFFFFFF;
+            }
+            else
+            {
+                tb_sprite.tint = parameter_set_player.hex_color;
+            }
+        }
+
+    }
 },
