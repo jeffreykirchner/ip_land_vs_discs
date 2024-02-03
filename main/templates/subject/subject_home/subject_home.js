@@ -223,45 +223,8 @@ var app = Vue.createApp({
         */
         do_first_load: function do_first_load()
         {           
-            app.end_game_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('end_game_modal'), {keyboard: false})   
-            app.interaction_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('interaction_modal'), {keyboard: false}) 
-            app.interaction_start_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('interaction_start_modal'), {keyboard: false})         
-            app.help_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('help_modal'), {keyboard: false})
-            app.field_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('field_modal'), {keyboard: false})
-            app.field_manage_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('field_manage_modal'), {keyboard: false})
             
-            document.getElementById('end_game_modal').addEventListener('hidden.bs.modal', app.hide_end_game_modal);
-            document.getElementById('interaction_modal').addEventListener('hidden.bs.modal', app.hide_interaction_modal);
-            document.getElementById('interaction_start_modal').addEventListener('hidden.bs.modal', app.hide_interaction_start_modal);
-            document.getElementById('field_modal').addEventListener('hidden.bs.modal', app.hide_field_modal);
-            document.getElementById('field_manage_modal').addEventListener('hidden.bs.modal', app.hide_field_manage_modal);
-
-      
-
-            // if game is finished show modal
-            if( app.session.world_state.current_experiment_phase == 'Names')
-            {
-                app.show_end_game_modal();
-            }
-            else if(app.session.world_state.current_experiment_phase == 'Done' && 
-                    app.session.parameter_set.survey_required=='True' && 
-                    !app.session_player.survey_complete)
-            {
-                window.location.replace(app.session_player.survey_link);
-            }
-
-            if(document.getElementById('instructions_frame_a'))
-            {
-                document.getElementById('instructions_frame_a').addEventListener('scroll',
-                    function()
-                    {
-                        
-                    },
-                    false
-                )
-
-                
-            }
+            
 
             app.setup_pixi();
 
