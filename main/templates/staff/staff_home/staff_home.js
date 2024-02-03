@@ -2,6 +2,8 @@
 axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
 axios.defaults.xsrfCookieName = "csrftoken";
 
+{%include "subject/subject_home/the_stage/pixi_globals.js"%}
+
 //vue app
 var app = Vue.createApp({
     delimiters: ["[[", "]]"],

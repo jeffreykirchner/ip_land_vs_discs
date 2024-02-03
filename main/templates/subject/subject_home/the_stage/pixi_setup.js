@@ -182,22 +182,20 @@ game_loop: function game_loop(delta)
         app.scroll_staff(delta);
     }  
     
-    {%if DEBUG or session.parameter_set.test_mode%}
-        pixi_fps_label.text = Math.round(pixi_app.ticker.FPS) + " FPS";
-    {%endif%}
+   
     //tick tock
-    // if(Date.now() - app.pixi_tick_tock.time >= 200)
-    // {
-    //     {%if DEBUG or session.parameter_set.test_mode%}
-    //     pixi_fps_label.text = Math.round(pixi_app.ticker.FPS) + " FPS";
-    //     {%endif%}
+    if(Date.now() - app.pixi_tick_tock.time >= 200)
+    {
+        {%if DEBUG or session.parameter_set.test_mode%}
+        pixi_fps_label.text = Math.round(pixi_app.ticker.FPS) + " FPS";
+        {%endif%}
 
-    //     app.pixi_tick_tock.time = Date.now();
-    //     if(app.pixi_tick_tock.value == "tick") 
-    //         app.pixi_tick_tock.value = "tock";
-    //     else
-    //         app.pixi_tick_tock.value = "tick";
-    // }
+        app.pixi_tick_tock.time = Date.now();
+        if(app.pixi_tick_tock.value == "tick") 
+            app.pixi_tick_tock.value = "tock";
+        else
+            app.pixi_tick_tock.value = "tick";
+    }
 },
 
 /**
