@@ -284,7 +284,7 @@ var app = Vue.createApp({
         do_reload: function do_reload()
         {
             app.setup_pixi_subjects();
-            app.setup_pixi_fields();
+            app.update_fields();
         },
 
         /** send winsock request to get session info

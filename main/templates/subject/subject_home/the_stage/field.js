@@ -491,8 +491,6 @@ take_field_claim: function take_field_claim(message_data)
         let field_id = message_data.field_id;
         app.session.world_state.fields[field_id] = message_data.field;
 
-        // app.destroy_pixi_fields();
-        //app.setup_pixi_fields();
         app.update_field(field_id);
 
         if(app.is_subject)
@@ -937,9 +935,6 @@ take_grant_field_access: function take_grant_field_access(message_data)
         let target_player_id = message_data.target_player_id;
 
         app.session.world_state.fields[field_id] = message_data.field;
-
-        // app.destroy_pixi_fields();
-        //app.setup_pixi_fields();
         app.update_field(field_id);
 
         if(app.is_subject && source_player_id == app.session_player.id)
