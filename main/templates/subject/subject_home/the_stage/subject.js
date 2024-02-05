@@ -10,6 +10,23 @@ get_offset:function get_offset()
 },
 
 /**
+ * subect_pointer_tap
+ */
+subject_pointer_tap: function subject_pointer_tap(event)
+{
+    if(Date.now() - app.last_subject_pointer_tap > 200)
+    {
+        app.subject_pointer_click(event);
+    }
+    else
+    {
+        app.subject_pointer_right_click(event);
+    }   
+
+    app.last_subject_pointer_tap = Date.now();
+},
+
+/**
  *pointer up on subject screen
  */
  subject_pointer_click: function subject_pointer_click(event)
@@ -44,6 +61,20 @@ get_offset:function get_offset()
                         28,
                         null);
         return;
+    }
+
+    //can't move ontop of other players
+    for(i in app.session.world_state.session_players)
+    {
+        let obj = app.session.world_state.session_players[i];
+    
+        if(obj.id == app.session_player.id) continue;
+
+        if(app.get_distance(obj.current_location, local_pos) < 100 &&
+        app.get_distance(obj.current_location, local_player.current_location) <= app.session.parameter_set.interaction_range+125)
+        {            
+            return;
+        }
     }
     
     local_player.target_location.x = local_pos.x;
