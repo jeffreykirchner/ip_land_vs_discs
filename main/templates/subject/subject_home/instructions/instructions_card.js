@@ -256,9 +256,12 @@ simulate_build_seeds: function simulate_build_seeds(){
     
         if(session_player.state=="open")
         {
+            //start build seeds
+            if(app.session_player.current_instruction != app.instructions.action_page_seed) return;
+
             if(app.build_seed_count != 10) 
             {
-                app.add_text_emitters("Invalid entry.", 
+                app.add_text_emitters("Error: Grow 10 seeds.", 
                                         session_player.current_location.x, 
                                         session_player.current_location.y,
                                         session_player.current_location.x,
@@ -283,9 +286,6 @@ simulate_build_seeds: function simulate_build_seeds(){
                 return;
             }
 
-            //start build seeds
-            if(app.session_player.current_instruction != app.instructions.action_page_seed) return;
-            
             message_data = {
                 "status": "success",
                 "error_message": [],
