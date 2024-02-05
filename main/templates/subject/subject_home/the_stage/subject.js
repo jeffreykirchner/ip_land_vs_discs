@@ -10,6 +10,23 @@ get_offset:function get_offset()
 },
 
 /**
+ * subect_pointer_tap
+ */
+subject_pointer_tap: function subject_pointer_tap(event)
+{
+    if(Date.now() - app.last_subject_pointer_tap > 200)
+    {
+        app.subject_pointer_click(event);
+    }
+    else
+    {
+        app.subject_pointer_right_click(event);
+    }   
+
+    app.last_subject_pointer_tap = Date.now();
+},
+
+/**
  *pointer up on subject screen
  */
  subject_pointer_click: function subject_pointer_click(event)

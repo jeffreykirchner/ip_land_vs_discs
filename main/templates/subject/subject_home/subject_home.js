@@ -97,6 +97,8 @@ var app = Vue.createApp({
                     field_error: null,
                     field_manage_error: null,
                     interaction_error: null,
+
+                    last_subject_pointer_tap : Date.now(),
                 }},
     methods: {
 
