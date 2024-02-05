@@ -273,7 +273,7 @@ var app = Vue.createApp({
         do_reload: function do_reload()
         {
             app.setup_pixi_subjects();
-            app.setup_pixi_fields();
+            app.update_fields();
             app.setup_pixi_minimap();
             app.setup_disc_inventory();
             app.setup_seed_inventory();
@@ -402,9 +402,7 @@ var app = Vue.createApp({
 
             //update fields
             app.session.world_state.fields = message_data.fields;
-
-            // app.destroy_pixi_fields();
-            app.setup_pixi_fields();
+            app.update_field_multiplier_tables();
 
             //period has changed
             if(message_data.period_is_over)
@@ -423,6 +421,7 @@ var app = Vue.createApp({
                 });          
                 
                 app.setup_pixi_minimap();
+                app.update_fields();
 
                 //reset player locations
 

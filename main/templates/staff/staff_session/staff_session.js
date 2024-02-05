@@ -284,7 +284,7 @@ var app = Vue.createApp({
         do_reload: function do_reload()
         {
             app.setup_pixi_subjects();
-            app.setup_pixi_fields();
+            app.update_fields();
         },
 
         /** send winsock request to get session info
@@ -401,18 +401,16 @@ var app = Vue.createApp({
 
             app.update_phase_button_text();
 
+            app.session.world_state.fields = message_data.fields;  
+            app.update_field_multiplier_tables();
+
             //update player earnings and inventory if period has changed
             if(message_data.period_is_over)
             {
                 //update fields
-                 
-     
+                app.update_fields();
                 app.take_update_earnings(message_data.earnings);  
             }
-
-            app.session.world_state.fields = message_data.fields;  
-            // app.destroy_pixi_fields();
-            app.setup_pixi_fields();
 
             //update player status
             for(p in message_data.session_player_status)

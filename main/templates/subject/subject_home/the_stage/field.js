@@ -27,215 +27,183 @@ setup_pixi_fields: function setup_pixi_fields()
         field_container.eventMode = 'passive';
         field_container.zIndex = 0;
 
-        if(field.status == "available")
-        {
-            let outline = new PIXI.Graphics();
-            //fill
-            outline.beginFill(0xFFFFFF, 0.5);
-            outline.drawRect(0, 0, parameter_set_field.width, parameter_set_field.height);
-            outline.endFill();
+        let available_container = new PIXI.Container();
+        available_container.eventMode = 'passive';
+        available_container.zIndex = 0;
+        available_container.visible = true;
 
-            //outline
-            let matrix_1 = new PIXI.Matrix(1,0,0,1,0,0);
+        let claimed_container = new PIXI.Container();
+        claimed_container.eventMode = 'passive';
+        claimed_container.zIndex = 0;
+        claimed_container.visible = false;
+
+        pixi_fields[i].available_container = available_container;
+        pixi_fields[i].claimed_container = claimed_container;
+
+        //available_container
+        let outline_dash = new PIXI.Graphics();
+        //fill
+        outline_dash.beginFill(0xFFFFFF, 0.5);
+        outline_dash.drawRect(0, 0, parameter_set_field.width, parameter_set_field.height);
+        outline_dash.endFill();
+
+        //outline
+        let matrix_1 = new PIXI.Matrix(1,0,0,1,0,0);
+    
+        let matrix_2 = new PIXI.Matrix(1,0,0,1,0,0);
+        matrix_2.rotate(1.5708);
+
+        line_texture_style_1 = {width:10,
+                                color:0x000000,
+                                alpha:0.5,
+                                texture:app.pixi_textures['dash_tex'],
+                                matrix:matrix_1,
+                                alignment:0};
         
-            let matrix_2 = new PIXI.Matrix(1,0,0,1,0,0);
-            matrix_2.rotate(1.5708);
+        line_texture_style_2 = {width:10,   
+                                color:0x000000,
+                                alpha:0.5,
+                                texture:app.pixi_textures['dash_tex'],
+                                matrix:matrix_2,
+                                alignment:0};
+        
+        outline_dash.lineTextureStyle(line_texture_style_1);
+        outline_dash.moveTo(0, 0);
+        outline_dash.lineTo(parameter_set_field.width, 0);
 
-            line_texture_style_1 = {width:10,
-                                    color:0x000000,
-                                    alpha:0.5,
-                                    texture:app.pixi_textures['dash_tex'],
-                                    matrix:matrix_1,
-                                    alignment:0};
-            
-            line_texture_style_2 = {width:10,   
-                                    color:0x000000,
-                                    alpha:0.5,
-                                    texture:app.pixi_textures['dash_tex'],
-                                    matrix:matrix_2,
-                                    alignment:0};
-            
-            outline.lineTextureStyle(line_texture_style_1);
-            outline.moveTo(0, 0);
-            outline.lineTo(parameter_set_field.width, 0);
+        outline_dash.lineTextureStyle(line_texture_style_2);
+        outline_dash.lineTo(parameter_set_field.width, parameter_set_field.height);
 
-            outline.lineTextureStyle(line_texture_style_2);
-            outline.lineTo(parameter_set_field.width, parameter_set_field.height);
+        outline_dash.lineTextureStyle(line_texture_style_1);
+        outline_dash.lineTo(0, parameter_set_field.height);
 
-            outline.lineTextureStyle(line_texture_style_1);
-            outline.lineTo(0, parameter_set_field.height);
+        outline_dash.lineTextureStyle(line_texture_style_2);
+        outline_dash.lineTo(0, 0);
 
-            outline.lineTextureStyle(line_texture_style_2);
-            outline.lineTo(0, 0);
+        outline_dash.eventMode = 'passive';  
 
-            outline.eventMode = 'passive';  
+        //text
+        let text_style = {
+            fontFamily: 'Arial',
+            fontSize: 28,
+            fill: 'white',
+            align: 'center',
+            stroke: 'black',
+            strokeThickness: 3,                
+        };
 
-            //text
-            let text_style = {
-                fontFamily: 'Arial',
-                fontSize: 28,
-                fill: 'white',
-                align: 'center',
-                stroke: 'black',
-                strokeThickness: 3,                
-            };
+        let id_label = new PIXI.Text("Right click to claim.", text_style);
+        id_label.eventMode = 'passive';
+        id_label.anchor.set(0.5);
 
-            let id_label = new PIXI.Text("Right click to claim.", text_style);
-            id_label.eventMode = 'passive';
-            id_label.anchor.set(0.5);
+        //right click
+        let right_click_graphic = PIXI.Sprite.from(app.pixi_textures["right_click_tex"]);
+        right_click_graphic.anchor.set(0.5)
+        right_click_graphic.eventMode = 'passive';
 
-            //right click
-            let right_click_graphic = PIXI.Sprite.from(app.pixi_textures["right_click_tex"]);
-            right_click_graphic.anchor.set(0.5)
-            right_click_graphic.eventMode = 'passive';
+        available_container.addChild(outline_dash);        
 
-            field_container.addChild(outline);        
+        id_label.position.set(available_container.width/2,
+                              id_label.height/2 + 30);
+        
+        right_click_graphic.position.set(available_container.width/2 + id_label.width/2 + 10 +  right_click_graphic.width/2,
+                                         id_label.position.y);
 
-            id_label.position.set(field_container.width/2,
-                                  id_label.height/2 + 30);
-            
-            right_click_graphic.position.set(field_container.width/2 + id_label.width/2 + 10 +  right_click_graphic.width/2,
-                                             id_label.position.y);
+        //cost label 
+        let cost_label = new PIXI.Text("Cost: " + app.session.parameter_set.field_build_length + " production seconds.", text_style);
+        cost_label.eventMode = 'passive';
+        cost_label.anchor.set(0.5);
+        cost_label.position.set(available_container.width/2,
+                                id_label.position.y + cost_label.height);
+        
+        available_container.addChild(id_label);
+        available_container.addChild(right_click_graphic);
+        available_container.addChild(cost_label);
 
-            //cost label 
-            let cost_label = new PIXI.Text("Cost: " + app.session.parameter_set.field_build_length + " production seconds.", text_style);
-            cost_label.eventMode = 'passive';
-            cost_label.anchor.set(0.5);
-            cost_label.position.set(field_container.width/2,
-                                    id_label.position.y + cost_label.height);
-            
-            field_container.addChild(id_label);
-            field_container.addChild(right_click_graphic);
-            field_container.addChild(cost_label);
+        field_container.addChild(available_container);
 
-            field_container.position.set(parameter_set_field.x - parameter_set_field.width/2,
-                                         parameter_set_field.y - parameter_set_field.height/2);
-        }
-        else
-        {
-            let parameter_set_player = app.get_parameter_set_player_from_player_id(field.owner);
-            let outline = new PIXI.Graphics();
-            //fill
-            outline.lineStyle({width:10,color:0x000000,alpha:1});
-            outline.beginFill(parameter_set_player.hex_color, 0.75);
-            outline.drawRect(0, 0, parameter_set_field.width, parameter_set_field.height);
-            outline.endFill();
+        //claimed_container
+        //let parameter_set_player = app.get_parameter_set_player_from_player_id(field.owner);
+        let outline_solid = new PIXI.Graphics();
+        //fill
+        outline_solid.lineStyle({width:10,color:0x000000,alpha:1});
+        outline_solid.beginFill('white', 0.75);
+        outline_solid.drawRect(0, 0, parameter_set_field.width, parameter_set_field.height);
+        outline_solid.endFill();
 
-            outline.eventMode = 'passive';  
+        outline_solid.eventMode = 'passive';  
 
-            //text
-            let text_style = {
-                fontFamily: 'Arial',
-                fontSize: 28,
-                fill: 'white',
-                align: 'center',
-                stroke: 'black',
-                strokeThickness: 3,
-                wordWrap : true,
-                wordWrapWidth : parameter_set_field.width - 20,
-            };
+        //text
+        let text_style_2 = {
+            fontFamily: 'Arial',
+            fontSize: 28,
+            fill: 'white',
+            align: 'center',
+            stroke: 'black',
+            strokeThickness: 3,
+            wordWrap : true,
+            wordWrapWidth : parameter_set_field.width - 20,
+        };
 
-            let id_label_text = ""
-            let left_cone_graphic = null;
-            let right_cone_graphic = null;
-            let management_label = null;
+        let id_label_text = ""
+        let left_cone_graphic = null;
+        let right_cone_graphic = null;
+        let management_label = null;
 
-            if(field.status == "claimed")
-            {
-                id_label_text = "Claimed by " + parameter_set_player.id_label + ".";
+        id_label_text = "Claimed by ___ .";
 
-                //field PR enabled
-                if(parameter_set_period.field_pr == "True")
-                {
-                    let allowed_players_text = "";
+        management_label = new PIXI.Text("Right click to admit others.", text_style_2);
 
-                    for(const j in field.allowed_players)
-                    {
-                        let allowed_player = app.get_parameter_set_player_from_player_id(field.allowed_players[j]);
+        left_cone_graphic = PIXI.Sprite.from(app.pixi_textures["cone_tex"]);
+        left_cone_graphic.anchor.set(1,0.5);
+        left_cone_graphic.eventMode = 'passive';
+        left_cone_graphic.scale.set(0.5);
 
-                        if(field.allowed_players.length > 1)
-                        {
-                            if(j == field.allowed_players.length - 1)
-                            {
-                                allowed_players_text += " and ";
-                            }
-                            else if(j > 0)
-                            {
-                                allowed_players_text += ", ";
-                            }
-                        }
-                        
-                        allowed_players_text += allowed_player.id_label;
-                    }
+        right_cone_graphic = PIXI.Sprite.from(app.pixi_textures["cone_tex"]);
+        right_cone_graphic.anchor.set(0,0.5);
+        right_cone_graphic.eventMode = 'passive';
+        right_cone_graphic.scale.set(0.5);
 
-                    id_label_text += "\n Allowed Players: " + allowed_players_text + ".";
+        let id_label_2 = new PIXI.Text(id_label_text, text_style_2);
+        id_label_2.eventMode = 'passive';
+        
+        claimed_container.addChild(outline_solid);        
 
-                    //management label
-                    if(app.is_subject && field.owner == app.session_player.id)
-                    {
-                        management_label = new PIXI.Text("Right click to admit others.", text_style);
-                    }                   
-                }
-            }
-            else
-            {
-                id_label_text = "Under construction by " + parameter_set_player.id_label + ".";
+        id_label_2.anchor.set(0.5);
+        id_label_2.position.set(field_container.width/2,
+                                id_label_2.height/2 + 20);
 
-                left_cone_graphic = PIXI.Sprite.from(app.pixi_textures["cone_tex"]);
-                left_cone_graphic.anchor.set(1,0.5)
-                left_cone_graphic.eventMode = 'passive';
-                left_cone_graphic.scale.set(0.5);
+        claimed_container.addChild(id_label_2);
 
-                right_cone_graphic = PIXI.Sprite.from(app.pixi_textures["cone_tex"]);
-                right_cone_graphic.anchor.set(0,0.5)
-                right_cone_graphic.eventMode = 'passive';
-                right_cone_graphic.scale.set(0.5);
-            }
+        management_label.anchor.set(0.5);
+        management_label.position.set(field_container.width/2,
+                                      field_container.height - management_label.height/2 - 20);
+        claimed_container.addChild(management_label);
 
-            let id_label = new PIXI.Text(id_label_text, text_style);
-            id_label.eventMode = 'passive';
-           
-            field_container.addChild(outline);        
+        //right click
+        let right_click_graphic_2 = PIXI.Sprite.from(app.pixi_textures["right_click_tex"]);
+        right_click_graphic_2.anchor.set(0.5)
+        right_click_graphic_2.eventMode = 'passive';
 
-            id_label.anchor.set(0.5);
-            id_label.position.set(field_container.width/2,
-                                  id_label.height/2 + 20);
+        right_click_graphic_2.position.set(field_container.width/2 + management_label.width/2 + 10 + right_click_graphic_2.width/2,
+                                            field_container.height - management_label.height/2 - 20);
 
-            field_container.addChild(id_label);
+        claimed_container.addChild(right_click_graphic_2);
 
-            //management label
-            if(management_label)
-            {
-                management_label.anchor.set(0.5);
-                management_label.position.set(field_container.width/2,
-                                              field_container.height - management_label.height/2 - 20);
-                field_container.addChild(management_label);
+        left_cone_graphic.position.set(0,0);
+        right_cone_graphic.position.set(0,0);
 
-                //right click
-                let right_click_graphic = PIXI.Sprite.from(app.pixi_textures["right_click_tex"]);
-                right_click_graphic.anchor.set(0.5)
-                right_click_graphic.eventMode = 'passive';
+        claimed_container.addChild(left_cone_graphic);
+        claimed_container.addChild(right_cone_graphic);
 
-                right_click_graphic.position.set(field_container.width/2 + management_label.width/2 + 10 + right_click_graphic.width/2,
-                                                 field_container.height - management_label.height/2 - 20);
+        pixi_fields[i].outline_solid = outline_solid;
+        pixi_fields[i].id_label_2 = id_label_2;
+        pixi_fields[i].management_label = management_label;
+        pixi_fields[i].left_cone_graphic = left_cone_graphic;
+        pixi_fields[i].right_cone_graphic = right_cone_graphic;
+        pixi_fields[i].right_click_graphic_2 = right_click_graphic_2;
 
-                field_container.addChild(right_click_graphic);
-            }
-
-            //cones
-            if(field.status == "building")
-            {
-                left_cone_graphic.position.set(field_container.width/2 - id_label.width/2 - 5 - left_cone_graphic.width/2,
-                                               id_label.position.y);
-                right_cone_graphic.position.set(field_container.width/2 + id_label.width/2 + 5 +  right_cone_graphic.width/2,
-                                                id_label.position.y);
-                field_container.addChild(left_cone_graphic);
-                field_container.addChild(right_cone_graphic);
-            }
-
-            field_container.position.set(parameter_set_field.x - parameter_set_field.width/2,
-                                        parameter_set_field.y - parameter_set_field.height/2);
-        }
+        field_container.addChild(claimed_container);
 
         let text_style_multiplier = {
             fontFamily: 'Arial',
@@ -260,26 +228,20 @@ setup_pixi_fields: function setup_pixi_fields()
 
         multiplier_table_container.addChild(multiplier_label);
 
-        present_players_length = field.present_players.length;
+        let present_players_length = field.present_players.length;
 
         if(present_players_length > multiplier_list.length) present_players_length = multiplier_list.length;
 
         //list
         let temp_y = multiplier_label.position.y + multiplier_label.height+2;
-        for(const i in multiplier_list)
+        pixi_fields[i].multiplier_table_left = [];
+        pixi_fields[i].multiplier_table_right = [];
+
+        for(const j in multiplier_list)
         {
-            let v = parseInt(i)+1;
+            let v = parseInt(j)+1;
             let multiplier_text_left = "";
             let multiplier_text_right = "";
-
-            if(present_players_length == v)
-            {
-                text_style_multiplier.fill = 'yellow';
-            }
-            else
-            {
-                text_style_multiplier.fill = 'white';
-            }
             
             if(v == 1)
             {
@@ -294,13 +256,13 @@ setup_pixi_fields: function setup_pixi_fields()
                 multiplier_text_left = v + " Players";
             }
 
-            multiplier_text_right =  multiplier_list[i] + " x";
+            multiplier_text_right =  multiplier_list[j] + " x";
 
             let multiplier_label_left = new PIXI.Text(multiplier_text_left, text_style_multiplier);
             let multiplier_label_right = new PIXI.Text(multiplier_text_right, text_style_multiplier);
 
             multiplier_label_left.eventMode = 'passive';           
-            // multiplier_label_right.eventMode = 'passive';
+            multiplier_label_right.eventMode = 'passive';
 
             multiplier_label_left.anchor.set(0,0);
             multiplier_label_right.anchor.set(1,0);
@@ -311,6 +273,9 @@ setup_pixi_fields: function setup_pixi_fields()
             
             multiplier_table_container.addChild(multiplier_label_left);
             multiplier_table_container.addChild(multiplier_label_right);
+            
+            pixi_fields[i].multiplier_table_left.push(multiplier_label_left);
+            pixi_fields[i].multiplier_table_right.push(multiplier_label_right);
 
             temp_y += multiplier_label_left.height-8;
         }
@@ -328,28 +293,168 @@ setup_pixi_fields: function setup_pixi_fields()
                                width:parameter_set_field.width, 
                                height:parameter_set_field.height};
 
+        field_container.position.set(parameter_set_field.x - parameter_set_field.width/2,
+                                     parameter_set_field.y - parameter_set_field.height/2);
+
         pixi_container_main.addChild(pixi_fields[i].field_container);
+    }
+
+    app.update_fields();
+},
+
+/**
+ * update field containers
+ */
+update_field: function update_field(field_id)
+{
+    const field = app.session.world_state.fields[field_id];
+    const parameter_set_field = app.session.parameter_set.parameter_set_fields[field_id];
+    const parameter_set_period = app.get_current_parameter_set_period();
+
+    let pixi_field = pixi_fields[field_id];
+
+    if(field.status == "available")
+    {
+        pixi_field.available_container.visible = true;
+        pixi_field.claimed_container.visible = false;
+    }
+    else
+    {
+        let owner = app.get_parameter_set_player_from_player_id(field.owner);
+
+        pixi_field.available_container.visible = false;
+        pixi_field.claimed_container.visible = true;
+
+        let outline_solid = new PIXI.Graphics();
+        //fill
+        outline_solid.lineStyle({width:10,color:0x000000,alpha:1});
+        outline_solid.beginFill(owner.hex_color, 0.75);
+        outline_solid.drawRect(0, 0, parameter_set_field.width, parameter_set_field.height);
+        outline_solid.endFill();
+
+        outline_solid.eventMode = 'passive';  
+
+        pixi_field.outline_solid.destroy();
+        pixi_field.claimed_container.addChildAt(outline_solid,0);
+        pixi_field.outline_solid = outline_solid;
+
+        if(field.status == "building")
+        {
+            pixi_field.id_label_2.text = "Under construction by " + owner.id_label + ".";
+            pixi_field.left_cone_graphic.visible = true;
+            pixi_field.right_cone_graphic.visible = true;
+            pixi_field.management_label.visible = false;
+            pixi_field.right_click_graphic_2.visible = false;
+
+            pixi_field.left_cone_graphic.position.set(pixi_field.id_label_2.position.x - pixi_field.id_label_2.width/2 - 5,
+                                                      pixi_field.id_label_2.position.y);
+            pixi_field.right_cone_graphic.position.set(pixi_field.id_label_2.position.x + pixi_field.id_label_2.width/2 + 5,
+                                                       pixi_field.id_label_2.position.y);
+        }
+        else
+        {
+            pixi_field.id_label_2.text = "Claimed by " + owner.id_label + ".";
+
+            if(parameter_set_period.field_pr == "True")
+            {
+                let allowed_players_text = "";
+
+                for(const j in field.allowed_players)
+                {
+                    let allowed_player = app.get_parameter_set_player_from_player_id(field.allowed_players[j]);
+
+                    if(field.allowed_players.length > 1)
+                    {
+                        if(j == field.allowed_players.length - 1)
+                        {
+                            allowed_players_text += " and ";
+                        }
+                        else if(j > 0)
+                        {
+                            allowed_players_text += ", ";
+                        }
+                    }
+                    
+                    allowed_players_text += allowed_player.id_label;
+                }
+
+                pixi_field.id_label_2.text += "\n Allowed Players: " + allowed_players_text + ".";
+            }
+
+            pixi_field.left_cone_graphic.visible = false;
+            pixi_field.right_cone_graphic.visible = false;
+
+            if(app.is_subject && field.owner == app.session_player.id)
+            {
+                if(parameter_set_period.field_pr == "True")
+                {
+                    pixi_field.management_label.visible = true;
+                    pixi_field.right_click_graphic_2.visible = true;
+                }
+            }
+            else
+            {
+                pixi_field.management_label.visible = false;
+                pixi_field.right_click_graphic_2.visible = false;
+            }
+        }
     }
 },
 
 /**
- * destroy pixi field objects in world state
+ * update fields
  */
-// destroy_pixi_fields: function destroy_setup_pixi_fields()
-// {
-//     return;
-//     if(!app.session) return;
+update_fields: function update_fields()
+{
+    for(const i in app.session.world_state.fields)
+    {
+        app.update_field(i);
+    }
+},
 
-//     for(const i in app.session.world_state.fields){
+/**
+ * update filed multiplier table
+ 
+ */
+update_field_multiplier_table: function update_field_multiplier_table(field_id)
+{
+    const field = app.session.world_state.fields[field_id];
+    const parameter_set_field = app.session.parameter_set.parameter_set_fields[field_id];
+    const parameter_set_period = app.get_current_parameter_set_period();
 
-//         let pixi_objects = pixi_fields[i];
+    let pixi_field = pixi_fields[field_id];
 
-//         if(pixi_objects)
-//         {
-//             pixi_objects.field_container.destroy({children:true, texture:true, baseTexture:true});
-//         }
-//     }
-// },
+    let present_players_length = field.present_players.length;
+
+    if(present_players_length > pixi_field.multiplier_table_left.length)
+        present_players_length =  pixi_field.multiplier_table_left.length;
+
+    for(let i=0; i<pixi_field.multiplier_table_left.length; i++)
+    {
+        if(present_players_length == i+1)
+        {
+            pixi_field.multiplier_table_left[i].style.fill = 'yellow';
+            pixi_field.multiplier_table_right[i].style.fill = 'yellow';
+        }
+        else
+        {
+            pixi_field.multiplier_table_left[i].style.fill = 'white';
+            pixi_field.multiplier_table_right[i].style.fill = 'white';
+        }
+    }
+
+},
+
+/** 
+update multiplier tables
+*/
+update_field_multiplier_tables: function update_field_multiplier_tables()
+{
+    for(const i in app.session.world_state.fields)
+    {
+        app.update_field_multiplier_table(i);
+    }
+},
 
 /**
  * send field claim
@@ -386,8 +491,7 @@ take_field_claim: function take_field_claim(message_data)
         let field_id = message_data.field_id;
         app.session.world_state.fields[field_id] = message_data.field;
 
-        // app.destroy_pixi_fields();
-        app.setup_pixi_fields();
+        app.update_field(field_id);
 
         if(app.is_subject)
         {
@@ -831,9 +935,7 @@ take_grant_field_access: function take_grant_field_access(message_data)
         let target_player_id = message_data.target_player_id;
 
         app.session.world_state.fields[field_id] = message_data.field;
-
-        // app.destroy_pixi_fields();
-        app.setup_pixi_fields();
+        app.update_field(field_id);
 
         if(app.is_subject && source_player_id == app.session_player.id)
         {

@@ -256,9 +256,12 @@ simulate_build_seeds: function simulate_build_seeds(){
     
         if(session_player.state=="open")
         {
+            //start build seeds
+            if(app.session_player.current_instruction != app.instructions.action_page_seed) return;
+
             if(app.build_seed_count != 10) 
             {
-                app.add_text_emitters("Invalid entry.", 
+                app.add_text_emitters("Grow 10 seeds.", 
                                         session_player.current_location.x, 
                                         session_player.current_location.y,
                                         session_player.current_location.x,
@@ -283,9 +286,6 @@ simulate_build_seeds: function simulate_build_seeds(){
                 return;
             }
 
-            //start build seeds
-            if(app.session_player.current_instruction != app.instructions.action_page_seed) return;
-            
             message_data = {
                 "status": "success",
                 "error_message": [],
@@ -401,7 +401,7 @@ simulate_present_players: function simulate_present_players(field_id, present_pl
             field.present_players = present_players;
 
             // app.destroy_pixi_fields();
-            app.setup_pixi_fields();
+            app.update_field_multiplier_tables();
 
             if(field.present_players.includes(app.session_player.id.toString()))
             {
