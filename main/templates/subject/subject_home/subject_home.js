@@ -275,7 +275,7 @@ var app = Vue.createApp({
         do_reload: function do_reload()
         {
             app.setup_pixi_subjects();
-            app.update_fields();
+            app.setup_pixi_fields();
             app.setup_pixi_minimap();
             app.setup_disc_inventory();
             app.setup_seed_inventory();
