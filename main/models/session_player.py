@@ -117,17 +117,11 @@ class SessionPlayer(models.Model):
         parameter_set = self.parameter_set_player.parameter_set.json()
         parameter_set_player = parameter_set["parameter_set_players"][str(self.parameter_set_player.id)]
 
+        for i in parameter_set:
+            text = text.replace(f'#{i}#', str(parameter_set[i]))
+
         text = text.replace("#player_count-1#", str(len(parameter_set["parameter_set_players"])-1))
         text = text.replace("#id_label#", str(parameter_set_player["id_label"]))
-        text = text.replace("#build_time#", str(parameter_set["build_time"]))
-        text = text.replace("#disc_build_length#", str(parameter_set["disc_build_length"]))
-        text = text.replace("#disc_value#", str(parameter_set["disc_value"]))
-        text = text.replace("#seed_build_length#", str(parameter_set["seed_build_length"]))
-        text = text.replace("#field_build_length#", str(parameter_set["field_build_length"]))
-        text = text.replace("#interaction_only_length#", str(parameter_set["interaction_only_length"]))
-        text = text.replace("#break_frequency#", str(parameter_set["break_frequency"]))
-        text = text.replace("#break_length#", str(parameter_set["break_length"]))
-        text = text.replace("#cool_down_length#", str(parameter_set["cool_down_length"]))
         
         return text
     
