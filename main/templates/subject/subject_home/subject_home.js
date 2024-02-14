@@ -279,8 +279,6 @@ var app = Vue.createApp({
             app.setup_pixi_minimap();
             app.setup_disc_inventory();
             app.setup_seed_inventory();
-
-            app.update_subject_status_overlay();
         },
 
         /** send winsock request to get session info
@@ -399,7 +397,7 @@ var app = Vue.createApp({
             }            
 
             Vue.nextTick(() => {
-                app.update_subject_status_overlay();
+                app.update_pixi_night();
             });
 
             //update fields
@@ -519,7 +517,7 @@ var app = Vue.createApp({
 
             if(app.session.world_state.time_remaining == 10)
             {
-                let notice_text = "The period is about end.";
+                let notice_text = "The period is about to end.";
 
                 app.add_notice(notice_text,
                                app.session.world_state.current_period,
@@ -606,6 +604,7 @@ var app = Vue.createApp({
                 app.destroy_pixi_objects();
                 app.do_reload();
                 app.remove_all_notices();
+                app.update_pixi_night();
             }
 
             app.working = false;
@@ -629,7 +628,6 @@ var app = Vue.createApp({
         {%include "subject/subject_home/the_stage/includes.js"%}
         {%include "subject/subject_home/the_stage/subject.js"%}
         {%include "subject/subject_home/the_stage/mini_map.js"%}
-        {%include "subject/subject_home/the_stage/subject_overlay.js"%}
         {%include "subject/subject_home/the_stage/notices.js"%}
         {%include "subject/subject_home/the_stage/inventory.js"%}
         {%include "subject/subject_home/help_doc_subject.js"%}
@@ -670,7 +668,7 @@ var app = Vue.createApp({
          * handle window resize event
          */
         handleResize: function handleResize(){
-            app.update_subject_status_overlay();
+
         },
 
     },

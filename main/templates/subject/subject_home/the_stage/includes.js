@@ -9,3 +9,4 @@
 {%include "subject/subject_home/the_stage/ground.js"%}
 {%include "subject/subject_home/the_stage/field.js"%}
 {%include "subject/subject_home/the_stage/destroy.js"%}
+{%include "subject/subject_home/the_stage/night.js"%}
