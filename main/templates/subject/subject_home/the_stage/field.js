@@ -171,7 +171,7 @@ setup_pixi_fields: function setup_pixi_fields()
 
         id_label_2.anchor.set(0.5);
         id_label_2.position.set(field_container.width/2,
-                                id_label_2.height/2 + 20);
+                                id_label_2.height/2 + 40);
 
         claimed_container.addChild(id_label_2);
 

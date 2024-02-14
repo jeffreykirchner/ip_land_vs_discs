@@ -15,6 +15,7 @@ var pixi_walls = {};                           //walls
 var pixi_barriers = {};                        //barriers
 var pixi_grounds = {};                         //grounds
 var pixi_fields = {};                          //fields
+var pixi_night = {};                           //night
 
 var wall_search = {counter:0, current_location:{x:-1,y:-1}, target_location:{x:-1,y:-1}};   //wall search for avatar pathfinding
 var wall_search_objects = [];
