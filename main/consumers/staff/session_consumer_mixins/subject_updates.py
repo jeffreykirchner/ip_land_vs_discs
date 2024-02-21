@@ -284,7 +284,7 @@ class SubjectUpdatesMixin():
         #check if on break
         if self.world_state_local["time_remaining"] > self.parameter_set_local["period_length"]:
             status = "fail"
-            error_message.append({"id":"field_claim", "message": "You cannot claim a field during the break."})
+            error_message.append({"id":"field_claim", "message": "You cannot interact during the break."})
 
         if status == "success":
             source_player = self.world_state_local['session_players'][str(player_id)]

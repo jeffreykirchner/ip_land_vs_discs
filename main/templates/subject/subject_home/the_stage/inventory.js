@@ -106,6 +106,7 @@ setup_seed_inventory: function setup_seed_inventory()
     if(!app.session) return;
     if(!app.session.started) return;
     if(app.pixi_mode!="subject") return;
+    if(!("seed_tex" in app.pixi_textures)) return;
 
     //disc inventory
     pixi_inventory.seed_container = new PIXI.Container();

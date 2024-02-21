@@ -6,6 +6,8 @@ axios.defaults.xsrfCookieName = "csrftoken";
 
 {%include "subject/subject_home/the_stage/pixi_globals.js"%}
 
+var worker = null;
+
 //vue app
 var app = Vue.createApp({
     delimiters: ["[[", "]]"],
@@ -20,7 +22,6 @@ var app = Vue.createApp({
                     session_key : "{{session.session_key}}",
                     session : null,
                     session_events : null,
-                    timer_pulse : null,
                     the_feed : [],
 
                     staff_edit_name_etc_form_ids: {{staff_edit_name_etc_form_ids|safe}},
@@ -88,7 +89,7 @@ var app = Vue.createApp({
         */
         handle_socket_connection_try: function handle_socket_connection_try(){         
             app.session.world_state.timer_running = false;
-            if(app.timer_pulse != null) clearTimeout(app.timer_pulse);   
+            if(worker) worker.terminate();  
             return true;
         },
 

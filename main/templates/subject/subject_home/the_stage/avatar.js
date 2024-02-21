@@ -278,6 +278,12 @@ subject_avatar_click: function subject_avatar_click(target_player_id)
 {
     if(target_player_id == app.session_player.id) return;
 
+    if(app.session.world_state.current_experiment_phase == 'Instructions' && 
+       app.session_player.current_instruction != app.instructions.action_page_interaction)
+    {
+        return;
+    }
+
     // console.log("subject avatar click", target_player_id);
 
     // app.send_message("tractor_beam", 
