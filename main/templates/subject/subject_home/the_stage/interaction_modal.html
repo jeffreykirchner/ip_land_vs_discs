@@ -23,7 +23,7 @@
                     
                 </span>
             </div>
-            <div class="modal-body" v-if="selected_player && selected_player.session_player">
+            <div class="modal-body" v-if="selected_player && selected_player.session_player && session">
                 <div class="row text-center">
                     <div class="col" v-if="selected_player.interaction_type=='send_seeds' || 
                                            selected_player.interaction_type=='take_seeds'">
@@ -70,6 +70,12 @@
                                     v-bind:disabled="reconnecting || working">
                                     All <i class="fas fa-check-double"></i>
                                 </button>
+                            </div>
+
+                            <div class="row mt-2">
+                                <div class="col text-center fw-bold">
+                                    Max: [[selected_player.interaction_type=='take_seeds' ? session.world_state.session_players[selected_player.selected_player_id].seeds:session.world_state.session_players[session_player.id].seeds]]
+                                </div>
                             </div>
                         </div>
                     </div>
