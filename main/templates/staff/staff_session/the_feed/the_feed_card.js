@@ -25,11 +25,6 @@ process_the_feed: function process_the_feed(message_type, message_data)
 
             html_text = "<b>" + sender_label + "</b> @ " + receiver_label + ": " +  message_data.text;
 
-            if(app.session.parameter_set.chat_mode == "Limited")
-            {
-                html_text += " (<i>" + message_data.text_limited + "</i>)";
-            }
-
             break;
         case "update_field_claim":
             sender_label = app.get_parameter_set_player_from_player_id(message_data.source_player_id).id_label;
