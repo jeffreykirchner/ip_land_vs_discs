@@ -92,7 +92,7 @@ setup_pixi_fields: function setup_pixi_fields()
             strokeThickness: 3,                
         };
 
-        let id_label = new PIXI.Text("Right click to claim.", text_style);
+        let id_label = new PIXI.Text("Right click to claim field.", text_style);
         id_label.eventMode = 'passive';
         id_label.anchor.set(0.5);
 
@@ -1008,17 +1008,13 @@ send_present_players: function send_present_players()
 
         if(field.allowed_players.includes(parseInt(session_player.id)))
         {
-            let rect1={x:session_player.current_location.x - container.width/2,
-                       y:session_player.current_location.y - container.height/2,
-                       width:container.width,
-                       height:container.height};
 
             let rect2={x:parameter_set_field.x - parameter_set_field.width/2,
                        y:parameter_set_field.y - parameter_set_field.height/2,
                        width:parameter_set_field.width,
                        height:parameter_set_field.height};
 
-            if(app.check_for_rect_intersection(rect1, rect2))
+            if(app.check_point_in_rectagle(session_player.current_location, rect2))
             {  
                 present_players.push(i);
             }
