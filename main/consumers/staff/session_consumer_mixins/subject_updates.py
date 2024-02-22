@@ -83,12 +83,12 @@ class SubjectUpdatesMixin():
                     if math.dist(source_pt, target_pt) <= 1000:
                         result["nearby_players"].append(i)
 
-            await SessionEvent.objects.acreate(session_id=self.session_id, 
-                                                session_player_id=player_id,
-                                                type=event['type'],
-                                                period_number=self.world_state_local["current_period"],
-                                                time_remaining=self.world_state_local["time_remaining"],
-                                                data=result)
+            self.session_events.append(SessionEvent(session_id=self.session_id, 
+                                                    session_player_id=player_id,
+                                                    type=event['type'],
+                                                    period_number=self.world_state_local["current_period"],
+                                                    time_remaining=self.world_state_local["time_remaining"],
+                                                    data=result))
 
         await self.send_message(message_to_self=None, message_to_group=result,
                                 message_type=event['type'], send_to_client=False, send_to_group=True)
@@ -236,12 +236,12 @@ class SubjectUpdatesMixin():
             
             data = {"target_locations" : target_locations, "current_locations" : current_locations}
 
-            await SessionEvent.objects.acreate(session_id=self.session_id, 
-                                               session_player_id=player_id,
-                                               type=event['type'],
-                                               period_number=self.world_state_local["current_period"],
-                                               time_remaining=self.world_state_local["time_remaining"],
-                                               data=data)
+            self.session_events.append(SessionEvent(session_id=self.session_id, 
+                                                    session_player_id=player_id,
+                                                    type=event['type'],
+                                                    period_number=self.world_state_local["current_period"],
+                                                    time_remaining=self.world_state_local["time_remaining"],
+                                                    data=data))
         
         result = {"value" : "success", 
                   "target_location" : target_location, 
@@ -335,12 +335,12 @@ class SubjectUpdatesMixin():
 
             await Session.objects.filter(id=self.session_id).aupdate(world_state=self.world_state_local)
 
-            await SessionEvent.objects.acreate(session_id=self.session_id, 
-                                               session_player_id=player_id,
-                                               type=event['type'],
-                                               period_number=self.world_state_local["current_period"],
-                                               time_remaining=self.world_state_local["time_remaining"],
-                                               data=result)
+            self.session_events.append(SessionEvent(session_id=self.session_id, 
+                                                    session_player_id=player_id,
+                                                    type=event['type'],
+                                                    period_number=self.world_state_local["current_period"],
+                                                    time_remaining=self.world_state_local["time_remaining"],
+                                                    data=result))
 
         await self.send_message(message_to_self=None, message_to_group=result,
                                 message_type=event['type'], send_to_client=False, send_to_group=True)
@@ -547,12 +547,12 @@ class SubjectUpdatesMixin():
 
             await Session.objects.filter(id=self.session_id).aupdate(world_state=self.world_state_local)
 
-            await SessionEvent.objects.acreate(session_id=self.session_id, 
-                                            session_player_id=player_id,
-                                            type=event['type'],
-                                            period_number=self.world_state_local["current_period"],
-                                            time_remaining=self.world_state_local["time_remaining"],
-                                            data=result)
+            self.session_events.append(SessionEvent(session_id=self.session_id, 
+                                                    session_player_id=player_id,
+                                                    type=event['type'],
+                                                    period_number=self.world_state_local["current_period"],
+                                                    time_remaining=self.world_state_local["time_remaining"],
+                                                    data=result))
         
         await self.send_message(message_to_self=None, message_to_group=result,
                                 message_type=event['type'], send_to_client=False, send_to_group=True)
@@ -619,12 +619,12 @@ class SubjectUpdatesMixin():
                   "error_message" : error_message,}
 
         if status == "success":
-            await SessionEvent.objects.acreate(session_id=self.session_id, 
-                                            session_player_id=player_id,
-                                            type=event['type'],
-                                            period_number=self.world_state_local["current_period"],
-                                            time_remaining=self.world_state_local["time_remaining"],
-                                            data=result)
+            self.session_events.append(SessionEvent(session_id=self.session_id, 
+                                                    session_player_id=player_id,
+                                                    type=event['type'],
+                                                    period_number=self.world_state_local["current_period"],
+                                                    time_remaining=self.world_state_local["time_remaining"],
+                                                    data=result))
 
         await self.send_message(message_to_self=None, message_to_group=result,
                                 message_type=event['type'], send_to_client=False, send_to_group=True)
@@ -740,12 +740,12 @@ class SubjectUpdatesMixin():
 
             await Session.objects.filter(id=self.session_id).aupdate(world_state=self.world_state_local)
 
-            await SessionEvent.objects.acreate(session_id=self.session_id, 
-                                            session_player_id=player_id,
-                                            type=event['type'],
-                                            period_number=self.world_state_local["current_period"],
-                                            time_remaining=self.world_state_local["time_remaining"],
-                                            data=result)
+            self.session_events.append(SessionEvent(session_id=self.session_id, 
+                                                    session_player_id=player_id,
+                                                    type=event['type'],
+                                                    period_number=self.world_state_local["current_period"],
+                                                    time_remaining=self.world_state_local["time_remaining"],
+                                                    data=result))
 
         await self.send_message(message_to_self=None, message_to_group=result,
                                 message_type=event['type'], send_to_client=False, send_to_group=True)
@@ -815,12 +815,12 @@ class SubjectUpdatesMixin():
             
             await Session.objects.filter(id=self.session_id).aupdate(world_state=self.world_state_local)
 
-            await SessionEvent.objects.acreate(session_id=self.session_id, 
-                                            session_player_id=player_id,
-                                            type=event['type'],
-                                            period_number=self.world_state_local["current_period"],
-                                            time_remaining=self.world_state_local["time_remaining"],
-                                            data=result)
+            self.session_events.append(SessionEvent(session_id=self.session_id, 
+                                                    session_player_id=player_id,
+                                                    type=event['type'],
+                                                    period_number=self.world_state_local["current_period"],
+                                                    time_remaining=self.world_state_local["time_remaining"],
+                                                    data=result))
 
         await self.send_message(message_to_self=None, message_to_group=result,
                                 message_type=event['type'], send_to_client=False, send_to_group=True)
@@ -913,12 +913,12 @@ class SubjectUpdatesMixin():
             await current_period.asave()
             await Session.objects.filter(id=self.session_id).aupdate(world_state=self.world_state_local)
 
-            await SessionEvent.objects.acreate(session_id=self.session_id, 
-                                               session_player_id=player_id,
-                                               type=event['type'],
-                                               period_number=self.world_state_local["current_period"],
-                                               time_remaining=self.world_state_local["time_remaining"],
-                                               data=result)
+            self.session_events.append(SessionEvent(session_id=self.session_id, 
+                                                    session_player_id=player_id,
+                                                    type=event['type'],
+                                                    period_number=self.world_state_local["current_period"],
+                                                    time_remaining=self.world_state_local["time_remaining"],
+                                                    data=result))
 
         await self.send_message(message_to_self=None, message_to_group=result,
                                 message_type=event['type'], send_to_client=False, send_to_group=True)
@@ -1017,12 +1017,12 @@ class SubjectUpdatesMixin():
 
             await Session.objects.filter(id=self.session_id).aupdate(world_state=self.world_state_local)
 
-            await SessionEvent.objects.acreate(session_id=self.session_id, 
-                                               session_player_id=player_id,
-                                               type=event['type'],
-                                               period_number=self.world_state_local["current_period"],
-                                               time_remaining=self.world_state_local["time_remaining"],
-                                               data=result)
+            self.session_events.append(SessionEvent(session_id=self.session_id, 
+                                                    session_player_id=player_id,
+                                                    type=event['type'],
+                                                    period_number=self.world_state_local["current_period"],
+                                                    time_remaining=self.world_state_local["time_remaining"],
+                                                    data=result))
 
         await self.send_message(message_to_self=None, message_to_group=result,
                                 message_type=event['type'], send_to_client=False, send_to_group=True)
