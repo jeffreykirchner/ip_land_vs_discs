@@ -73,17 +73,17 @@ update_player_inventory: function update_player_inventory()
 //     }
 // },
 
-take_cancel_interaction: function take_cancel_interaction(message_data)
-{
-    let source_player_id = message_data.source_player_id;
-    let target_player_id = message_data.target_player_id;
+// take_cancel_interaction: function take_cancel_interaction(message_data)
+// {
+//     let source_player_id = message_data.source_player_id;
+//     let target_player_id = message_data.target_player_id;
 
-    app.session.world_state.session_players[source_player_id].tractor_beam_target = null;
+//     app.session.world_state.session_players[source_player_id].tractor_beam_target = null;
 
-    app.session.world_state.session_players[source_player_id].frozen = false
-    app.session.world_state.session_players[target_player_id].frozen = false
+//     app.session.world_state.session_players[source_player_id].frozen = false
+//     app.session.world_state.session_players[target_player_id].frozen = false
 
-    app.session.world_state.session_players[source_player_id].interaction = 0;
-    app.session.world_state.session_players[target_player_id].interaction = 0;
-}, 
+//     app.session.world_state.session_players[source_player_id].interaction = 0;
+//     app.session.world_state.session_players[target_player_id].interaction = 0;
+// }, 
 
