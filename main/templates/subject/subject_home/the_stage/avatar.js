@@ -595,45 +595,44 @@ take_tractor_beam: function take_tractor_beam(message_data)
 
     if(message_data.status == "success")
     {
+
+        let player_id = message_data.player_id;
+        let target_player_id = message_data.target_player_id;
+    
+        app.session.world_state.session_players[player_id].tractor_beam_target = target_player_id;
+    
+        app.session.world_state.session_players[player_id].frozen = true
+        app.session.world_state.session_players[target_player_id].frozen = true
+    
+        app.session.world_state.session_players[player_id].interaction = app.session.parameter_set.interaction_length;
+        app.session.world_state.session_players[target_player_id].interaction = app.session.parameter_set.interaction_length;
+    
         if(app.is_subject)
         {
-            let player_id = message_data.player_id;
-            let target_player_id = message_data.target_player_id;
-        
-            app.session.world_state.session_players[player_id].tractor_beam_target = target_player_id;
-        
-            app.session.world_state.session_players[player_id].frozen = true
-            app.session.world_state.session_players[target_player_id].frozen = true
-        
-            app.session.world_state.session_players[player_id].interaction = app.session.parameter_set.interaction_length;
-            app.session.world_state.session_players[target_player_id].interaction = app.session.parameter_set.interaction_length;
-        
-            if(app.is_subject)
+            if(player_id == app.session_player.id)
             {
-                if(player_id == app.session_player.id)
-                {
-                    app.interaction_start_modal.hide();
-                    app.field_modal.hide();
-                    app.field_manage_modal.hide();
+                app.interaction_start_modal.hide();
+                app.field_modal.hide();
+                app.field_manage_modal.hide();
 
-                    app.interaction_modal.toggle();
-                    app.interaction_modal_open = true;
+                app.interaction_modal.toggle();
+                app.interaction_modal_open = true;
 
-                    app.working = false;
-                }
-                else if(target_player_id == app.session_player.id)
-                {
-                    
-                    app.field_modal.hide();
-                    app.field_manage_modal.hide();
+                app.working = false;
+            }
+            else if(target_player_id == app.session_player.id)
+            {
+                
+                app.field_modal.hide();
+                app.field_manage_modal.hide();
 
-                    app.interaction_modal.hide();
-                    app.interaction_start_modal.hide();
+                app.interaction_modal.hide();
+                app.interaction_start_modal.hide();
 
-                    app.working = false;
-                }
+                app.working = false;
             }
         }
+        
     }
     else
     {
