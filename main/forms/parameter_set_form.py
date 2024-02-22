@@ -147,7 +147,7 @@ class ParameterSetForm(forms.ModelForm):
                                                                                     "min":"0.01"}))
     
     avatar_move_speed = forms.DecimalField(label='Avatar Move Speed (pixels per second)',
-                                             max_digits=3,
+                                             max_digits=4,
                                              decimal_places=2,
                                              min_value=0.01,
                                              widget=forms.NumberInput(attrs={"v-model":"parameter_set.avatar_move_speed",
