@@ -49,7 +49,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = '_ip_land_vs_discs.urls'
-ADMIN_SITE_HEADER = 'ESI - IP Land vs Discs Administration'
+ADMIN_SITE_HEADER = 'ESI - Property in Things Administration'
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
