@@ -126,7 +126,7 @@ class ParameterSetForm(forms.ModelForm):
     
     disc_value = forms.IntegerField(label='Disc Value(¢)',
                                             min_value=1,
-                                            widget=forms.NumberInput(attrs={"v-model":"parameter_set.field_build_length",
+                                            widget=forms.NumberInput(attrs={"v-model":"parameter_set.disc_value",
                                                                             "step":"1",
                                                                             "min":"1"}))
 
