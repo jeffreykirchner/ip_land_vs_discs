@@ -49,6 +49,7 @@ class ParameterSet(models.Model):
     seed_build_length = models.DecimalField(verbose_name='Seed Build Length', decimal_places=1, max_digits=3, default=0.5)   #seed build length in seconds
     field_build_length = models.IntegerField(verbose_name='Field Build Length', default=12)                   #field build length in seconds
     disc_build_length = models.IntegerField(verbose_name='Disc Build Length', default=12)                     #disc build length in seconds 
+    enable_discs = models.BooleanField(verbose_name='Enable Discs', default=True, )                           #enable discs 
 
     seed_multipliers = models.TextField(verbose_name='Seed Multipliers', default="3.5", blank=True)            #seed multipliers
     disc_value = models.IntegerField(verbose_name='Disc Value', default=10)                                   #disc value
@@ -111,6 +112,7 @@ class ParameterSet(models.Model):
             self.seed_build_length = new_ps.get("seed_build_length", 1)
             self.field_build_length = new_ps.get("field_build_length", 12)
             self.disc_build_length = new_ps.get("disc_build_length", 12)
+            self.enable_discs = new_ps.get("enable_discs", True)
 
             self.seed_multipliers = new_ps.get("seed_multipliers", "3.5")
             self.disc_value = new_ps.get("disc_value", 10)
@@ -302,6 +304,7 @@ class ParameterSet(models.Model):
         self.json_for_session["seed_build_length"] = self.seed_build_length
         self.json_for_session["field_build_length"] = self.field_build_length
         self.json_for_session["disc_build_length"] = self.disc_build_length
+        self.json_for_session["enable_discs"] = "True" if self.enable_discs else "False"
 
         self.json_for_session["seed_multipliers"] = self.seed_multipliers
         self.json_for_session["disc_value"] = self.disc_value

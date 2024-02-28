@@ -119,6 +119,10 @@ class ParameterSetForm(forms.ModelForm):
                                                                             "step":"1",
                                                                             "min":"1"}))
     
+    enable_discs = forms.ChoiceField(label='Enable Discs',
+                                     choices=((True, 'Yes'), (False,'No' )),
+                                     widget=forms.Select(attrs={"v-model":"parameter_set.enable_discs",}))
+    
     seed_multipliers = forms.CharField(label='Seed multipliers',
                                              required=False,
                                              widget=forms.Textarea(attrs={"v-model":"parameter_set.seed_multipliers",
@@ -183,11 +187,11 @@ class ParameterSetForm(forms.ModelForm):
         model=ParameterSet
         fields =['period_count', 'period_length', 'break_frequency', 'break_length', 'interaction_only_length',
                  'show_instructions', 'instruction_set', 
-                 'survey_required', 'survey_link', 'test_mode', 'prolific_mode', 'prolific_completion_link', 'reconnection_limit',
+                 'survey_required', 'survey_link', 'prolific_mode', 'prolific_completion_link', 'reconnection_limit',
                  'interaction_length', 'interaction_range', 'cool_down_length', 'build_time', 'field_build_length', 'disc_build_length','seed_build_length',
-                 'seed_multipliers', 'disc_value',
+                 'seed_multipliers', 'disc_value', 'enable_discs',
                  'avatar_scale', 'avatar_bound_box_percent', 'avatar_move_speed', 'avatar_animation_speed',
-                 'world_width', 'world_height']
+                 'world_width', 'world_height', 'test_mode']
 
     def clean_survey_link(self):
         
