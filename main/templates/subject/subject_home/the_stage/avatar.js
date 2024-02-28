@@ -689,35 +689,53 @@ take_interaction: function take_interaction(message_data)
         //add transfer beam
         if(interaction_type == "take_seeds")
         {
+            let elements = [];
+            element = {source_change:message_data.target_player_change,
+                       target_change:message_data.source_player_change,
+                       texture:app.pixi_textures["seed_tex"]}
+            elements.push(element);
+
             app.add_transfer_beam(target_player.current_location, 
-                                source_player.current_location,
-                                app.pixi_textures["seed_tex"],
-                                message_data.target_player_change,
-                                message_data.source_player_change);
+                                  source_player.current_location,
+                                  elements);
         }
         else if(interaction_type == "send_seeds")
         {
+            let elements = [];
+            element = {source_change:message_data.source_player_change,
+                       target_change:message_data.target_player_change,
+                       texture:app.pixi_textures["seed_tex"]}
+            elements.push(element);
+
             app.add_transfer_beam(source_player.current_location, 
-                                target_player.current_location,
-                                app.pixi_textures["seed_tex"],
-                                message_data.source_player_change,
-                                message_data.target_player_change);
+                                  target_player.current_location,
+                                  elements);
         }
         else if(interaction_type == "take_disc")
         {
-             app.add_transfer_beam(target_player.current_location,
+            let elements = [];
+            element = {source_change:null,
+                       target_change:null,
+                       texture:app.pixi_textures["disc_tex"]}
+            elements.push(element);
+
+            app.add_transfer_beam(target_player.current_location,
                                   source_player.current_location,
-                                  app.pixi_textures["disc_tex"],
-                                  null,
-                                  null);
+                                  elements,
+                                  show_target_emitter=false);
         }
         else if(interaction_type == "send_disc")
         {
-            app.add_transfer_beam(source_player.current_location, 
-                                target_player.current_location,
-                                app.pixi_textures["disc_tex"],
-                                null,
-                                null);
+            let elements = [];
+            element = {source_change:null,
+                       target_change:null,
+                       texture:app.pixi_textures["disc_tex"]}
+            elements.push(element);
+
+            app.add_transfer_beam(source_player.current_location,
+                                  target_player.current_location,
+                                  elements,
+                                  show_source_emitter=false);
         }
 
         if(app.pixi_mode=="subject")
