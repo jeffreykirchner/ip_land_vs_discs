@@ -96,8 +96,9 @@
 
         <div class="row justify-content-center align-items-center mt-2" 
             v-if="pixi_mode=='subject' && session && session.started">
-            <div class="col-2 text-center">   
-                <button type="button" 
+            <div class="col-2 text-center">
+                <div v-if="session.parameter_set.enable_discs=='True'">
+                    <button type="button" 
                         title="Build Disc"
                         class="btn btn-outline-primary btn-lg"
                         id="id_send_build_disc"
@@ -110,17 +111,17 @@
                                          session.started===false || 
                                          session.world_state.finished"
                         v-on:click="send_build_disc()">
-                        Build Disc <i class="fas fa-compact-disc"></i>
-                </button>
-                
-                <div class="fw-bold">
-                    [[session.parameter_set.disc_build_length]] seconds 
-
-                    <button type="button" class="btn btn-link" title="Show Help" v-on:click="send_load_help_doc_subject('subject_disc')">
-                        <i class="far fa-question-circle"></i> 
+                            Build Disc <i class="fas fa-compact-disc"></i>
                     </button>
-                </div>
-                
+                    
+                    <div class="fw-bold">
+                        [[session.parameter_set.disc_build_length]] seconds 
+
+                        <button type="button" class="btn btn-link" title="Show Help" v-on:click="send_load_help_doc_subject('subject_disc')">
+                            <i class="far fa-question-circle"></i> 
+                        </button>
+                    </div>
+                </div>   
             </div>
             <div class="col-2 text-center">                
                 <div class="input-group">

@@ -12,6 +12,7 @@ setup_disc_inventory: function setup_disc_inventory()
     if(!app.session) return;
     if(!app.session.started) return;
     if(app.pixi_mode!="subject") return;
+    if(app.session.parameter_set.enable_discs=='False') return;
 
     //disc inventory
     pixi_inventory.disc_container = new PIXI.Container();
@@ -172,7 +173,11 @@ setup_seed_inventory: function setup_seed_inventory()
     pixi_inventory.seed_container.addChildAt(invetory_bg,0);
     
     //add to stage
-    pixi_inventory.seed_container.position.set(app.canvas_width - pixi_inventory.seed_container.width-10, 
-                                               pixi_inventory.disc_container.y + pixi_inventory.disc_container.height + 5);
+    let y = 30;
+    if(app.session.parameter_set.enable_discs=='True')
+    {
+        y = pixi_inventory.disc_container.y + pixi_inventory.disc_container.height + 5;
+    }
+    pixi_inventory.seed_container.position.set(app.canvas_width - pixi_inventory.seed_container.width-10, y);
     pixi_app.stage.addChild(pixi_inventory.seed_container);
 },
