@@ -88,10 +88,10 @@ class ParameterSetForm(forms.ModelForm):
                                                                             "min":"100"}))
     
     cool_down_length = forms.IntegerField(label='Cool Down Length (seconds)',
-                                          min_value=1,
+                                          min_value=0,
                                           widget=forms.NumberInput(attrs={"v-model":"parameter_set.cool_down_length",
                                                                           "step":"1",
-                                                                          "min":"1"}))
+                                                                          "min":"0"}))
 
     build_time = forms.IntegerField(label='Total Production Time (seconds)',
                                             min_value=1,
