@@ -81,7 +81,7 @@ setup_pixi_subjects: function setup_pixi_subjects(){
         pixi_avatars[i].disc_wedges = disc_wedges;
        
         avatar_container.addChild(gear_sprite);
-        avatar_container.addChild(disc_wedges);
+        if(app.session.parameter_set.enable_discs=="True") avatar_container.addChild(disc_wedges);
         avatar_container.addChild(face_sprite);
         avatar_container.addChild(id_label);
         avatar_container.addChild(token_graphic);
@@ -1118,6 +1118,8 @@ move_player: function move_player(delta)
  */
 update_disc_wedges: function update_disc_wedges(player_id)
 {
+    if(app.session.parameter_set.enable_discs=="False") return;
+    
     let disc_wedges = pixi_avatars[player_id].disc_wedges;
     let session_player = app.session.world_state.session_players[player_id];
 
