@@ -180,7 +180,6 @@ send_chat_instructions: function send_chat_instructions()
     let message_data = {
         "status": "success",
         "text": app.chat_text.trim(),
-        "text_limited": app.chat_text.trim(),
         "sender_id": app.session_player.id,       
         "nearby_players": [],
     };
