@@ -70,8 +70,7 @@ subject_pointer_tap: function subject_pointer_tap(event)
     
         if(obj.id == app.session_player.id) continue;
 
-        if(app.get_distance(obj.current_location, local_pos) < 100 &&
-        app.get_distance(obj.current_location, local_player.current_location) <= app.session.parameter_set.interaction_range+125)
+        if(app.get_distance(obj.current_location, local_pos) < 100)
         {            
             return;
         }
