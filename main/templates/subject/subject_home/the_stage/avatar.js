@@ -500,6 +500,19 @@ select_all_discs: function select_all_discs()
    }
 },
 
+/*
+* select disc
+*/
+select_disc: function select_disc(id)
+{
+    for(const i in app.selected_player.interaction_discs)
+    {
+        app.selected_player.interaction_discs[i] = false;
+    }
+    app.selected_player.interaction_discs[id] = true;
+},
+
+
 /**
  * update the inventory of the player
  */
@@ -713,9 +726,19 @@ take_interaction: function take_interaction(message_data)
         }
         else if(interaction_type == "take_disc")
         {
+            let parameter_set_player = null;
+            for(const i in message_data.interaction_discs)
+            {
+                if(message_data.interaction_discs[i])
+                {
+                    parameter_set_player = app.get_parameter_set_player_from_player_id(parseInt(i));
+                }
+            }
+
             let elements = [];
             element = {source_change:null,
                        target_change:null,
+                       tint:parameter_set_player.hex_color,
                        texture:app.pixi_textures["disc_tex"]}
             elements.push(element);
 
@@ -726,9 +749,19 @@ take_interaction: function take_interaction(message_data)
         }
         else if(interaction_type == "send_disc")
         {
+            let parameter_set_player = null;
+            for(const i in message_data.interaction_discs)
+            {
+                if(message_data.interaction_discs[i])
+                {
+                    parameter_set_player = app.get_parameter_set_player_from_player_id(parseInt(i));
+                }
+            }
+
             let elements = [];
             element = {source_change:null,
                        target_change:null,
+                       tint:parameter_set_player.hex_color,
                        texture:app.pixi_textures["disc_tex"]}
             elements.push(element);
 

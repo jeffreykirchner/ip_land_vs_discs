@@ -89,9 +89,11 @@
                                             type="checkbox" 
                                             value=""
                                             v-bind:id="'interaction_cb_' + session_player.id"
-                                            v-model="selected_player.interaction_discs[session_player.id]">
+                                            v-model="selected_player.interaction_discs[session_player.id]"
+                                            v-on:click="select_disc(session_player.id)">
                                     <label class="form-check-label" 
-                                            v-bind:for="'interaction_cb_' + session_player.id">
+                                            v-bind:for="'interaction_cb_' + session_player.id"
+                                            v-on:click="select_disc(session_player.id)">
                                         My Disc Copy                                   
                                     </label>
                                 </div>
@@ -109,9 +111,11 @@
                                            type="checkbox" 
                                            value="" 
                                            v-bind:id="'interaction_cb_' + key"
-                                           v-model="selected_player.interaction_discs[key]">
+                                           v-model="selected_player.interaction_discs[key]"
+                                           v-on:click="select_disc(key)">
                                     <label class="form-check-label" 
-                                           v-bind:for="'interaction_cb_' + key">
+                                           v-bind:for="'interaction_cb_' + key"
+                                           v-on:click="select_disc(key)">
                                         [[get_parameter_set_player_from_player_id(key).id_label]]'s Disc Copy                                 
                                     </label>
                                 </div>
@@ -119,7 +123,7 @@
                         </div>
 
                         <!-- select all -->
-                        <div class="row mt-4">
+                        <!-- <div class="row mt-4">
                             <div class="col text-center">
                                 <button type="button"
                                         class="btn btn-outline-primary"
@@ -129,7 +133,7 @@
                                     Select All <i class="fas fa-check-double"></i>
                                 </button>
                             </div>
-                        </div>
+                        </div> -->
 
                         <!-- empty -->
                         <div class="row">
