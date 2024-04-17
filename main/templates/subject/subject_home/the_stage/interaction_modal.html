@@ -101,23 +101,25 @@
                         </div>
 
                         <!-- other discs -->
-                        <div class="row" v-for="(value, key) in selected_player.interaction_discs" 
-                                v-bind:key="key">
-                            <div class="col h5">
-                                
-                                <div class="form-check" 
-                                     v-if="key!=session_player.id">
-                                    <input class="form-check-input" 
-                                           type="checkbox" 
-                                           value="" 
-                                           v-bind:id="'interaction_cb_' + key"
-                                           v-model="selected_player.interaction_discs[key]"
-                                           v-on:click="select_disc(key)">
-                                    <label class="form-check-label" 
-                                           v-bind:for="'interaction_cb_' + key"
-                                           >
-                                        [[get_parameter_set_player_from_player_id(key).id_label]]'s Disc Copy                                 
-                                    </label>
+                        <div  v-if="get_current_parameter_set_period().disc_pr=='False'">
+                            <div class="row" v-for="(value, key) in selected_player.interaction_discs" 
+                                    v-bind:key="key">
+                                <div class="col h5">
+                                    
+                                    <div class="form-check" 
+                                        v-if="key!=session_player.id">
+                                        <input class="form-check-input" 
+                                            type="checkbox" 
+                                            value="" 
+                                            v-bind:id="'interaction_cb_' + key"
+                                            v-model="selected_player.interaction_discs[key]"
+                                            v-on:click="select_disc(key)">
+                                        <label class="form-check-label" 
+                                            v-bind:for="'interaction_cb_' + key"
+                                            >
+                                            [[get_parameter_set_player_from_player_id(key).id_label]]'s Disc Copy                                 
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
