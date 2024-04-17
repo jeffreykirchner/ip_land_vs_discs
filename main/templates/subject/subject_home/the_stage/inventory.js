@@ -16,7 +16,7 @@ setup_disc_inventory: function setup_disc_inventory()
 
     //disc inventory
     pixi_inventory.disc_container = new PIXI.Container();
-    pixi_inventory.disc_container.eventMode = 'none';
+    // pixi_inventory.disc_container.eventMode = 'none';
     pixi_inventory.disc_container.zIndex = 9998;
     pixi_inventory.sortableChildren = true;
 
@@ -114,7 +114,7 @@ setup_seed_inventory: function setup_seed_inventory()
 
     //disc inventory
     pixi_inventory.seed_container = new PIXI.Container();
-    pixi_inventory.seed_container.eventMode = 'none';
+    // pixi_inventory.seed_container.eventMode = 'none';
     pixi_inventory.seed_container.zIndex = 9998;
     pixi_inventory.sortableChildren = true;
 

@@ -19,7 +19,7 @@ setup_pixi_subjects: function setup_pixi_subjects(){
         avatar_container.position.set(subject.current_location.x, subject.current_location.y);
         avatar_container.height = 250;
         avatar_container.width = 250;
-        avatar_container.eventMode = 'passive';
+        // avatar_container.eventMode = 'passive';
         avatar_container.label = {player_id : i};
         avatar_container.zIndex=200;
         // avatar_container.on("pointerup", app.subject_avatar_click);
@@ -28,11 +28,11 @@ setup_pixi_subjects: function setup_pixi_subjects(){
         gear_sprite.animationSpeed = app.session.parameter_set.avatar_animation_speed;
         gear_sprite.anchor.set(0.5)
         gear_sprite.tint = parameter_set_player.hex_color;
-        gear_sprite.eventMode = 'passive';    
+        // gear_sprite.eventMode = 'passive';    
 
         let face_sprite = PIXI.Sprite.from(app.pixi_textures.sprite_sheet_2.textures["face_1.png"]);
         face_sprite.anchor.set(0.5);
-        face_sprite.eventMode = 'passive';
+        // face_sprite.eventMode = 'passive';
 
         let text_style = {
             fontFamily: 'Arial',
@@ -52,26 +52,26 @@ setup_pixi_subjects: function setup_pixi_subjects(){
 
         let id_label = new PIXI.Text({text:parameter_set_player.id_label, 
                                       style:text_style});
-        id_label.eventMode = 'passive';
+        // id_label.eventMode = 'passive';
         id_label.anchor.set(0.5);
         
         let token_graphic = PIXI.Sprite.from(app.pixi_textures["seed_tex"]);
-        token_graphic.eventMode = 'passive';
+        // token_graphic.eventMode = 'passive';
         token_graphic.scale.set(0.7);
         token_graphic.anchor.set(1, 0.5)
         // token_graphic.alpha = 0.7;
 
         let inventory_label = new PIXI.Text({text : subject.seeds,style : text_style_2});
-        inventory_label.eventMode = 'passive';
+        // inventory_label.eventMode = 'passive';
         inventory_label.anchor.set(0, 0.5);
 
         let status_label = new PIXI.Text({text:"Working ... 10", style:text_style});
-        status_label.eventMode = 'passive';
+        // status_label.eventMode = 'passive';
         status_label.anchor.set(0.5);
         status_label.visible = false;
 
         let disc_wedges = new PIXI.Graphics(); 
-        disc_wedges.eventMode = 'passive';    
+        // disc_wedges.eventMode = 'passive';    
         let disc_wedge_radius = gear_sprite.width/2-80;        
         disc_wedges.circle(0, 0, disc_wedge_radius);
         disc_wedges.fill({color:'white', alpha:0.5});
@@ -147,7 +147,7 @@ setup_pixi_subjects: function setup_pixi_subjects(){
         
         let chat_bubble_sprite = PIXI.Sprite.from(app.pixi_textures.sprite_sheet_2.textures["chat_bubble.png"]);
         chat_bubble_sprite.anchor.set(0.5);
-        chat_bubble_sprite.eventMode = 'none';
+        // chat_bubble_sprite.eventMode = 'none';
 
         let chat_bubble_text = new PIXI.Text({text:'',style: {
                 fontFamily: 'Arial',
@@ -155,7 +155,7 @@ setup_pixi_subjects: function setup_pixi_subjects(){
                 fill: 0x000000,
                 align: 'left',
             }});
-        chat_bubble_text.eventMode = 'none';    
+        // chat_bubble_text.eventMode = 'none';    
 
         chat_container.addChild(chat_bubble_sprite);
         chat_container.addChild(chat_bubble_text);
@@ -182,7 +182,7 @@ setup_pixi_subjects: function setup_pixi_subjects(){
         {
             let tractor_beam_sprite = PIXI.Sprite.from(app.pixi_textures.sprite_sheet_2.textures["particle2.png"]);
             tractor_beam_sprite.anchor.set(0.5);
-            tractor_beam_sprite.eventMode = 'passive';
+            // tractor_beam_sprite.eventMode = 'passive';
             tractor_beam_sprite.visible = false;
             tractor_beam_sprite.zIndex = 1500;
             pixi_avatars[i].tractor_beam.push(tractor_beam_sprite);
@@ -987,7 +987,7 @@ move_player: function move_player(delta)
         {           
             //move player towards target
 
-            app.move_avatar(delta.deltaTime,i);
+            app.move_avatar(delta,i);
 
             //update the sprite locations
             gear_sprite.play();

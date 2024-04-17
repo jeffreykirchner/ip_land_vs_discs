@@ -11,7 +11,7 @@ setup_pixi_ground: function setup_pixi_ground()
         const ground = app.session.parameter_set.parameter_set_grounds[ground_id];
         
         let ground_container = new PIXI.Container();
-        ground_container.eventMode = 'passive';
+        // ground_container.eventMode = 'passive';
         ground_container.zIndex = 0;
         
         ground_container.position.set(ground.x, ground.y)
@@ -24,7 +24,7 @@ setup_pixi_ground: function setup_pixi_ground()
         outline.rect(0, 0, ground.width, ground.height);
         outline.fill({texture: app.pixi_textures[ground.texture], matrix:matrix});
         outline.tint = ground.tint;
-        outline.eventMode = 'passive';
+        // outline.eventMode = 'passive';
        
         //outline.endFill();
         ground_container.addChild(outline);

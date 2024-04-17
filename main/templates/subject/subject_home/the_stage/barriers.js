@@ -24,7 +24,7 @@ setup_pixi_barrier: function setup_pixi_barrier()
         let rotation = app.degrees_to_radians(barrier.rotation);
         
         barrier_container.position.set(barrier.start_x,barrier.start_y)
-        barrier_container.eventMode = 'none';
+        // barrier_container.eventMode = 'none';
 
         //outline
         let outline = new PIXI.Graphics();

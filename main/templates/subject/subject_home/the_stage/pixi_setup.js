@@ -73,8 +73,8 @@ reset_pixi_app: async function reset_pixi_app(){
                          canvas: canvas });
 
     // The stage will handle the move events
-    pixi_app.stage.eventMode = 'static';
-    pixi_app.stage.hitArea = pixi_app.screen;
+    // pixi_app.stage.eventMode = 'static';
+    //pixi_app.stage.hitArea = pixi_app.screen;
 
     app.canvas_width = canvas.width;
     app.canvas_height = canvas.height;
@@ -89,7 +89,7 @@ setup_pixi_sheets: function setup_pixi_sheets(textures){
 
     pixi_container_main = new PIXI.Container();
     pixi_container_main.sortableChildren = true;
-    pixi_container_main.eventMode = 'passive';
+    //pixi_container_main.eventMode = 'static';
 
     pixi_app.stage.addChild(pixi_container_main);
    
@@ -155,7 +155,7 @@ setup_pixi_sheets: function setup_pixi_sheets(textures){
     };
     let fps_label = new PIXI.Text({text:"0 fps", 
                                    style:text_style});
-    fps_label.eventMode = 'none';
+    // fps_label.eventMode = 'none';
 
     pixi_fps_label = fps_label;
     pixi_fps_label.position.set(10, app.canvas_height-25);
@@ -170,20 +170,20 @@ setup_pixi_sheets: function setup_pixi_sheets(textures){
  */
 game_loop: function game_loop(delta)
 {
-    app.move_player(delta);
-    app.move_text_emitters(delta);
-    app.animate_transfer_beams(delta);
+    app.move_player(delta.deltaTime);
+    app.move_text_emitters(delta.deltaTime);
+    app.animate_transfer_beams(delta.deltaTime);
 
     if(app.pixi_mode=="subject" && app.session.started)
     {   
-        app.update_offsets_player(delta);
-        app.update_mini_map(delta);
+        app.update_offsets_player(delta.deltaTime);
+        app.update_mini_map(delta.deltaTime);
     }
     
     if(app.pixi_mode=="staff")
     {
-        app.update_offsets_staff(delta);
-        app.scroll_staff(delta);
+        app.update_offsets_staff(delta.deltaTime);
+        app.scroll_staff(delta.deltaTime);
     }  
     
     //tick tock

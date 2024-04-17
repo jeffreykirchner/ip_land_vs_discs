@@ -24,16 +24,16 @@ setup_pixi_fields: function setup_pixi_fields()
         const parameter_set_period = app.get_current_parameter_set_period();
         
         let field_container = new PIXI.Container();
-        field_container.eventMode = 'passive';
+        // field_container.eventMode = 'static';
         field_container.zIndex = 0;
 
         let available_container = new PIXI.Container();
-        available_container.eventMode = 'passive';
+        // available_container.eventMode = 'static';
         available_container.zIndex = 0;
         available_container.visible = true;
 
         let claimed_container = new PIXI.Container();
-        claimed_container.eventMode = 'passive';
+        // claimed_container.eventMode = 'static';
         claimed_container.zIndex = 0;
         claimed_container.visible = false;
 
@@ -45,43 +45,52 @@ setup_pixi_fields: function setup_pixi_fields()
         //fill
         outline_dash.rect(0, 0, parameter_set_field.width, parameter_set_field.height);
         outline_dash.fill({color:0xFFFFFF, alpha:0.5});
+
+        let matrix_2 = new PIXI.Matrix(1,0,0,1,0,0);
+        matrix_2.rotate(1.5708);
+        outline_dash.stroke({width:10,
+                             texture:app.pixi_textures['dash_tex'],
+                             alpha:0.5,
+                             alignment:1,
+                             color:0x000000,
+                             matrix:matrix_2});
         // outline_dash.endFill();
 
         //outline
-        let matrix_1 = new PIXI.Matrix(1,0,0,1,0,0);
+        // let matrix_1 = new PIXI.Matrix(1,0,0,1,0,0);
     
-        let matrix_2 = new PIXI.Matrix(1,0,0,1,0,0);
-        matrix_2.rotate(1.5708);
+        // let matrix_2 = new PIXI.Matrix(1,0,0,1,0,0);
+        // matrix_2.rotate(1.5708);
 
-        line_texture_style_1 = {width:10,
-                                color:0x000000,
-                                alpha:0.5,
-                                texture:app.pixi_textures['dash_tex'],
-                                matrix:matrix_1,
-                                alignment:0};
+        // line_texture_style_1 = {width:10,
+        //                         color:0x000000,
+        //                         alpha:0.5,
+        //                         texture:app.pixi_textures['dash_tex'],
+        //                         matrix:matrix_1,
+        //                         alignment:0};
         
-        line_texture_style_2 = {width:10,   
-                                color:0x000000,
-                                alpha:0.5,
-                                texture:app.pixi_textures['dash_tex'],
-                                matrix:matrix_2,
-                                alignment:0};
+        // line_texture_style_2 = {width:10,   
+        //                         color:0x000000,
+        //                         alpha:0.5,
+        //                         texture:app.pixi_textures['dash_tex'],
+        //                         matrix:matrix_2,
+        //                         alignment:0};
         
-        // outline_dash.stroke(line_texture_style_1);
-        outline_dash.moveTo(0, 0);
-        outline_dash.lineTo(parameter_set_field.width, 0);
+        // // outline_dash.stroke(line_texture_style_1);
+        // outline_dash.moveTo(0, 0);
+        // outline_dash.lineTo(parameter_set_field.width, 0);
 
-        // outline_dash.stroke(line_texture_style_2);
-        outline_dash.lineTo(parameter_set_field.width, parameter_set_field.height);
+        // // outline_dash.stroke(line_texture_style_2);
+        // outline_dash.lineTo(parameter_set_field.width, parameter_set_field.height);
 
-        // outline_dash.stroke(line_texture_style_1);
-        outline_dash.lineTo(0, parameter_set_field.height);
+        // // outline_dash.stroke(line_texture_style_1);
+        // outline_dash.lineTo(0, parameter_set_field.height);
 
-        // outline_dash.stroke(line_texture_style_2);
-        outline_dash.lineTo(0, -10);
-        outline_dash.stroke(line_texture_style_1)
+        // // outline_dash.stroke(line_texture_style_2);
+        // outline_dash.lineTo(0, -10);
+        // outline_dash.stroke(line_texture_style_1)
 
-        outline_dash.eventMode = 'passive';  
+        // outline_dash.eventMode = 'passive';  
 
         //text
         let text_style = {
@@ -93,13 +102,13 @@ setup_pixi_fields: function setup_pixi_fields()
         };
 
         let id_label = new PIXI.Text({text:"Right click to claim field.", style:text_style});
-        id_label.eventMode = 'passive';
+        // id_label.eventMode = 'passive';
         id_label.anchor.set(0.5);
 
         //right click
         let right_click_graphic = PIXI.Sprite.from(app.pixi_textures["right_click_tex"]);
         right_click_graphic.anchor.set(0.5)
-        right_click_graphic.eventMode = 'passive';
+        // right_click_graphic.eventMode = 'passive';
 
         available_container.addChild(outline_dash);        
 
@@ -112,7 +121,7 @@ setup_pixi_fields: function setup_pixi_fields()
         //cost label 
         let cost_label = new PIXI.Text({text:"Cost: " + app.session.parameter_set.field_build_length + " production seconds.", 
                                         style:text_style});
-        cost_label.eventMode = 'passive';
+        // cost_label.eventMode = 'passive';
         cost_label.anchor.set(0.5);
         cost_label.position.set(available_container.width/2,
                                 id_label.position.y + cost_label.height);
@@ -130,9 +139,10 @@ setup_pixi_fields: function setup_pixi_fields()
         outline_solid.rect(0, 0, parameter_set_field.width, parameter_set_field.height);
         outline_solid.fill({color:'white', alpha: 0.75});
         outline_solid.stroke({width:10,color:0x000000,alpha:1});
+
         // outline_solid.endFill();
 
-        outline_solid.eventMode = 'passive';  
+        // outline_solid.eventMode = 'passive';  
 
         //text
         let text_style_2 = {
@@ -157,17 +167,17 @@ setup_pixi_fields: function setup_pixi_fields()
 
         left_cone_graphic = PIXI.Sprite.from(app.pixi_textures["cone_tex"]);
         left_cone_graphic.anchor.set(1,0.5);
-        left_cone_graphic.eventMode = 'passive';
+        // left_cone_graphic.eventMode = 'passive';
         left_cone_graphic.scale.set(0.5);
 
         right_cone_graphic = PIXI.Sprite.from(app.pixi_textures["cone_tex"]);
         right_cone_graphic.anchor.set(0,0.5);
-        right_cone_graphic.eventMode = 'passive';
+        // right_cone_graphic.eventMode = 'passive';
         right_cone_graphic.scale.set(0.5);
 
         let id_label_2 = new PIXI.Text({text:id_label_text, 
                                         style:text_style_2});
-        id_label_2.eventMode = 'passive';
+        // id_label_2.eventMode = 'passive';
         
         claimed_container.addChild(outline_solid);        
 
@@ -185,7 +195,7 @@ setup_pixi_fields: function setup_pixi_fields()
         //right click
         let right_click_graphic_2 = PIXI.Sprite.from(app.pixi_textures["right_click_tex"]);
         right_click_graphic_2.anchor.set(0.5)
-        right_click_graphic_2.eventMode = 'passive';
+        // right_click_graphic_2.eventMode = 'passive';
 
         right_click_graphic_2.position.set(field_container.width/2 + management_label.width/2 + 10 + right_click_graphic_2.width/2,
                                             field_container.height - management_label.height/2 - 20);
@@ -223,7 +233,7 @@ setup_pixi_fields: function setup_pixi_fields()
 
         let multiplier_label = new PIXI.Text({text:multiplier_text, 
                                               style:text_style_multiplier});
-        multiplier_label.eventMode = 'passive';
+        // multiplier_label.eventMode = 'passive';
         
         multiplier_label.anchor.set(0);
         multiplier_label.position.set(0,0);
@@ -265,8 +275,8 @@ setup_pixi_fields: function setup_pixi_fields()
             let multiplier_label_right = new PIXI.Text({text:multiplier_text_right, 
                                                         style:text_style_multiplier});
 
-            multiplier_label_left.eventMode = 'passive';           
-            multiplier_label_right.eventMode = 'passive';
+            // multiplier_label_left.eventMode = 'passive';           
+            // multiplier_label_right.eventMode = 'passive';
 
             multiplier_label_left.anchor.set(0,0);
             multiplier_label_right.anchor.set(1,0);
@@ -332,11 +342,11 @@ update_field: function update_field(field_id)
         let outline_solid = new PIXI.Graphics();
         //fill
         outline_solid.rect(0, 0, parameter_set_field.width, parameter_set_field.height);
-        outline_solid.stroke({width:10,color:0x000000,alpha:1});
         outline_solid.fill({color:owner.hex_color, alpha:0.75});
+        outline_solid.stroke({width:10,color:0x000000,alpha:1});
         // outline_solid.endFill();
 
-        outline_solid.eventMode = 'passive';  
+        // outline_solid.eventMode = 'passive';  
 
         pixi_field.outline_solid.destroy();
         pixi_field.claimed_container.addChildAt(outline_solid,0);
@@ -688,7 +698,7 @@ take_build_disc: function take_build_disc(message_data)
             app.update_disc_wedges(message_data.source_player_id);
             
             let disc_graphic = PIXI.Sprite.from(app.pixi_textures['disc_tex']);
-            disc_graphic.eventMode = 'none';
+            // disc_graphic.eventMode = 'none';
             disc_graphic.scale.set(0.4);
             disc_graphic.alpha = 0.7;
             disc_graphic.tint = app.get_parameter_set_player_from_player_id(source_player_id).hex_color;
@@ -820,7 +830,7 @@ take_build_seeds: function take_build_seeds(message_data)
             app.update_player_inventory();
             
             let seed_graphic = PIXI.Sprite.from(app.pixi_textures['seed_tex']);
-            seed_graphic.eventMode = 'none';
+            // seed_graphic.eventMode = 'none';
             seed_graphic.scale.set(0.4);
             seed_graphic.alpha = 0.7;
 

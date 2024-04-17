@@ -42,7 +42,7 @@ update_notices: function update_notices()
                                         stroke: 'black',
                                         strokeThickness: 2,}});
 
-            label.eventMode = 'passive';    
+            // label.eventMode = 'passive';    
             label.anchor.set(0.5);
 
             container.addChild(label);        

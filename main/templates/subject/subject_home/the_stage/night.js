@@ -4,7 +4,7 @@
 setup_pixi_night: function setup_pixi_night()
 {
     pixi_night.container = new PIXI.Container();
-    pixi_night.container.eventMode = 'none';
+    // pixi_night.container.eventMode = 'none';
 
     //night background
     let pixi_night_bg = new PIXI.Graphics();
