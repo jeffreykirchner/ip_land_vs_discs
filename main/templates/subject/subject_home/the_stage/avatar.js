@@ -386,14 +386,14 @@ start_send_disc: function start_send_disc()
     {
         if(session_player.disc_inventory[i])
         {
-            if(i == app.session_player.id)
-            {
-                app.selected_player.interaction_discs[i] = true;
-            }
-            else
-            {
+            // if(i == app.session_player.id)
+            // {
+            //     app.selected_player.interaction_discs[i] = true;
+            // }
+            // else
+            // {
                 app.selected_player.interaction_discs[i] = false;
-            }
+            //}
         }
     }
 
