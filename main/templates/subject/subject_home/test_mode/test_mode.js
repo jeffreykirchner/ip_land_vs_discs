@@ -708,6 +708,15 @@ test_mode_send_discs: function test_mode_send_discs(){
         {
         if(random_number(1, 2) == 1)
             {
+                //deslect all other discs
+                for(const j in target_player.disc_inventory)
+                {
+                    if(target_player.disc_inventory[j])
+                    {
+                        app.selected_player.interaction_discs[j] = false;
+                    }
+                }
+
                 app.selected_player.interaction_discs[i] = true;
             }
             else
@@ -752,6 +761,15 @@ test_mode_take_discs: function test_mode_take_discs(){
         {
             if(random_number(1, 2) == 1)
             {
+                //deslect all other discs
+                for(const j in target_player.disc_inventory)
+                {
+                    if(target_player.disc_inventory[j])
+                    {
+                        app.selected_player.interaction_discs[j] = false;
+                    }
+                }
+                
                 app.selected_player.interaction_discs[i] = true;
             }
             else
