@@ -56,19 +56,21 @@ setup_pixi: function setup_pixi(){
     pixi_transfer_beams_key = 0;
 },
 
-reset_pixi_app: function reset_pixi_app(){    
+reset_pixi_app: async function reset_pixi_app(){    
 
     app.stage_width = app.session.parameter_set.world_width;
     app.stage_height = app.session.parameter_set.world_height;
 
     let canvas = document.getElementById('sd_graph_id');
 
-    pixi_app = new PIXI.Application({resizeTo : canvas,
-                                        backgroundColor : 0xFFFFFF,
-                                        autoResize: true,
-                                        antialias: true,
-                                        resolution: 1,
-                                        view: canvas });
+    pixi_app = new PIXI.Application()
+
+    await pixi_app.init({resizeTo : canvas,
+                         backgroundColor : 0xFFFFFF,
+                         autoResize: true,
+                         antialias: true,
+                         resolution: 1,
+                         canvas: canvas });
 
     // The stage will handle the move events
     pixi_app.stage.eventMode = 'static';
@@ -91,11 +93,11 @@ setup_pixi_sheets: function setup_pixi_sheets(textures){
 
     pixi_app.stage.addChild(pixi_container_main);
    
-    let tiling_sprite = new PIXI.TilingSprite(
-        textures.bg_tex,
-        app.stage_width,
-        app.stage_height,
-    );
+    let tiling_sprite = new PIXI.TilingSprite({
+        texture : textures.bg_tex,
+        width : app.stage_width,
+        height : app.stage_height});
+
     tiling_sprite.position.set(0,0);
     pixi_container_main.addChild(tiling_sprite);
 
@@ -108,9 +110,10 @@ setup_pixi_sheets: function setup_pixi_sheets(textures){
         tiling_sprite.on("tap", app.subject_pointer_tap);
                
         pixi_target = new PIXI.Graphics();
-        pixi_target.lineStyle(3, 0x000000);
+
         pixi_target.alpha = 0.33;
-        pixi_target.drawCircle(0, 0, 10);
+        pixi_target.circle(0, 0, 10);
+        pixi_target.stroke({width:3, color:0x000000});
         pixi_target.eventMode='static';
         pixi_target.zIndex = 100;
 
@@ -147,10 +150,11 @@ setup_pixi_sheets: function setup_pixi_sheets(textures){
     let text_style = {
         fontFamily: 'Arial',
         fontSize: 14,
-        fill: 'black',
+        fill: {color:'black'},
         align: 'left',
     };
-    let fps_label = new PIXI.Text("0 fps", text_style);
+    let fps_label = new PIXI.Text({text:"0 fps", 
+                                   style:text_style});
     fps_label.eventMode = 'none';
 
     pixi_fps_label = fps_label;
@@ -158,9 +162,6 @@ setup_pixi_sheets: function setup_pixi_sheets(textures){
     pixi_app.stage.addChild(pixi_fps_label);   
     {%endif%}
 
-    //start game loop
-    // pixi_app.ticker.maxFPS = 60;
-    // pixi_app.ticker.minFPS = 60;
     pixi_app.ticker.add(app.game_loop);
 },
 
@@ -185,7 +186,6 @@ game_loop: function game_loop(delta)
         app.scroll_staff(delta);
     }  
     
-   
     //tick tock
     if(Date.now() - app.pixi_tick_tock.time >= 200)
     {

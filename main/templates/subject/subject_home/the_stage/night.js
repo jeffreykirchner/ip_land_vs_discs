@@ -11,10 +11,10 @@ setup_pixi_night: function setup_pixi_night()
     
     pixi_night_bg.width =  pixi_app.screen.width;
     pixi_night_bg.height =  pixi_app.screen.height;
-    pixi_night_bg.lineStyle(1, 0x000000);
-    pixi_night_bg.beginFill('black');
-    pixi_night_bg.drawRect(0, 0, pixi_app.screen.width, pixi_app.screen.height);
-    pixi_night_bg.endFill();
+    
+    pixi_night_bg.rect(0, 0, pixi_app.screen.width, pixi_app.screen.height);
+    pixi_night_bg.stroke(1, 0x000000);
+    pixi_night_bg.fill({color:'black'});
 
     pixi_night.container.addChild(pixi_night_bg);
 

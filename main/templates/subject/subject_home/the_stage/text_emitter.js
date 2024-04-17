@@ -9,12 +9,13 @@ add_text_emitters: function add_text_emitters(text, start_x, start_y, end_x, end
     emitter_container.eventMode = 'none';
     emitter_container.zIndex = 2000;
 
-    let emitter_text = new PIXI.Text(text, {
-            fontFamily: 'Arial',
-            fontSize: font_size,
-            fill: font_color,
-            align: 'left',
-        });
+    let emitter_text = new PIXI.Text({text:text, 
+                                      style:{
+                                        fontFamily: 'Arial',
+                                        fontSize: font_size,
+                                        fill: font_color,
+                                        align: 'left',}}
+                                    );
 
     emitter_text.anchor.set(0.5);
 

@@ -20,7 +20,7 @@ setup_pixi_subjects: function setup_pixi_subjects(){
         avatar_container.height = 250;
         avatar_container.width = 250;
         avatar_container.eventMode = 'passive';
-        avatar_container.name = {player_id : i};
+        avatar_container.label = {player_id : i};
         avatar_container.zIndex=200;
         // avatar_container.on("pointerup", app.subject_avatar_click);
 
@@ -37,22 +37,21 @@ setup_pixi_subjects: function setup_pixi_subjects(){
         let text_style = {
             fontFamily: 'Arial',
             fontSize: 40,
-            fill: 'white',
+            fill: {color:'white'},
             align: 'left',
-            stroke: 'black',
-            strokeThickness: 3,
+            stroke: {color:'black', width: 3},
         };
 
         let text_style_2 = {
             fontFamily: 'Arial',
             fontSize: 50,
-            fill: 'white',
+            fill: {color:'white'},
             align: 'left',
-            stroke: 'black',
-            strokeThickness: 3,
+            stroke: {color:'black', width: 3},
         };
 
-        let id_label = new PIXI.Text(parameter_set_player.id_label, text_style);
+        let id_label = new PIXI.Text({text:parameter_set_player.id_label, 
+                                      style:text_style});
         id_label.eventMode = 'passive';
         id_label.anchor.set(0.5);
         
@@ -62,21 +61,21 @@ setup_pixi_subjects: function setup_pixi_subjects(){
         token_graphic.anchor.set(1, 0.5)
         // token_graphic.alpha = 0.7;
 
-        let inventory_label = new PIXI.Text(subject.seeds, text_style_2);
+        let inventory_label = new PIXI.Text({text : subject.seeds,style : text_style_2});
         inventory_label.eventMode = 'passive';
         inventory_label.anchor.set(0, 0.5);
 
-        let status_label = new PIXI.Text("Working ... 10", text_style);
+        let status_label = new PIXI.Text({text:"Working ... 10", style:text_style});
         status_label.eventMode = 'passive';
         status_label.anchor.set(0.5);
         status_label.visible = false;
 
         let disc_wedges = new PIXI.Graphics(); 
         disc_wedges.eventMode = 'passive';    
-        let disc_wedge_radius = gear_sprite.width/2-80;
-        disc_wedges.beginFill('white', 0.5);
-        disc_wedges.drawCircle(0, 0, disc_wedge_radius);
-        disc_wedges.endFill();
+        let disc_wedge_radius = gear_sprite.width/2-80;        
+        disc_wedges.circle(0, 0, disc_wedge_radius);
+        disc_wedges.fill({color:'white', alpha:0.5});
+        // disc_wedges.endFill();
 
         pixi_avatars[i].disc_wedges = disc_wedges;
        
@@ -108,10 +107,10 @@ setup_pixi_subjects: function setup_pixi_subjects(){
         //bounding box with avatar scaller        
         let bounding_box = new PIXI.Graphics();
     
-        bounding_box.lineStyle(2, "orchid");
-        bounding_box.drawRect(0, 0, avatar_container.width * app.session.parameter_set.avatar_bound_box_percent * app.session.parameter_set.avatar_scale, 
+       
+        bounding_box.rect(0, 0, avatar_container.width * app.session.parameter_set.avatar_bound_box_percent * app.session.parameter_set.avatar_scale, 
                                     avatar_container.height * app.session.parameter_set.avatar_bound_box_percent * app.session.parameter_set.avatar_scale);
-        bounding_box.endFill();
+        bounding_box.stroke(2, "orchid");
         bounding_box.pivot.set(bounding_box.width/2, bounding_box.height/2);
         bounding_box.position.set(0, 0);
         bounding_box.visible = false;
@@ -122,10 +121,10 @@ setup_pixi_subjects: function setup_pixi_subjects(){
         //bound box view
         let bounding_box_view = new PIXI.Graphics();
     
-        bounding_box_view.lineStyle(2, "orchid");
-        bounding_box_view.drawRect(0, 0, avatar_container.width * app.session.parameter_set.avatar_bound_box_percent, 
+        
+        bounding_box_view.rect(0, 0, avatar_container.width * app.session.parameter_set.avatar_bound_box_percent, 
                                     avatar_container.height * app.session.parameter_set.avatar_bound_box_percent);
-        bounding_box_view.endFill();
+        bounding_box_view.stroke(2, "orchid");
         bounding_box_view.pivot.set(bounding_box_view.width/2, bounding_box_view.height/2);
         bounding_box_view.position.set(0, 0);
 
@@ -150,12 +149,12 @@ setup_pixi_subjects: function setup_pixi_subjects(){
         chat_bubble_sprite.anchor.set(0.5);
         chat_bubble_sprite.eventMode = 'none';
 
-        let chat_bubble_text = new PIXI.Text('', {
+        let chat_bubble_text = new PIXI.Text({text:'',style: {
                 fontFamily: 'Arial',
                 fontSize: 18,
                 fill: 0x000000,
                 align: 'left',
-            });
+            }});
         chat_bubble_text.eventMode = 'none';    
 
         chat_container.addChild(chat_bubble_sprite);
@@ -197,8 +196,8 @@ setup_pixi_subjects: function setup_pixi_subjects(){
         let interaction_range = new PIXI.Graphics();
         let interaction_range_radius = app.session.parameter_set.interaction_range;
 
-        interaction_range.lineStyle({width:1, color:"dimgray", alignment:0});
-        interaction_range.drawCircle(0, 0, interaction_range_radius);
+        interaction_range.circle(0, 0, interaction_range_radius);
+        interaction_range.stroke({width:1, color:"dimgray", alignment:0});
 
         interaction_container.zIndex=2
         interaction_container.addChild(interaction_range);
@@ -212,10 +211,11 @@ setup_pixi_subjects: function setup_pixi_subjects(){
             view_container.position.set(subject.current_location.x, subject.current_location.y);
 
             let view_range = new PIXI.Graphics();
-            // view_range.lineStyle({width:2, color:app.session.session_players[i].parameter_set_player.hex_color, alignment:0});
-            view_range.beginFill(parameter_set_player.hex_color,0.1);
-            view_range.drawRect(0, 0, 1850, 800);
-            view_range.endFill();    
+           
+            view_range.rect(0, 0, 1850, 800);
+            view_range.fill({color:parameter_set_player.hex_color, 
+                             alpha:0.1});
+            // view_range.endFill();    
             view_range.zIndex = 75;
             view_range.pivot.set(1850/2, 800/2);
             view_range.position.set(0, 0);
@@ -987,7 +987,7 @@ move_player: function move_player(delta)
         {           
             //move player towards target
 
-            app.move_avatar(delta,i);
+            app.move_avatar(delta.deltaTime,i);
 
             //update the sprite locations
             gear_sprite.play();
@@ -1159,13 +1159,13 @@ update_disc_wedges: function update_disc_wedges(player_id)
     disc_wedges.clear();
 
     let disc_wedge_radius = pixi_avatars[player_id].gear_sprite.width/2-80;
-    disc_wedges.beginFill('white', .5);
-    disc_wedges.drawCircle(0, 0, disc_wedge_radius);
-    disc_wedges.endFill();
+    disc_wedges.circle(0, 0, disc_wedge_radius);
+    disc_wedges.fill({color:'white', 
+                      alpha:0.5});
+    // disc_wedges.endFill();
 
     let start_angle = -90;
     let wedge_size = 360/app.session.world_state.session_players_order.length;
-    disc_wedges.lineStyle(2, "dimgray");
     disc_wedges.moveTo(0, 0);
 
     for(const j in app.session.world_state.session_players)
@@ -1176,8 +1176,6 @@ update_disc_wedges: function update_disc_wedges(player_id)
         {
             alpha = 1;
         }
-        
-        disc_wedges.beginFill(app.get_parameter_set_player_from_player_id(j).hex_color, alpha);
 
         let temp_point =  app.get_point_on_circle(0, 0, disc_wedge_radius, app.degrees_to_radians(start_angle));
         disc_wedges.lineTo(temp_point.x, temp_point.y);
@@ -1185,9 +1183,14 @@ update_disc_wedges: function update_disc_wedges(player_id)
         disc_wedges.arc(0, 0, disc_wedge_radius, app.degrees_to_radians(start_angle), app.degrees_to_radians(start_angle + wedge_size));
         disc_wedges.lineTo(0, 0);
 
+        disc_wedges.fill({color:app.get_parameter_set_player_from_player_id(j).hex_color, 
+            alpha:alpha});
+        
+        disc_wedges.stroke({color:"dimgray", width:2});
+
         start_angle += wedge_size;
 
-        disc_wedges.endFill();
+        // disc_wedges.endFill();
     }
 },
 

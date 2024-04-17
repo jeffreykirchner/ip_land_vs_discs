@@ -54,7 +54,8 @@ setup_disc_inventory: function setup_disc_inventory()
         }
         disc_graphic.alpha = 0.75;
 
-        disc_label = new PIXI.Text(parameter_set_player.id_label, text_disc_style);
+        disc_label = new PIXI.Text({text:parameter_set_player.id_label, 
+                                    style:text_disc_style});
         disc_label.anchor.set(0.5);
         disc_label.position.set(start_x + disc_graphic.width/2, disc_graphic.height + 10);
         disc_label.zIndex = z_index;
@@ -66,13 +67,15 @@ setup_disc_inventory: function setup_disc_inventory()
         z_index++;
     }
 
-    let disc_total_value_label = new PIXI.Text("= " + disc_total_value + "¢", text_disc_value_style);
+    let disc_total_value_label = new PIXI.Text({text:"= " + disc_total_value + "¢", 
+                                                style:text_disc_value_style});
     disc_total_value_label.anchor.set(0.5);
     disc_total_value_label.position.set(start_x + disc_total_value_label.width/2, disc_total_value_label.height/2);
     disc_total_value_label.zIndex = z_index;
     pixi_inventory.disc_container.addChild(disc_total_value_label);
 
-    let disc_value_label = new PIXI.Text("("+ app.session.parameter_set.disc_value + "¢ a disc)", text_disc_style);
+    let disc_value_label = new PIXI.Text({text:"("+ app.session.parameter_set.disc_value + "¢ a disc)", 
+                                          style:text_disc_style});
     disc_value_label.anchor.set(0.5);
     disc_value_label.position.set(disc_total_value_label.x, disc_total_value_label.height + 10);
     disc_value_label.zIndex = z_index;
@@ -81,10 +84,10 @@ setup_disc_inventory: function setup_disc_inventory()
     //inventory background
     let invetory_bg = new PIXI.Graphics();
     
-    invetory_bg.lineStyle(1, 0x000000);
-    invetory_bg.beginFill('white');
-    invetory_bg.drawRect(-10, -10, pixi_inventory.disc_container.width+20, pixi_inventory.disc_container.height+20);
-    invetory_bg.endFill();
+    
+    invetory_bg.rect(-10, -10, pixi_inventory.disc_container.width+20, pixi_inventory.disc_container.height+20);
+    invetory_bg.stroke(1, 0x000000);
+    invetory_bg.fill({color:'white'});
     invetory_bg.zIndex = 1;
 
     pixi_inventory.disc_container.addChildAt(invetory_bg,0);
@@ -147,15 +150,16 @@ setup_seed_inventory: function setup_seed_inventory()
     let seed_multiplier_s = parseFloat(seed_multiplier).toFixed(1);
     let total_seed_value_s = parseFloat(total_seed_value).toFixed(1);
 
-    let seed_value_label = new PIXI.Text(session_player.seeds + " x " + seed_multiplier_s + " = " + total_seed_value_s + "¢",
-                                         text_seed_value_style);
+    let seed_value_label = new PIXI.Text({text:session_player.seeds + " x " + seed_multiplier_s + " = " + total_seed_value_s + "¢",
+                                          style:text_seed_value_style});
 
     seed_value_label.position.set(seed_graphic.x + seed_graphic.width + 5, 
                                   seed_graphic.y + seed_graphic.height/2 - seed_value_label.height/2);
     seed_value_label.zIndex = 100;
     pixi_inventory.seed_container.addChild(seed_value_label);
 
-    let seed_value_label_2 = new PIXI.Text("(seeds x multiplier = ¢)", text_seed_style);
+    let seed_value_label_2 = new PIXI.Text({text:"(seeds x multiplier = ¢)", 
+                                            style:text_seed_style});
     seed_value_label_2.position.set(pixi_inventory.seed_container.width/2 - seed_value_label_2.width/2,
                                     pixi_inventory.seed_container.height);
     seed_value_label_2.zIndex = 100;
@@ -164,10 +168,11 @@ setup_seed_inventory: function setup_seed_inventory()
     //inventory background
     let invetory_bg = new PIXI.Graphics();
     
-    invetory_bg.lineStyle(1, 0x000000);
-    invetory_bg.beginFill('white');
-    invetory_bg.drawRect(-10, -10, pixi_inventory.seed_container.width+20, pixi_inventory.seed_container.height+20);
-    invetory_bg.endFill();
+    
+    invetory_bg.rect(-10, -10, pixi_inventory.seed_container.width+20, pixi_inventory.seed_container.height+20);
+    invetory_bg.stroke(1, 0x000000);
+    invetory_bg.fill({color:'white'});
+    // invetory_bg.endFill();
     invetory_bg.zIndex = 1;
 
     pixi_inventory.seed_container.addChildAt(invetory_bg,0);

@@ -43,9 +43,9 @@ setup_pixi_fields: function setup_pixi_fields()
         //available_container
         let outline_dash = new PIXI.Graphics();
         //fill
-        outline_dash.beginFill(0xFFFFFF, 0.5);
-        outline_dash.drawRect(0, 0, parameter_set_field.width, parameter_set_field.height);
-        outline_dash.endFill();
+        outline_dash.rect(0, 0, parameter_set_field.width, parameter_set_field.height);
+        outline_dash.fill({color:0xFFFFFF, alpha:0.5});
+        // outline_dash.endFill();
 
         //outline
         let matrix_1 = new PIXI.Matrix(1,0,0,1,0,0);
@@ -67,18 +67,19 @@ setup_pixi_fields: function setup_pixi_fields()
                                 matrix:matrix_2,
                                 alignment:0};
         
-        outline_dash.lineTextureStyle(line_texture_style_1);
+        // outline_dash.stroke(line_texture_style_1);
         outline_dash.moveTo(0, 0);
         outline_dash.lineTo(parameter_set_field.width, 0);
 
-        outline_dash.lineTextureStyle(line_texture_style_2);
+        // outline_dash.stroke(line_texture_style_2);
         outline_dash.lineTo(parameter_set_field.width, parameter_set_field.height);
 
-        outline_dash.lineTextureStyle(line_texture_style_1);
+        // outline_dash.stroke(line_texture_style_1);
         outline_dash.lineTo(0, parameter_set_field.height);
 
-        outline_dash.lineTextureStyle(line_texture_style_2);
-        outline_dash.lineTo(0, 0);
+        // outline_dash.stroke(line_texture_style_2);
+        outline_dash.lineTo(0, -10);
+        outline_dash.stroke(line_texture_style_1)
 
         outline_dash.eventMode = 'passive';  
 
@@ -86,13 +87,12 @@ setup_pixi_fields: function setup_pixi_fields()
         let text_style = {
             fontFamily: 'Arial',
             fontSize: 28,
-            fill: 'white',
+            fill: {color:'white'},
             align: 'center',
-            stroke: 'black',
-            strokeThickness: 3,                
+            stroke: {color:'black', width:3},              
         };
 
-        let id_label = new PIXI.Text("Right click to claim field.", text_style);
+        let id_label = new PIXI.Text({text:"Right click to claim field.", style:text_style});
         id_label.eventMode = 'passive';
         id_label.anchor.set(0.5);
 
@@ -110,7 +110,8 @@ setup_pixi_fields: function setup_pixi_fields()
                                          id_label.position.y);
 
         //cost label 
-        let cost_label = new PIXI.Text("Cost: " + app.session.parameter_set.field_build_length + " production seconds.", text_style);
+        let cost_label = new PIXI.Text({text:"Cost: " + app.session.parameter_set.field_build_length + " production seconds.", 
+                                        style:text_style});
         cost_label.eventMode = 'passive';
         cost_label.anchor.set(0.5);
         cost_label.position.set(available_container.width/2,
@@ -125,11 +126,11 @@ setup_pixi_fields: function setup_pixi_fields()
         //claimed_container
         //let parameter_set_player = app.get_parameter_set_player_from_player_id(field.owner);
         let outline_solid = new PIXI.Graphics();
-        //fill
-        outline_solid.lineStyle({width:10,color:0x000000,alpha:1});
-        outline_solid.beginFill('white', 0.75);
-        outline_solid.drawRect(0, 0, parameter_set_field.width, parameter_set_field.height);
-        outline_solid.endFill();
+       
+        outline_solid.rect(0, 0, parameter_set_field.width, parameter_set_field.height);
+        outline_solid.fill({color:'white', alpha: 0.75});
+        outline_solid.stroke({width:10,color:0x000000,alpha:1});
+        // outline_solid.endFill();
 
         outline_solid.eventMode = 'passive';  
 
@@ -137,10 +138,9 @@ setup_pixi_fields: function setup_pixi_fields()
         let text_style_2 = {
             fontFamily: 'Arial',
             fontSize: 28,
-            fill: 'white',
+            fill: {color:'white'},
             align: 'center',
-            stroke: 'black',
-            strokeThickness: 3,
+            stroke: {color:'black', width:3},
             wordWrap : true,
             wordWrapWidth : parameter_set_field.width - 20,
         };
@@ -152,7 +152,8 @@ setup_pixi_fields: function setup_pixi_fields()
 
         id_label_text = "Claimed by ___ .";
 
-        management_label = new PIXI.Text("Right click to admit others.", text_style_2);
+        management_label = new PIXI.Text({text:"Right click to admit others.", 
+                                          style:text_style_2});
 
         left_cone_graphic = PIXI.Sprite.from(app.pixi_textures["cone_tex"]);
         left_cone_graphic.anchor.set(1,0.5);
@@ -164,7 +165,8 @@ setup_pixi_fields: function setup_pixi_fields()
         right_cone_graphic.eventMode = 'passive';
         right_cone_graphic.scale.set(0.5);
 
-        let id_label_2 = new PIXI.Text(id_label_text, text_style_2);
+        let id_label_2 = new PIXI.Text({text:id_label_text, 
+                                        style:text_style_2});
         id_label_2.eventMode = 'passive';
         
         claimed_container.addChild(outline_solid);        
@@ -208,10 +210,9 @@ setup_pixi_fields: function setup_pixi_fields()
         let text_style_multiplier = {
             fontFamily: 'Arial',
             fontSize: 26,
-            fill: 'white',
+            fill: {color:'white'},
             align: 'center',
-            stroke: 'black',
-            strokeThickness: 3,
+            stroke: {color:'black', width:3},
         };
 
         //multiplier table
@@ -220,7 +221,8 @@ setup_pixi_fields: function setup_pixi_fields()
         let multiplier_text = "Seed Earnings Multiplier"
         let multiplier_list = app.session.parameter_set.seed_multipliers.split("\n");
 
-        let multiplier_label = new PIXI.Text(multiplier_text, text_style_multiplier);
+        let multiplier_label = new PIXI.Text({text:multiplier_text, 
+                                              style:text_style_multiplier});
         multiplier_label.eventMode = 'passive';
         
         multiplier_label.anchor.set(0);
@@ -258,8 +260,10 @@ setup_pixi_fields: function setup_pixi_fields()
 
             multiplier_text_right =  multiplier_list[j] + " x";
 
-            let multiplier_label_left = new PIXI.Text(multiplier_text_left, text_style_multiplier);
-            let multiplier_label_right = new PIXI.Text(multiplier_text_right, text_style_multiplier);
+            let multiplier_label_left = new PIXI.Text({text:multiplier_text_left, 
+                                                       style:text_style_multiplier});
+            let multiplier_label_right = new PIXI.Text({text:multiplier_text_right, 
+                                                        style:text_style_multiplier});
 
             multiplier_label_left.eventMode = 'passive';           
             multiplier_label_right.eventMode = 'passive';
@@ -327,10 +331,10 @@ update_field: function update_field(field_id)
 
         let outline_solid = new PIXI.Graphics();
         //fill
-        outline_solid.lineStyle({width:10,color:0x000000,alpha:1});
-        outline_solid.beginFill(owner.hex_color, 0.75);
-        outline_solid.drawRect(0, 0, parameter_set_field.width, parameter_set_field.height);
-        outline_solid.endFill();
+        outline_solid.rect(0, 0, parameter_set_field.width, parameter_set_field.height);
+        outline_solid.stroke({width:10,color:0x000000,alpha:1});
+        outline_solid.fill({color:owner.hex_color, alpha:0.75});
+        // outline_solid.endFill();
 
         outline_solid.eventMode = 'passive';  
 
