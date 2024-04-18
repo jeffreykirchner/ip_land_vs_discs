@@ -50,8 +50,7 @@
                 </div>
                   
                 <div class="row mt-4" 
-                     v-if="session.started && 
-                           get_current_parameter_set_period().disc_pr=='False' && 
+                     v-if="session.started &&  
                            session.parameter_set.enable_discs=='True'">
                     <div class="col text-center">
                         <button type="button"
@@ -60,12 +59,12 @@
                                 id="id_start_send_disc_button" 
                                 title="Send Disc Copies"                       
                                 v-bind:disabled="reconnecting || working">
-                            Send Disc Copies to [[selected_player.parameter_set_player.id_label]] <i class="fas fa-compact-disc"></i>
+                            Send Disc Copy to [[selected_player.parameter_set_player.id_label]] <i class="fas fa-compact-disc"></i>
                         </button>
                     </div>
                 </div>
 
-                <div class="row mt-4"
+                <!-- <div class="row mt-4"
                      v-if="session.started && 
                            get_current_parameter_set_period().disc_pr=='True' &&
                            session.parameter_set.enable_discs=='True'">
@@ -79,7 +78,7 @@
                             Send My Disc Copy to [[selected_player.parameter_set_player.id_label]] <i class="fas fa-compact-disc"></i>
                         </button>
                     </div>
-                </div>
+                </div> -->
                 
                 <div class="row mt-2"
                      v-if="session.started && 
@@ -92,7 +91,7 @@
                                 id="id_start_take_disc_button"
                                 title="Take Disc Copies"                 
                                 v-bind:disabled="reconnecting || working">
-                            Take Disc Copies from [[selected_player.parameter_set_player.id_label]] <i class="fas fa-compact-disc"></i>
+                            Take Disc Copy from [[selected_player.parameter_set_player.id_label]] <i class="fas fa-compact-disc"></i>
                         </button>
                     </div>
                 </div>

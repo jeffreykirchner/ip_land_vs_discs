@@ -41,10 +41,10 @@
                         </span>
 
                         <span v-if="selected_player.interaction_type=='send_disc'">
-                            Send Disc Copies to [[selected_player.parameter_set_player.id_label]]
+                            Send Disc Copy to [[selected_player.parameter_set_player.id_label]]
                         </span>
                         <span v-if="selected_player.interaction_type=='take_disc'">
-                            Take Disc Copies from [[selected_player.parameter_set_player.id_label]]
+                            Take Disc Copy from [[selected_player.parameter_set_player.id_label]]
                         </span>
                     </div>
                 </div>
@@ -93,7 +93,7 @@
                                             v-on:click="select_disc(session_player.id)">
                                     <label class="form-check-label" 
                                             v-bind:for="'interaction_cb_' + session_player.id"
-                                            v-on:click="select_disc(session_player.id)">
+                                            >
                                         My Disc Copy                                   
                                     </label>
                                 </div>
@@ -101,23 +101,25 @@
                         </div>
 
                         <!-- other discs -->
-                        <div class="row" v-for="(value, key) in selected_player.interaction_discs" 
-                                v-bind:key="key">
-                            <div class="col h5">
-                                
-                                <div class="form-check" 
-                                     v-if="key!=session_player.id">
-                                    <input class="form-check-input" 
-                                           type="checkbox" 
-                                           value="" 
-                                           v-bind:id="'interaction_cb_' + key"
-                                           v-model="selected_player.interaction_discs[key]"
-                                           v-on:click="select_disc(key)">
-                                    <label class="form-check-label" 
-                                           v-bind:for="'interaction_cb_' + key"
-                                           v-on:click="select_disc(key)">
-                                        [[get_parameter_set_player_from_player_id(key).id_label]]'s Disc Copy                                 
-                                    </label>
+                        <div  v-if="get_current_parameter_set_period().disc_pr=='False'">
+                            <div class="row" v-for="(value, key) in selected_player.interaction_discs" 
+                                    v-bind:key="key">
+                                <div class="col h5">
+                                    
+                                    <div class="form-check" 
+                                        v-if="key!=session_player.id">
+                                        <input class="form-check-input" 
+                                            type="checkbox" 
+                                            value="" 
+                                            v-bind:id="'interaction_cb_' + key"
+                                            v-model="selected_player.interaction_discs[key]"
+                                            v-on:click="select_disc(key)">
+                                        <label class="form-check-label" 
+                                            v-bind:for="'interaction_cb_' + key"
+                                            >
+                                            [[get_parameter_set_player_from_player_id(key).id_label]]'s Disc Copy                                 
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
