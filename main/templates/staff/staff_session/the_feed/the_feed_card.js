@@ -89,32 +89,35 @@ process_the_feed: function process_the_feed(message_type, message_data)
             }
             else if(message_data.interaction_type == "send_disc")
             {
-               let disc_list = ""; 
-               for(i in message_data.interaction_discs)
-               {
+                let disc_list = ""; 
+                for(i in message_data.interaction_discs)
+                {
+                    if(!message_data.interaction_discs[i]) continue;
+
                     let disc_label = app.get_parameter_set_player_from_player_id(i).id_label;
                     if(disc_list != "")
                     {
                         disc_list += ", ";
                     } 
                     disc_list += "<b>" + disc_label + "</b>";
-               }
-               html_text = "<b>" + sender_label + "</b> sent " + disc_list + " disc(s) to <b>" + receiver_label + "</b>. ";
-               html_text += " <img src='/static/"+  "disc_1.png' width='20'>";
+                }
+                html_text = "<b>" + sender_label + "</b> sent a " + disc_list + " disc to <b>" + receiver_label + "</b>. ";
+                html_text += " <img src='/static/"+  "disc_1.png' width='20'>";
             }
             else if(message_data.interaction_type == "take_disc")
             {
                 let disc_list = ""; 
                 for(i in message_data.interaction_discs)
                 {
-                     let disc_label = app.get_parameter_set_player_from_player_id(i).id_label;
-                     if(disc_list != "")
-                     {
-                         disc_list += ", ";
-                     } 
-                     disc_list += "<b>" + disc_label + "</b>";
+                    if(!message_data.interaction_discs[i]) continue;
+                    let disc_label = app.get_parameter_set_player_from_player_id(i).id_label;
+                    if(disc_list != "")
+                    {
+                        disc_list += ", ";
+                    } 
+                    disc_list += "<b>" + disc_label + "</b>";
                 }
-                html_text = "<b>" + sender_label + "</b> took " + disc_list + " disc(s) from <b>" + receiver_label + "</b>. ";
+                html_text = "<b>" + sender_label + "</b> took a " + disc_list + " disc from <b>" + receiver_label + "</b>. ";
                 html_text += " <img src='/static/"+  "disc_1.png' width='20'>";
             }
 
