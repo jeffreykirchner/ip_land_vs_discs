@@ -338,6 +338,16 @@ simulate_field_claim: function simulate_field_claim(field_id, field){
     {
         //start build field
         if(app.session_player.current_instruction != app.instructions.action_page_field) return;
+
+        //check if player already has a field
+        for(let i in app.session.world_state.fields)
+        {
+            if(app.session.world_state.fields[i].owner == app.session_player.id)
+            {
+                app.field_error = "You already claimed a field."
+                return;
+            }
+        }
         
         field.status = "building"
         field.owner = app.session_player.id;
