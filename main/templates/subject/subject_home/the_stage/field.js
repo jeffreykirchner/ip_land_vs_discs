@@ -268,7 +268,7 @@ setup_pixi_fields: function setup_pixi_fields()
                 multiplier_text_left = v + " Players";
             }
 
-            multiplier_text_right =  multiplier_list[j] + " x";
+            multiplier_text_right =  multiplier_list[j].trim() + " x";
 
             let multiplier_label_left = new PIXI.Text({text:multiplier_text_left, 
                                                        style:text_style_multiplier});
