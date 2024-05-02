@@ -21,8 +21,7 @@ class ParameterSet(models.Model):
     '''
     parameter set
     '''    
-    instruction_set = models.ForeignKey(InstructionSet, on_delete=models.SET_NULL, related_name="parameter_sets", blank=True, null=True)
-
+   
     period_count = models.IntegerField(verbose_name='Number of periods', default=20)                          #number of periods in the experiment
     period_length = models.IntegerField(verbose_name='Period Length, Production', default=60           )      #period length in seconds
     break_frequency = models.IntegerField(verbose_name='Break Frequency', default=7)                          #frequency of breaks
@@ -124,11 +123,6 @@ class ParameterSet(models.Model):
 
             self.reconnection_limit = new_ps.get("reconnection_limit", None)
 
-            self.instruction_set = InstructionSet.objects.filter(label=new_ps.get("instruction_set")["label"]).first()
-            
-            if not self.instruction_set:
-                self.instruction_set = InstructionSet.objects.first()
-
             self.save()
 
             #parameter set groups
@@ -153,6 +147,9 @@ class ParameterSet(models.Model):
 
                 if v.get("parameter_set_group", None) != None:
                     p.parameter_set_group_id=new_parameter_set_groups_map[str(v["parameter_set_group"])]
+
+                if v.get("instruction_set", None) != None:
+                    p.instruction_set = InstructionSet.objects.filter(label=v.get("instruction_set_label")).first()
                 
                 p.save()
 
@@ -285,7 +282,6 @@ class ParameterSet(models.Model):
 
         self.json_for_session["private_chat"] = "False"
         self.json_for_session["show_instructions"] = "True" if self.show_instructions else "False"
-        self.json_for_session["instruction_set"] = self.instruction_set.json_min()
 
         self.json_for_session["survey_required"] = "True" if self.survey_required else "False"
         self.json_for_session["survey_link"] = self.survey_link

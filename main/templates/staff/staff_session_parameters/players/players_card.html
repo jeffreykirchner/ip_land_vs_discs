@@ -44,6 +44,9 @@
                                 <th scope="col" class = "m-1 p-1">
                                     Field Prod.
                                 </th>
+                                <th scope="col" class = "m-1 p-1">
+                                    Instructions
+                                </th>
                             </tr>
                         </thead>
                         <tbody id="player_list">
@@ -101,6 +104,10 @@
                                     <span v-else>
                                         No
                                     </span>
+                                </td>
+                                <td v-on:click="show_edit_parameter_set_player(p)" 
+                                    class="player_table_cell">
+                                    [[temp_p.instruction_set_label]]
                                 </td>
                             </tr>
                         </tbody>

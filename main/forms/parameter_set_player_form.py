@@ -6,6 +6,7 @@ from django import forms
 
 from main.models import ParameterSetGroup
 from main.models import ParameterSetPlayer
+from main.models import InstructionSet
 
 class ParameterSetPlayerForm(forms.ModelForm):
     '''
@@ -45,9 +46,14 @@ class ParameterSetPlayerForm(forms.ModelForm):
     enable_field_production = forms.ChoiceField(label='Enable Field Production',
                                                 choices=((1, 'Yes'), (0,'No' )),
                                                 widget=forms.Select(attrs={"v-model":"current_parameter_set_player.enable_field_production",}))
+    
+    instruction_set = forms.ModelChoiceField(label='instruction_set',
+                                             empty_label=None,
+                                             queryset=InstructionSet.objects.all(),
+                                             widget=forms.Select(attrs={"v-model":"current_parameter_set_player.instruction_set",}))
 
     class Meta:
         model=ParameterSetPlayer
         fields =['id_label', 'parameter_set_group', 'start_x', 'start_y', 'hex_color', 
-                 'enable_disc_production', 'enable_seed_production', 'enable_field_production']
+                 'enable_disc_production', 'enable_seed_production', 'enable_field_production', 'instruction_set']
     
