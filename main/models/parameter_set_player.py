@@ -25,7 +25,7 @@ class ParameterSetPlayer(models.Model):
 
     start_x = models.IntegerField(verbose_name='Start Location X', default=50)                #starting location x and y
     start_y = models.IntegerField(verbose_name='Start Location Y', default=50)
-    hex_color = models.CharField(verbose_name='Hex Color', max_length = 8, default="0x000000") #color of player
+    hex_color = models.CharField(verbose_name='Hex Color', max_length = 30, default="0x000000") #color of player
 
     enable_disc_production = models.BooleanField(verbose_name='Enable Disc Production', default=True, )  #enable disc production
     enable_seed_production = models.BooleanField(verbose_name='Enable Disc Seed', default=True, )  #enable seed consumption
