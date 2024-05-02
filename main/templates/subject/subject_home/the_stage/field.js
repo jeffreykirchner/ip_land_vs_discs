@@ -101,7 +101,15 @@ setup_pixi_fields: function setup_pixi_fields()
             stroke: {color:'black', width:3},              
         };
 
-        let id_label = new PIXI.Text({text:"Right click to claim field.", style:text_style});
+        let id_label = null;
+        if(app.is_subject && app.get_parameter_set_player_from_player_id(app.session_player.id).enable_field_production)
+        {
+            id_label = new PIXI.Text({text:"Right click to claim field.", style:text_style});
+        }
+        else
+        {
+            id_label = new PIXI.Text({text:"This field is unclaimed", style:text_style});
+        }
         // id_label.eventMode = 'passive';
         id_label.anchor.set(0.5);
 
@@ -127,8 +135,11 @@ setup_pixi_fields: function setup_pixi_fields()
                                 id_label.position.y + cost_label.height);
         
         available_container.addChild(id_label);
-        available_container.addChild(right_click_graphic);
-        available_container.addChild(cost_label);
+        if(app.is_subject && app.get_parameter_set_player_from_player_id(app.session_player.id).enable_field_production)
+        {           
+            available_container.addChild(right_click_graphic);
+            available_container.addChild(cost_label);
+        }
 
         field_container.addChild(available_container);
 
@@ -568,6 +579,20 @@ subject_field_click: function subject_field_click(target_field_id)
     //check if enough time remaining in period to build
     if(app.selected_field.field.owner == null)
     {
+        if(!app.get_parameter_set_player_from_player_id(app.session_player.id).enable_field_production)
+        {
+            let obj = app.session.world_state.session_players[app.session_player.id];
+            app.add_text_emitters("You cannot claim a field.", 
+                                    obj.current_location.x, 
+                                    obj.current_location.y,
+                                    obj.current_location.x,
+                                    obj.current_location.y-100,
+                                    0xFFFFFF,
+                                    28,
+                                    null);
+            return;
+        }
+
         if(app.session.world_state.time_remaining > app.session.parameter_set.period_length &&
             app.session.world_state.current_period % app.session.parameter_set.break_frequency == 0)
         {

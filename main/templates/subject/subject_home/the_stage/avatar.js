@@ -1162,33 +1162,46 @@ update_disc_wedges: function update_disc_wedges(player_id)
     disc_wedges.circle(0, 0, disc_wedge_radius);
     disc_wedges.fill({color:'white', 
                       alpha:0.5});
-    // disc_wedges.endFill();
+   
+    let disc_producer_count = 0;
+    for(const j in app.session.parameter_set.parameter_set_players)
+    {
+        if(app.session.parameter_set.parameter_set_players[j].enable_disc_production)
+        {
+            disc_producer_count++;
+        }
+    }
 
     let start_angle = -90;
-    let wedge_size = 360/app.session.world_state.session_players_order.length;
+    let wedge_size = 360/disc_producer_count;
     disc_wedges.moveTo(0, 0);
 
     for(const j in app.session.world_state.session_players)
     {
-        let alpha = 0;
+        let parameter_set_player = app.get_parameter_set_player_from_player_id(j);
 
-        if(session_player.disc_inventory[j])
+        if(parameter_set_player.enable_disc_production)
         {
-            alpha = 1;
+            let alpha = 0;
+
+            if(session_player.disc_inventory[j])
+            {
+                alpha = 1;
+            }
+
+            let temp_point =  app.get_point_on_circle(0, 0, disc_wedge_radius, app.degrees_to_radians(start_angle));
+            disc_wedges.lineTo(temp_point.x, temp_point.y);
+
+            disc_wedges.arc(0, 0, disc_wedge_radius, app.degrees_to_radians(start_angle), app.degrees_to_radians(start_angle + wedge_size));
+            disc_wedges.lineTo(0, 0);
+
+            disc_wedges.fill({color:parameter_set_player.hex_color, 
+                            alpha:alpha});
+            
+            disc_wedges.stroke({color:"dimgray", width:2});
+
+            start_angle += wedge_size;
         }
-
-        let temp_point =  app.get_point_on_circle(0, 0, disc_wedge_radius, app.degrees_to_radians(start_angle));
-        disc_wedges.lineTo(temp_point.x, temp_point.y);
-
-        disc_wedges.arc(0, 0, disc_wedge_radius, app.degrees_to_radians(start_angle), app.degrees_to_radians(start_angle + wedge_size));
-        disc_wedges.lineTo(0, 0);
-
-        disc_wedges.fill({color:app.get_parameter_set_player_from_player_id(j).hex_color, 
-            alpha:alpha});
-        
-        disc_wedges.stroke({color:"dimgray", width:2});
-
-        start_angle += wedge_size;
 
         // disc_wedges.endFill();
     }
