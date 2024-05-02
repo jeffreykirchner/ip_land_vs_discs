@@ -33,8 +33,21 @@ class ParameterSetPlayerForm(forms.ModelForm):
     
     hex_color = forms.CharField(label='Hex Color (e.g. 0x00AABB)',
                                 widget=forms.TextInput(attrs={"v-model":"current_parameter_set_player.hex_color",}))
+    
+    enable_disc_production = forms.ChoiceField(label='Enable Disc Production',
+                                               choices=((1, 'Yes'), (0,'No' )),
+                                               widget=forms.Select(attrs={"v-model":"current_parameter_set_player.enable_disc_production",}))
+    
+    enable_seed_production = forms.ChoiceField(label='Enable Seed Production',
+                                               choices=((1, 'Yes'), (0,'No' )),
+                                               widget=forms.Select(attrs={"v-model":"current_parameter_set_player.enable_seed_production",}))
+    
+    enable_field_production = forms.ChoiceField(label='Enable Field Production',
+                                                choices=((1, 'Yes'), (0,'No' )),
+                                                widget=forms.Select(attrs={"v-model":"current_parameter_set_player.enable_field_production",}))
 
     class Meta:
         model=ParameterSetPlayer
-        fields =['id_label', 'parameter_set_group', 'start_x', 'start_y', 'hex_color']
+        fields =['id_label', 'parameter_set_group', 'start_x', 'start_y', 'hex_color', 
+                 'enable_disc_production', 'enable_seed_production', 'enable_field_production']
     

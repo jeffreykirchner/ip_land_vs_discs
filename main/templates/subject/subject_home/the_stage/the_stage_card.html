@@ -97,7 +97,8 @@
         <div class="row justify-content-center align-items-center mt-2" 
             v-if="pixi_mode=='subject' && session && session.started">
             <div class="col-2 text-center">
-                <div v-if="session.parameter_set.enable_discs=='True'">
+                <div v-if="session.parameter_set.enable_discs=='True' && 
+                           get_parameter_set_player_from_player_id(session_player.id).enable_disc_production">
                     <button type="button" 
                         title="Build Disc"
                         class="btn btn-outline-primary btn-lg"
@@ -123,36 +124,37 @@
                     </div>
                 </div>   
             </div>
-            <div class="col-2 text-center">                
-                <div class="input-group">
-                    <input type="number" 
-                            class="form-control form-control-lg fw-bold"
-                            v-model="build_seed_count"
-                            min="1"
-                            max="99"
-                            aria-label="Seed Count"
-                            id="id_build_seed_count"                           
-                            aria-describedby="send_build_seeds_id">
-                    <button class="btn btn-outline-primary btn-lg"
-                            type="button" 
-                            id="id_send_build_seeds" 
-                            title="Grow Seeds"
-                            v-bind:disabled="reconnecting || 
-                                             working || 
-                                             session.world_state.session_players[session_player.id].interaction > 0 ||
-                                             session.world_state.time_remaining <= session.parameter_set.interaction_only_length ||
-                                             session.world_state.time_remaining > session.parameter_set.period_length ||
-                                             session.started===false || 
-                                             session.world_state.finished"
-                            v-on:click="send_build_seeds()">Grow Seeds <i class="fas fa-seedling"></i></button>
-                </div>
-                <div class="fw-bold">
-                    [[session.parameter_set.seed_build_length]] seconds per seed
-                    <button type="button" class="btn btn-link" title="Show Help" v-on:click="send_load_help_doc_subject('subject_seeds')">
-                        <i class="far fa-question-circle"></i> 
-                    </button>
-                </div>
-                
+            <div class="col-2 text-center"> 
+                <div v-if="get_parameter_set_player_from_player_id(session_player.id).enable_seed_production">     
+                    <div class="input-group">
+                        <input type="number" 
+                                class="form-control form-control-lg fw-bold"
+                                v-model="build_seed_count"
+                                min="1"
+                                max="99"
+                                aria-label="Seed Count"
+                                id="id_build_seed_count"                           
+                                aria-describedby="send_build_seeds_id">
+                        <button class="btn btn-outline-primary btn-lg"
+                                type="button" 
+                                id="id_send_build_seeds" 
+                                title="Grow Seeds"
+                                v-bind:disabled="reconnecting || 
+                                                working || 
+                                                session.world_state.session_players[session_player.id].interaction > 0 ||
+                                                session.world_state.time_remaining <= session.parameter_set.interaction_only_length ||
+                                                session.world_state.time_remaining > session.parameter_set.period_length ||
+                                                session.started===false || 
+                                                session.world_state.finished"
+                                v-on:click="send_build_seeds()">Grow Seeds <i class="fas fa-seedling"></i></button>
+                    </div>
+                    <div class="fw-bold">
+                        [[session.parameter_set.seed_build_length]] seconds per seed
+                        <button type="button" class="btn btn-link" title="Show Help" v-on:click="send_load_help_doc_subject('subject_seeds')">
+                            <i class="far fa-question-circle"></i> 
+                        </button>
+                    </div>
+                </div> 
             </div>
 
             <div class="col-3 text-center ">
