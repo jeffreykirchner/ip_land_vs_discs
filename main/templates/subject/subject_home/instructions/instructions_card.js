@@ -260,7 +260,7 @@ simulate_build_seeds: function simulate_build_seeds(){
 
             if(app.build_seed_count != 10) 
             {
-                app.add_text_emitters("Grow 10 seeds.", 
+                app.add_text_emitters("Grow 10 seeds at once.", 
                                         session_player.current_location.x, 
                                         session_player.current_location.y,
                                         session_player.current_location.x,
