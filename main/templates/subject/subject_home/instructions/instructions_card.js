@@ -111,10 +111,18 @@ process_instruction_page: function process_instruction_page(){
             break;        
         case app.instructions.action_page_interaction:
             let session_player = app.session.world_state.session_players[app.session_player.id];
-            session_player.seeds = 10;
-            session_player.disc_inventory[app.session_player.id] = true;
+            session_player.seeds = 10;            
             app.setup_seed_inventory();
             app.update_player_inventory();
+
+            if(app.get_parameter_set_player_from_player_id(app.session_player.id).enable_disc_production)
+            {
+                session_player.disc_inventory[app.session_player.id] = true;
+                app.update_disc_wedges(app.session_player.id);
+                app.setup_disc_inventory();
+                
+            }
+
             return;
             break;
         case app.instructions.action_page_chat:
