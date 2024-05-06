@@ -155,7 +155,7 @@ subject_pointer_tap: function subject_pointer_tap(event)
             if(app.session.world_state.time_remaining > app.session.parameter_set.period_length &&
                 app.session.world_state.current_period % app.session.parameter_set.break_frequency == 0)
             {
-                app.add_text_emitters("No claims while on break.", 
+                app.add_text_emitters("No starts while on break.", 
                                         local_pos.x, 
                                         local_pos.y,
                                         local_pos.x,

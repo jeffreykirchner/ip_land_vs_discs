@@ -104,11 +104,11 @@ setup_pixi_fields: function setup_pixi_fields()
         let id_label = null;
         if(app.is_subject && app.get_parameter_set_player_from_player_id(app.session_player.id).enable_field_production)
         {
-            id_label = new PIXI.Text({text:"Right click to claim field.", style:text_style});
+            id_label = new PIXI.Text({text:"Right click to start field.", style:text_style});
         }
         else
         {
-            id_label = new PIXI.Text({text:"This field is unclaimed", style:text_style});
+            id_label = new PIXI.Text({text:"This field has not started.", style:text_style});
         }
         // id_label.eventMode = 'passive';
         id_label.anchor.set(0.5);
@@ -171,7 +171,7 @@ setup_pixi_fields: function setup_pixi_fields()
         let right_cone_graphic = null;
         let management_label = null;
 
-        id_label_text = "Claimed by ___ .";
+        id_label_text = "Started by ___ .";
 
         management_label = new PIXI.Text({text:"Right click to admit others.", 
                                           style:text_style_2});
@@ -378,7 +378,7 @@ update_field: function update_field(field_id)
         }
         else
         {
-            pixi_field.id_label_2.text = "Claimed by " + owner.id_label + ".";
+            pixi_field.id_label_2.text = "Started by " + owner.id_label + ".";
 
             if(parameter_set_period.field_pr == "True")
             {
@@ -582,7 +582,7 @@ subject_field_click: function subject_field_click(target_field_id)
         if(!app.get_parameter_set_player_from_player_id(app.session_player.id).enable_field_production)
         {
             let obj = app.session.world_state.session_players[app.session_player.id];
-            app.add_text_emitters("You cannot claim a field.", 
+            app.add_text_emitters("You cannot start a field.", 
                                     obj.current_location.x, 
                                     obj.current_location.y,
                                     obj.current_location.x,
@@ -597,7 +597,7 @@ subject_field_click: function subject_field_click(target_field_id)
             app.session.world_state.current_period % app.session.parameter_set.break_frequency == 0)
         {
             let obj = app.session.world_state.session_players[app.session_player.id];
-            app.add_text_emitters("No claims while on break.", 
+            app.add_text_emitters("No starts while on break.", 
                                     obj.current_location.x, 
                                     obj.current_location.y,
                                     obj.current_location.x,
@@ -612,7 +612,7 @@ subject_field_click: function subject_field_click(target_field_id)
             app.session.parameter_set.interaction_only_length)
         {
             let obj = app.session.world_state.session_players[app.session_player.id];
-            app.add_text_emitters("Not enough time remaining in period to claim.", 
+            app.add_text_emitters("Not enough time remaining in period to start.", 
                                     obj.current_location.x, 
                                     obj.current_location.y,
                                     obj.current_location.x,

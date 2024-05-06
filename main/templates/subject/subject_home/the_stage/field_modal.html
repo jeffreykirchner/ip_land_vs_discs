@@ -22,7 +22,7 @@
             </div>
             <div class="modal-body">   
                 <div class="row">
-                    <div class="col text-center h5">Claim Field?</div>                    
+                    <div class="col text-center h5">Start Field?</div>                    
                 </div>
                 <div class="row" v-if="session && session.started">
                     <div class="col text-center h5">Cost: [[session.parameter_set.field_build_length]] Production Seconds</div>
@@ -43,7 +43,7 @@
                                 v-bind:disabled="reconnecting || 
                                                  working || 
                                                  (session.world_state.current_experiment_phase == 'Instructions' && session_player.current_instruction != instructions.action_page_field)">
-                            Claim <i class="fas fa-sign-in-alt"></i>
+                            Start <i class="fas fa-sign-in-alt"></i>
                         </button>
                     </div>
                 </div>
