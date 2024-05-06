@@ -32,11 +32,11 @@ process_the_feed: function process_the_feed(message_type, message_data)
 
             if(message_data.field.status == "building")
             {
-                html_text = "<b>" + sender_label + "</b> is claiming field <b>" + field.info + "</b>."
+                html_text = "<b>" + sender_label + "</b> is starting field <b>" + field.info + "</b>."
             }
             else if(message_data.field.status == "claimed")
             {
-                html_text = "<b>" + sender_label + "</b> has claimed field <b>" + field.info + "</b>."
+                html_text = "<b>" + sender_label + "</b> has started field <b>" + field.info + "</b>."
             }
             break;
         case "update_grant_field_access":

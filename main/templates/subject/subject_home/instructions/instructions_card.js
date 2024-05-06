@@ -351,7 +351,7 @@ simulate_field_claim: function simulate_field_claim(field_id, field){
         {
             if(app.session.world_state.fields[i].owner == app.session_player.id)
             {
-                app.field_error = "You already claimed a field."
+                app.field_error = "You already started a field."
                 return;
             }
         }
