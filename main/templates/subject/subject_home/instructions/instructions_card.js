@@ -120,7 +120,6 @@ process_instruction_page: function process_instruction_page(){
                 session_player.disc_inventory[app.session_player.id] = true;
                 app.update_disc_wedges(app.session_player.id);
                 app.setup_disc_inventory();
-                
             }
 
             return;
