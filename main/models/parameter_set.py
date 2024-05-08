@@ -13,8 +13,6 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from main import globals
 
-from main.models import InstructionSet
-
 import main
 
 class ParameterSet(models.Model):
