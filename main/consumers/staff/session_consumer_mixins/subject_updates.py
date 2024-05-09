@@ -669,27 +669,27 @@ class SubjectUpdatesMixin():
         #check if on break
         if self.world_state_local["time_remaining"] > self.parameter_set_local["period_length"]:
             status = "fail"
-            error_message.append({"id":"field_claim", "message": "You cannot claim a field during the break."})
+            error_message.append({"id":"field_claim", "message": "You cannot plow a field during the break."})
 
         #check if field is already claimed
         if status == "success" and source == "client":
             if field["status"] != "available":
                 status = "fail"
-                error_message.append({"id":"field_claim", "message": "Field already claimed."})
+                error_message.append({"id":"field_claim", "message": "The Field was already plowed this period."})
         
         #check if player already claimed another field
         if status == "success" and source == "client":
             for i in self.world_state_local["fields"]:
                 if self.world_state_local["fields"][i]["owner"] == player_id:
                     status = "fail"
-                    error_message.append({"id":"field_claim", "message": "You already claimed a field."})
+                    error_message.append({"id":"field_claim", "message": "You already plowed a field this period."})
                     break
         
         #check if player has enough proudction seconds remaining    
         if status == "success" and source == "client":
             if Decimal(source_player["build_time_remaining"]) < Decimal(self.parameter_set_local["field_build_length"]):
                 status = "fail"
-                error_message.append({"id":"field_claim", "message": "Not enough production time to claim a field."})
+                error_message.append({"id":"field_claim", "message": "Not enough production time to plow a field."})
 
         result = {"status" : status, 
                   "error_message" : error_message, 
