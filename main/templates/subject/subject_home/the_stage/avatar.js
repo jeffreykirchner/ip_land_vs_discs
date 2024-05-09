@@ -1024,7 +1024,7 @@ move_player: function move_player(delta)
             }
             else if(obj.state=="claiming_field")
             {
-                status_label.text = "Claiming Field ... " + obj.interaction;
+                status_label.text = "Plowing Field ... " + obj.interaction;
             }
             else if(obj.state=="building_disc")
             {

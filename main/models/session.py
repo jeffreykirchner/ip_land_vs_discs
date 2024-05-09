@@ -481,9 +481,9 @@ class Session(models.Model):
             parameter_set_field = parameter_set["parameter_set_fields"][str(data["field"]["id"])]
 
             if data["state"] == "claiming_field":
-                return f'Start claiming field {parameter_set_field["info"]}'
+                return f'Start plowing the field {parameter_set_field["info"]}'
             else:
-                return f'Complete claiming field {parameter_set_field["info"]}'
+                return f'Complete plowing the field {parameter_set_field["info"]}'
             
         elif type == "build_seeds":
 
