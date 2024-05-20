@@ -39,7 +39,7 @@ setup_disc_inventory: function setup_disc_inventory()
     let start_x = 0;
     let z_index = 100;
     let disc_total_value = 0;
-    for(i in session_player.disc_inventory)
+    for(let i in session_player.disc_inventory)
     {
         let disc_graphic = PIXI.Sprite.from(app.pixi_textures["disc_tex"]);
         let parameter_set_player = app.get_parameter_set_player_from_player_id(i);
@@ -54,7 +54,7 @@ setup_disc_inventory: function setup_disc_inventory()
         }
         disc_graphic.alpha = 0.75;
 
-        disc_label = new PIXI.Text({text:parameter_set_player.id_label, 
+        let disc_label = new PIXI.Text({text:parameter_set_player.id_label, 
                                     style:text_disc_style});
         disc_label.anchor.set(0.5);
         disc_label.position.set(start_x + disc_graphic.width/2, disc_graphic.height + 10);
@@ -110,6 +110,7 @@ setup_seed_inventory: function setup_seed_inventory()
     if(!app.session) return;
     if(!app.session.started) return;
     if(app.pixi_mode!="subject") return;
+    if(app.pixi_textures==null) return;
     if(!("seed_tex" in app.pixi_textures)) return;
 
     //disc inventory

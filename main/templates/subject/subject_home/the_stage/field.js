@@ -929,7 +929,7 @@ get_manage_field_players_that_could_be_allowed: function get_manage_field_player
     let current_allowed_players = app.session.world_state.fields[field_id].allowed_players;
     let potential_allowed_players = [];
 
-    for(i in app.session.session_players)
+    for(let i in app.session.session_players)
     {
         if(!current_allowed_players.includes(app.session.session_players[i].id))
         {

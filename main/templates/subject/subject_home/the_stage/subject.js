@@ -64,7 +64,7 @@ subject_pointer_tap: function subject_pointer_tap(event)
     }
 
     //can't move ontop of other players
-    for(i in app.session.world_state.session_players)
+    for(let i in app.session.world_state.session_players)
     {
         let obj = app.session.world_state.session_players[i];
     
@@ -115,7 +115,7 @@ subject_pointer_tap: function subject_pointer_tap(event)
     }
 
     //avatars
-    for(i in app.session.world_state.session_players)
+    for(let i in app.session.world_state.session_players)
     {
         let obj = app.session.world_state.session_players[i];
 
@@ -143,7 +143,7 @@ subject_pointer_tap: function subject_pointer_tap(event)
     }
 
     //fields
-    for(i in app.session.world_state.fields)
+    for(let i in app.session.world_state.fields)
     {
         let obj = app.session.parameter_set.parameter_set_fields[i];
         let rect={x:obj.x-obj.width/2, y:obj.y-obj.height/2, width:obj.width, height:obj.height};
@@ -186,12 +186,12 @@ subject_pointer_tap: function subject_pointer_tap(event)
  */
 update_offsets_player: function update_offsets_player(delta)
 {
-    offset = app.get_offset();
+    let offset = app.get_offset();
 
     pixi_container_main.x = -offset.x;
     pixi_container_main.y = -offset.y;   
     
-    obj = app.session.world_state.session_players[app.session_player.id];
+    let obj = app.session.world_state.session_players[app.session_player.id];
 
     pixi_target.x = obj.target_location.x;
     pixi_target.y = obj.target_location.y;

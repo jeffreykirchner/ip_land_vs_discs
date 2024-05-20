@@ -414,10 +414,10 @@ var app = Vue.createApp({
             }
 
             //update player status
-            for(p in message_data.session_player_status)
+            for(let p in message_data.session_player_status)
             {
-                session_player = message_data.session_player_status[p];
-                session_player_local = app.session.world_state.session_players[p];
+                let session_player = message_data.session_player_status[p];
+                let session_player_local = app.session.world_state.session_players[p];
 
                 session_player_local.interaction = session_player.interaction;
                 session_player_local.frozen = session_player.frozen;
@@ -443,7 +443,7 @@ var app = Vue.createApp({
             app.update_player_inventory();     
 
             //update player location
-            for(p in message_data.current_locations)
+            for(let p in message_data.current_locations)
             {
                 let server_location = message_data.current_locations[p];
                 let server_target_location = message_data.target_locations[p];

@@ -33,7 +33,7 @@ send_next_instruction: function send_next_instruction(direction){
 take_next_instruction: function take_next_instruction(message_data){
     if(message_data.value == "success")
     {
-        result = message_data.result;       
+        let result = message_data.result;       
         
         app.session_player.current_instruction = result.current_instruction;
         app.session_player.current_instruction_complete = result.current_instruction_complete;
@@ -67,7 +67,7 @@ send_finish_instructions: function send_finish_instructions(){
 take_finish_instructions: function take_finish_instructions(message_data){
     if(message_data.value == "success")
     {
-        result = message_data.result;       
+        let result = message_data.result;       
         app.working = false;
         app.session_player.instructions_finished = result.instructions_finished;
         app.session_player.current_instruction_complete = result.current_instruction_complete;
@@ -111,16 +111,19 @@ process_instruction_page: function process_instruction_page(){
             break;        
         case app.instructions.action_page_interaction:
             let session_player = app.session.world_state.session_players[app.session_player.id];
-            session_player.seeds = 10;            
-            app.setup_seed_inventory();
-            app.update_player_inventory();
+            session_player.seeds = 10;  
+            
+            Vue.nextTick(() => {
+                app.setup_seed_inventory();
+                app.update_player_inventory();
 
-            if(app.get_parameter_set_player_from_player_id(app.session_player.id).enable_disc_production)
-            {
-                session_player.disc_inventory[app.session_player.id] = true;
-                app.update_disc_wedges(app.session_player.id);
-                app.setup_disc_inventory();
-            }
+                if(app.get_parameter_set_player_from_player_id(app.session_player.id).enable_disc_production)
+                {
+                    session_player.disc_inventory[app.session_player.id] = true;
+                    app.update_disc_wedges(app.session_player.id);
+                    app.setup_disc_inventory();
+                }
+            });
 
             return;
             break;
@@ -210,7 +213,7 @@ simulate_build_disc: function simulate_build_disc(){
         //start build disc
         if(app.session_player.current_instruction != app.instructions.action_page_disc) return;
         
-        message_data = {
+        let message_data = {
                 "status": "success",
                 "error_message": [],
                 "source_player_id": app.session_player.id,
@@ -233,7 +236,7 @@ simulate_build_disc: function simulate_build_disc(){
     else
     {
         session_player.disc_inventory[app.session_player.id] = true;
-        message_data = { 
+        let message_data = { 
             "status": "success",
             "error_message": [],
             "source_player_id": app.session_player.id,
@@ -292,7 +295,7 @@ simulate_build_seeds: function simulate_build_seeds(){
                 return;
             }
 
-            message_data = {
+            let message_data = {
                 "status": "success",
                 "error_message": [],
                 "source_player_id": app.session_player.id,
@@ -315,7 +318,7 @@ simulate_build_seeds: function simulate_build_seeds(){
         }
         else
         {
-            message_data = {
+            let message_data = {
                 "status": "success",
                 "error_message": [],
                 "source_player_id": app.session_player.id,
@@ -358,7 +361,7 @@ simulate_field_claim: function simulate_field_claim(field_id, field){
         
         field.status = "building"
         field.owner = app.session_player.id;
-        message_data = {
+        let message_data = {
             "status": "success",
             "error_message": [],
             "source_player_id": app.session_player.id,
@@ -384,7 +387,7 @@ simulate_field_claim: function simulate_field_claim(field_id, field){
        
         field.status = "claimed";
         field.allowed_players = [app.session_player.id];
-        message_data = {
+        let message_data = {
             "status": "success",
             "error_message": [],
             "source_player_id": app.session_player.id,
@@ -466,7 +469,7 @@ simulate_interaction: function simulate_interaction(){
         return;
     }
 
-    message_data = {
+    let message_data = {
         "source_player_id": app.session_player.id,
         "source_player_change": "",
         "target_player_change": "",
@@ -510,7 +513,7 @@ simulate_interaction: function simulate_interaction(){
  */
 simulate_grant_field_access : function simulate_grant_field_access(target_player_id){
 
-    message_data = {
+    let message_data = {
         "status": "success",
         "error_message": [],
         "source_player_id": app.session_player.id,

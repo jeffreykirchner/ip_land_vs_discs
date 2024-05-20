@@ -703,7 +703,7 @@ take_interaction: function take_interaction(message_data)
         if(interaction_type == "take_seeds")
         {
             let elements = [];
-            element = {source_change:message_data.target_player_change,
+            let element = {source_change:message_data.target_player_change,
                        target_change:message_data.source_player_change,
                        texture:app.pixi_textures["seed_tex"]}
             elements.push(element);
@@ -715,7 +715,7 @@ take_interaction: function take_interaction(message_data)
         else if(interaction_type == "send_seeds")
         {
             let elements = [];
-            element = {source_change:message_data.source_player_change,
+            let element = {source_change:message_data.source_player_change,
                        target_change:message_data.target_player_change,
                        texture:app.pixi_textures["seed_tex"]}
             elements.push(element);
@@ -736,7 +736,7 @@ take_interaction: function take_interaction(message_data)
             }
 
             let elements = [];
-            element = {source_change:null,
+            let element = {source_change:null,
                        target_change:null,
                        tint:parameter_set_player.hex_color,
                        texture:app.pixi_textures["disc_tex"]}
@@ -745,7 +745,7 @@ take_interaction: function take_interaction(message_data)
             app.add_transfer_beam(target_player.current_location,
                                   source_player.current_location,
                                   elements,
-                                  show_target_emitter=false);
+                                  false);
         }
         else if(interaction_type == "send_disc")
         {
@@ -759,7 +759,7 @@ take_interaction: function take_interaction(message_data)
             }
 
             let elements = [];
-            element = {source_change:null,
+            let element = {source_change:null,
                        target_change:null,
                        tint:parameter_set_player.hex_color,
                        texture:app.pixi_textures["disc_tex"]}
@@ -768,7 +768,7 @@ take_interaction: function take_interaction(message_data)
             app.add_transfer_beam(source_player.current_location,
                                   target_player.current_location,
                                   elements,
-                                  show_source_emitter=false);
+                                  false);
         }
 
         if(app.pixi_mode=="subject")
@@ -821,7 +821,7 @@ hide_interaction_start_modal: function hide_interaction_start_modal(){
  */
 cancel_interaction:function cancel_interaction()
 {
-    session_player = app.session.world_state.session_players[app.session_player.id];
+    let session_player = app.session.world_state.session_players[app.session_player.id];
 
     if(session_player.interaction == 0)
     {        
@@ -934,7 +934,7 @@ setup_tractor_beam: function setup_tractor_beam(source_id, target_id)
         let temp_x = (myX - Math.cos(tempAngle) * xIncrement * i);
         let temp_y = (myY - Math.sin(tempAngle) * xIncrement * i);
 
-        tb_sprite = pixi_avatars[source_id].tractor_beam[i];
+        let tb_sprite = pixi_avatars[source_id].tractor_beam[i];
         tb_sprite.position.set(temp_x, temp_y)
         tb_sprite.scale.set(tempScale * i);
         tb_sprite.visible = true;
@@ -1062,7 +1062,7 @@ move_player: function move_player(delta)
 
             if(i != j)
             {
-                temp_distance = app.get_distance(obj1.current_location, obj2.current_location);
+                let temp_distance = app.get_distance(obj1.current_location, obj2.current_location);
 
                 if(!obj1.nearest_player)
                 {
@@ -1122,7 +1122,7 @@ move_player: function move_player(delta)
         {
             for (let j=0; j< pixi_avatars[i].tractor_beam.length; j++)
             {
-                tb_sprite = pixi_avatars[i].tractor_beam[j];
+                let tb_sprite = pixi_avatars[i].tractor_beam[j];
                 tb_sprite.visible = false;
             }
         }

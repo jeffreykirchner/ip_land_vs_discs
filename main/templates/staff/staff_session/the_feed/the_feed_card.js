@@ -18,7 +18,7 @@ process_the_feed: function process_the_feed(message_type, message_data)
             sender_label = app.get_parameter_set_player_from_player_id(message_data.sender_id).id_label;
             receiver_label = "";
 
-            for(i in message_data.nearby_players) {
+            for(let i in message_data.nearby_players) {
                 if(receiver_label != "") receiver_label += ", ";
                 receiver_label += "<b>" + app.get_parameter_set_player_from_player_id(message_data.nearby_players[i]).id_label + "</b>";
             }
@@ -90,7 +90,7 @@ process_the_feed: function process_the_feed(message_type, message_data)
             else if(message_data.interaction_type == "send_disc")
             {
                 let disc_list = ""; 
-                for(i in message_data.interaction_discs)
+                for(let i in message_data.interaction_discs)
                 {
                     if(!message_data.interaction_discs[i]) continue;
 
@@ -107,7 +107,7 @@ process_the_feed: function process_the_feed(message_type, message_data)
             else if(message_data.interaction_type == "take_disc")
             {
                 let disc_list = ""; 
-                for(i in message_data.interaction_discs)
+                for(let i in message_data.interaction_discs)
                 {
                     if(!message_data.interaction_discs[i]) continue;
                     let disc_label = app.get_parameter_set_player_from_player_id(i).id_label;
