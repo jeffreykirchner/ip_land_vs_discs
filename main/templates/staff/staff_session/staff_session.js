@@ -6,10 +6,10 @@ axios.defaults.xsrfCookieName = "csrftoken";
 
 {%include "subject/subject_home/the_stage/pixi_globals.js"%}
 
-var worker = null;
+let worker = null;
 
 //vue app
-var app = Vue.createApp({
+let app = Vue.createApp({
     delimiters: ["[[", "]]"],
 
     data() {return {chat_socket : "",

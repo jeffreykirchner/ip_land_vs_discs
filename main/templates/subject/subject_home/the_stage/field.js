@@ -509,7 +509,7 @@ send_field_claim: function send_field_claim()
  */
 take_field_claim: function take_field_claim(message_data)
 {
-    var source_player_id = message_data.source_player_id;
+    let source_player_id = message_data.source_player_id;
 
     if(message_data.status == "success")
     {

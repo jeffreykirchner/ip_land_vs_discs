@@ -258,6 +258,7 @@ class Session(models.Model):
         #self.time_remaining = self.parameter_set.period_length
         #self.timer_running = False
         self.world_state ={}
+        self.replay_data = None
         self.save()
 
         for p in self.session_players.all():
