@@ -53,7 +53,7 @@ def take_get_session(session_key):
     logger = logging.getLogger(__name__)
 
     try:        
-        session = Session.objects.get(session_key=session_key)
+        session = Session.objects.defer("replay_data").get(session_key=session_key)
         return session.json()
     except ObjectDoesNotExist:
         logger.warning(f"staff get_session session, not found: {session_key}")

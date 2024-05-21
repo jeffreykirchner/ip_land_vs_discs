@@ -42,7 +42,9 @@ class StaffSessionParametersView(SingleObjectMixin, View):
         '''
         handle get requests
         '''
-        session = self.get_object()
+        logger = logging.getLogger(__name__)
+        logger.info(f"StaffSessionParametersView {kwargs}")
+        session = Session.objects.only("id", "parameter_set").get(id=self.kwargs['pk'])
 
         parameter_set_player_form = ParameterSetPlayerForm()
         parameter_set_notice_form = ParameterSetNoticeForm()
@@ -93,6 +95,8 @@ class StaffSessionParametersView(SingleObjectMixin, View):
         for i in parameter_set_period_form:
             parameter_set_period_form_ids.append(i.html_name)
 
+        logger.info(f"StaffSessionParametersView {kwargs}")
+
         return render(request=request,
                       template_name=self.template_name,
                       context={"channel_key" : uuid.uuid4(),
@@ -126,7 +130,7 @@ class StaffSessionParametersView(SingleObjectMixin, View):
                                "number_of_player_types" : range(4),
                                "session_json" : json.dumps(session.json_for_parameter_set(), cls=DjangoJSONEncoder),
                                "parameter_set_json" : json.dumps(session.parameter_set.json(), cls=DjangoJSONEncoder),
-                               "session" : session,
+                            #    "session" : session,
                                })
     
     @method_decorator(login_required)

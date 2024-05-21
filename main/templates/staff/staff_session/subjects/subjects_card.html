@@ -6,11 +6,11 @@
 
         <span class="float-end"> 
 
-            <a href='{%url "staff_session_subject_earnings" session.id %}' class='link-primary me-4' title='Open print earnings' v-if="session.started">
+            <a href='{%url "staff_session_subject_earnings" id %}' class='link-primary me-4' title='Open print earnings' v-if="session.started">
                 Print Earnings                
             </a>
             
-            <a href='{%url "staff_session_parameters" session.id %}' class='link-primary' title='Open parameter set'>
+            <a href='{%url "staff_session_parameters" id %}' class='link-primary' title='Open parameter set'>
                 [[session.started ? 'View': 'Edit']] Parameters                
             </a>
 
