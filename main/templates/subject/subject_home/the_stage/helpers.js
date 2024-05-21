@@ -228,15 +228,15 @@ clone_json: function clone_json(obj) {
     }
     // array deep copy
     if (obj instanceof Array) {
-        var cloneA = [];
-        for (var i = 0; i < obj.length; ++i) {
+        let cloneA = [];
+        for (let i = 0; i < obj.length; ++i) {
             cloneA[i] = clone_json(obj[i]);
         }              
         return cloneA;
     }                  
     // object deep copy
-    var cloneO = {};   
-    for (var i in obj) {
+    let cloneO = {};   
+    for (let i in obj) {
         cloneO[i] = clone_json(obj[i]);
     }                  
     return cloneO;

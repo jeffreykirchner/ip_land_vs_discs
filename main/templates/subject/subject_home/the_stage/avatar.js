@@ -604,7 +604,7 @@ send_interaction: function send_interaction()
  */
 take_tractor_beam: function take_tractor_beam(message_data)
 {
-    var source_player_id = message_data.source_player_id;
+    let source_player_id = message_data.source_player_id;
 
     if(message_data.status == "success")
     {
