@@ -5,7 +5,7 @@ process_the_feed: function process_the_feed(message_type, message_data)
 {
     if(message_data.status != "success") return;
     
-    html_text = "";
+    let html_text = "";
     let sender_label = "";
     let receiver_label = "";
     let field = null;
