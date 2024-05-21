@@ -61,7 +61,9 @@ class Session(models.Model):
     invitation_text = HTMLField(default="", verbose_name="Invitation Text")       #inviataion email subject and text
     invitation_subject = HTMLField(default="", verbose_name="Invitation Subject")
 
-    world_state = models.JSONField(encoder=DjangoJSONEncoder, null=True, blank=True, verbose_name="Current Session State")       #world state at this point in session
+    world_state = models.JSONField(encoder=DjangoJSONEncoder, null=True, blank=True, verbose_name="Current Session State")    #world state at this point in session
+
+    replay_data = models.JSONField(encoder=DjangoJSONEncoder, null=True, blank=True, verbose_name="Replay Data")              #replay data for session
 
     soft_delete =  models.BooleanField(default=False)                             #hide session if true
 
