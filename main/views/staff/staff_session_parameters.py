@@ -43,7 +43,7 @@ class StaffSessionParametersView(SingleObjectMixin, View):
         handle get requests
         '''
         logger = logging.getLogger(__name__)
-        logger.info(f"StaffSessionParametersView {kwargs}")
+        # logger.info(f"StaffSessionParametersView {kwargs}")
         session = Session.objects.only("id", "parameter_set").get(id=self.kwargs['pk'])
 
         parameter_set_player_form = ParameterSetPlayerForm()
@@ -95,7 +95,7 @@ class StaffSessionParametersView(SingleObjectMixin, View):
         for i in parameter_set_period_form:
             parameter_set_period_form_ids.append(i.html_name)
 
-        logger.info(f"StaffSessionParametersView {kwargs}")
+        # logger.info(f"StaffSessionParametersView {kwargs}")
 
         return render(request=request,
                       template_name=self.template_name,
