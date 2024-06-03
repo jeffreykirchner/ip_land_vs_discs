@@ -44,6 +44,8 @@ setup_disc_inventory: function setup_disc_inventory()
         let disc_graphic = PIXI.Sprite.from(app.pixi_textures["disc_tex"]);
         let parameter_set_player = app.get_parameter_set_player_from_player_id(i);
 
+        if(!parameter_set_player.enable_disc_production) continue;
+
         disc_graphic.scale.set(0.5);
         disc_graphic.position.set(start_x, 0);
         disc_graphic.zIndex = z_index;
