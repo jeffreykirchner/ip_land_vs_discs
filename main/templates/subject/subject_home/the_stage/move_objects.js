@@ -249,7 +249,7 @@ search_for_path_around_walls: function search_for_path_around_walls(starting_rec
             let rect = search_grid.rect;
     
             box.rect(rect.x, rect.y, rect.width, rect.height);
-            box.stroke(1, "black");
+            box.stroke({width:1, color:"black"});
             
             wall_search_objects.push(box);
             pixi_container_main.addChild(box);
@@ -264,7 +264,7 @@ search_for_path_around_walls: function search_for_path_around_walls(starting_rec
                 line_to_parent.moveTo(rect.x + rect.width/2, rect.y + rect.height/2);
                 line_to_parent.lineTo(search_grid_parent.rect.x + search_grid_parent.rect.width/2, search_grid_parent.rect.y + search_grid_parent.rect.height/2);
                 
-                line_to_parent.stroke(1, "gray");
+                line_to_parent.stroke({width:1, color:"gray"});
 
                 wall_search_objects.push(line_to_parent);
                 pixi_container_main.addChild(line_to_parent);
@@ -298,7 +298,7 @@ search_for_path_around_walls: function search_for_path_around_walls(starting_rec
                 line_to_parent.moveTo(pt1.x, pt1.y);
                 line_to_parent.lineTo(pt2.x, pt2.y);
 
-                line_to_parent.stroke(2, "purple");     
+                line_to_parent.stroke({width:2, color:"purple"});     
 
                 wall_search_objects.push(line_to_parent);
                 pixi_container_main.addChild(line_to_parent);
