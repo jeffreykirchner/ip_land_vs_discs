@@ -548,10 +548,17 @@ class Session(models.Model):
 
             return f'Grant {target_parameter_set_player["id_label"]} access to {parameter_set_field["info"]}'
 
-
         elif type == "help_doc":
             return data
+        
+        elif type == "field_enter":
 
+            return f'Enter field {data["field_label"]}'
+
+        elif type == "field_exit":
+                
+            return f'Exit field {data["field_label"]}'
+        
         return ""
     
     def get_download_recruiter_csv(self):

@@ -1051,8 +1051,12 @@ class SubjectUpdatesMixin():
         status = "success"
 
         try:
-            player_id = self.session_players_local[event["player_key"]]["id"]
+            session_player_id = self.session_players_local[event["player_key"]]["id"]
+            session_player = self.world_state_local["session_players"][str(session_player_id)]
+            parameter_set_player = self.parameter_set_local["parameter_set_players"][str(session_player["parameter_set_player_id"])]
             field_id = event["message_text"]["field_id"]
+            field =  self.world_state_local["fields"][str(field_id)]
+            parameter_set_field = self.parameter_set_local["parameter_set_fields"][str(field["parameter_set_field"])]
             present_players = event["message_text"]["present_players"]
         except:
             logger.error(f"present_players: invalid data, {event['message_text']}")
@@ -1060,7 +1064,52 @@ class SubjectUpdatesMixin():
             error_message.append({"id":"present_players", "message": "Invalid data, try again."})
         
         if status == "success":
-            self.world_state_local["fields"][str(field_id)]["present_players"] = present_players
+            #store entries
+            field_entries = []
+            for i in present_players:
+                if i not in field["present_players"]:
+                    field_entries.append(i)
+
+            #store exits
+            field_exits = []
+            for i in field["present_players"]:
+                if i not in present_players:
+                    field_exits.append(i)
+
+            field["present_players"] = present_players
+
+            #data setup
+            data = {"field": field, "field_label":parameter_set_field["info"]}
+            data["field_owner_label"] = parameter_set_player["id_label"]
+            data["present_player_labels"] = []
+            data["allowed_player_labels"] = []
+
+            for j in field["present_players"]:
+                p = self.world_state_local["session_players"][str(j)]
+                psp = self.parameter_set_local["parameter_set_players"][str(p["parameter_set_player_id"])]
+                data["present_player_labels"].append(psp["id_label"])
+
+            for j in field["allowed_players"]:
+                p = self.world_state_local["session_players"][str(j)]
+                psp = self.parameter_set_local["parameter_set_players"][str(p["parameter_set_player_id"])]
+                data["allowed_player_labels"].append(psp["id_label"])
+
+            #record entries
+            for i in field_entries:
+                self.session_events.append(SessionEvent(session_id=self.session_id, 
+                                                        session_player_id=i,
+                                                        type="field_enter",
+                                                        period_number=self.world_state_local["current_period"],
+                                                        time_remaining=self.world_state_local["time_remaining"],
+                                                        data=data))
+            #record exits
+            for i in field_exits:
+                self.session_events.append(SessionEvent(session_id=self.session_id, 
+                                                        session_player_id=i,
+                                                        type="field_exit",
+                                                        period_number=self.world_state_local["current_period"],
+                                                        time_remaining=self.world_state_local["time_remaining"],
+                                                        data=data))
     
     #helpers
     async def get_current_parameter_set_period(self):
