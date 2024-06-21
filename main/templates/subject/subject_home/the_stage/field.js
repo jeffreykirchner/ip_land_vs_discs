@@ -171,7 +171,7 @@ setup_pixi_fields: function setup_pixi_fields()
         let right_cone_graphic = null;
         let management_label = null;
 
-        id_label_text = "Started by ___ .";
+        id_label_text = "Plowed by ___ .";
 
         management_label = new PIXI.Text({text:"Right click to admit others.", 
                                           style:text_style_2});
@@ -378,7 +378,7 @@ update_field: function update_field(field_id)
         }
         else
         {
-            pixi_field.id_label_2.text = "Started by " + owner.id_label + ".";
+            pixi_field.id_label_2.text = "Plowed by " + owner.id_label + ".";
 
             if(parameter_set_period.field_pr == "True")
             {
