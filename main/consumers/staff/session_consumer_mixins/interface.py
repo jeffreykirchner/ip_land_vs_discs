@@ -15,12 +15,13 @@ class InterfaceMixin():
         load session events
         '''
         
-        session = await Session.objects.aget(id=self.session_id)
+        session = await Session.objects.only("replay_data").aget(id=self.session_id)
         session_events_local = {}
 
         if session.replay_data:
             session_events_local = session.replay_data
         else:
+            # session = await Session.objects.aget(id=self.session_id)
             async for i in session.session_periods.all():
 
                 session_events_local[str(i.period_number)] = {}
@@ -37,8 +38,7 @@ class InterfaceMixin():
                 v = {"type" : i.type, "data" : i.data}
                 session_events_local[str(i.period_number)][str(i.time_remaining)].append(v)
 
-            session.replay_data = session_events_local
-            await session.asave()
+            await Session.objects.filter(id=self.session_id).aupdate(replay_data=session_events_local)
 
         result = {"session_events": session_events_local}
 
