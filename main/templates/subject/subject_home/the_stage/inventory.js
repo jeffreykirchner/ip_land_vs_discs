@@ -88,8 +88,8 @@ setup_disc_inventory: function setup_disc_inventory()
     
     
     invetory_bg.rect(-10, -10, pixi_inventory.disc_container.width+20, pixi_inventory.disc_container.height+20);
-    invetory_bg.stroke(1, 0x000000);
     invetory_bg.fill({color:'white'});
+    invetory_bg.stroke({width:1, color:0x000000});
     invetory_bg.zIndex = 1;
 
     pixi_inventory.disc_container.addChildAt(invetory_bg,0);
@@ -173,8 +173,9 @@ setup_seed_inventory: function setup_seed_inventory()
     
     
     invetory_bg.rect(-10, -10, pixi_inventory.seed_container.width+20, pixi_inventory.seed_container.height+20);
-    invetory_bg.stroke(1, 0x000000);
+    
     invetory_bg.fill({color:'white'});
+    invetory_bg.stroke({width:1, color:0x000000});
     // invetory_bg.endFill();
     invetory_bg.zIndex = 1;
 

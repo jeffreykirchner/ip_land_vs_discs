@@ -10,7 +10,7 @@ add_scroll_button: function add_scroll_button(button_size, name, text)
     g.rect(0, 0, button_size.w, button_size.h);
     // g.pivot.set(button_size.w/2, button_size.h/2);
     // g.endFill();
-    g.stroke(1, 0x000000);
+    g.stroke({width:1, color:0x000000});
     g.fill({color:0xffffff});
     // g.x=button_size.x;
     // g.y=button_size.y;

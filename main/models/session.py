@@ -6,6 +6,7 @@ from datetime import datetime
 from tinymce.models import HTMLField
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
+from decimal import Decimal
 
 import logging
 import uuid
@@ -31,6 +32,7 @@ import main
 from main.models import ParameterSet
 
 from main.globals import ExperimentPhase
+from main.globals import round_up
 
 #experiment sessoin
 class Session(models.Model):
@@ -546,10 +548,17 @@ class Session(models.Model):
 
             return f'Grant {target_parameter_set_player["id_label"]} access to {parameter_set_field["info"]}'
 
-
         elif type == "help_doc":
             return data
+        
+        elif type == "field_enter":
 
+            return f'Enter field {data["field_label"]}'
+
+        elif type == "field_exit":
+                
+            return f'Exit field {data["field_label"]}'
+        
         return ""
     
     def get_download_recruiter_csv(self):
@@ -566,7 +575,7 @@ class Session(models.Model):
 
             for p in self.world_state["session_players"]:
                 writer.writerow([parameter_set_players[p]["student_id"],
-                                 self.world_state["session_players"][p]["earnings"]])
+                                 round_up(Decimal(self.world_state["session_players"][p]["earnings"])/100,2)])
 
             v = output.getvalue()
             output.close()
