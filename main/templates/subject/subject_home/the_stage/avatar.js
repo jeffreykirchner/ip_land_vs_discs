@@ -574,7 +574,7 @@ send_interaction: function send_interaction()
 
         if(disc_count == 0)
         {
-            app.interaction_error = "Select at least one disc.";
+            app.interaction_error = "Select a disc.";
             return;
         }
     }
