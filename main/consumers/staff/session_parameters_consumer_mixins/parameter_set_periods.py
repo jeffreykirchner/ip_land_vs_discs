@@ -64,7 +64,7 @@ def take_update_parameter_set_period(data):
     logger.info(f'form_data_dict : {form_data_dict}')
 
     form = ParameterSetPeriodForm(form_data_dict, instance=parameter_set_period)
-    form.fields["help_doc"].queryset = session.parameter_set.instruction_set.help_docs_subject.all()
+    form.fields["help_doc"].queryset = session.parameter_set.parameter_set_players.first().instruction_set.help_docs_subject.all()
 
     if form.is_valid():         
         form.save()              
@@ -96,6 +96,8 @@ def take_copy_period_down(data):
 
     parameter_set_period_json = parameter_set_period.json()
 
+    parameter_set_period_json["help_doc"] = None
+    parameter_set_period_json["help_doc_title"] = None
 
     for period in parameter_set_periods:
         period.from_dict(parameter_set_period_json)
