@@ -270,7 +270,8 @@ setup_pixi_fields: function setup_pixi_fields()
             {
                 multiplier_text_left = v + " Player";
             }
-            else if(v == multiplier_list.length)
+            else if(v == multiplier_list.length && 
+                    multiplier_list.length < Object.keys(app.session.session_players).length)
             {
                 multiplier_text_left = v + "+ Players";
             }
