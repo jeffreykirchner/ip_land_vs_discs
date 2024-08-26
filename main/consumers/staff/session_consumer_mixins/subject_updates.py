@@ -2,18 +2,13 @@
 import logging
 import math
 
-from asgiref.sync import sync_to_async
-from textwrap import TextWrapper
 from decimal import Decimal
 
-from django.db import transaction
-from django.db.models.fields.json import KT
+from django.utils.html import strip_tags
 
 from main.models import SessionPlayer
 from main.models import Session
 from main.models import SessionEvent
-from django.utils.decorators import method_decorator
-
 
 from datetime import datetime, timedelta
 
@@ -66,12 +61,12 @@ class SubjectUpdatesMixin():
             session_player = self.world_state_local["session_players"][str(player_id)]
             session_player["current_location"] = current_location
             
-            result["text"] = event_data["text"]
+            result["text"] = strip_tags(event_data["text"])
             result["nearby_players"] = []
 
             #format text for chat bubbles
-            wrapper = TextWrapper(width=13, max_lines=6)
-            result['text'] = wrapper.fill(text=result['text'])
+            # wrapper = TextWrapper(width=13, max_lines=6)
+            # result['text'] = wrapper.fill(text=result['text'])
 
             #find nearby players
             session_players = self.world_state_local["session_players"]
