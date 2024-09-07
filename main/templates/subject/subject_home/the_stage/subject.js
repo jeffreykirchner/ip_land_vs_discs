@@ -29,7 +29,7 @@ subject_pointer_tap: function subject_pointer_tap(event)
 /**
  *pointer up on subject screen
  */
- subject_pointer_click: function subject_pointer_click(event)
+subject_pointer_click: function subject_pointer_click(event)
 {
     if(!app.session.world_state.hasOwnProperty('started')) return;
     let local_pos = event.data.getLocalPosition(event.currentTarget);
@@ -84,8 +84,8 @@ subject_pointer_tap: function subject_pointer_tap(event)
 
 /**
  *pointer up on subject screen
- */
- subject_pointer_right_click: function subject_pointer_right_click(event)
+*/
+subject_pointer_right_click: function subject_pointer_right_click(event)
 {
     if(!app.session.world_state.hasOwnProperty('started')) return;
     let local_pos = event.data.getLocalPosition(event.currentTarget);
