@@ -207,17 +207,21 @@ find_test_mode_task: function find_test_mode_task()
     {
        v = app.random_number(1, 3);
     }
+    else if(app.session.world_state.time_remaining>app.session.parameter_set.period_length)
+    {
+        v = app.random_number(1, 2);
+    }
 
     switch (v){
         case 1:
             app.test_mode_info.task = "chat";
             break;        
         case 2:                
-            app.test_mode_info.task = "go_to_field";
-            break;
-        case 3:
             app.test_mode_info.task = "go_to_player";
             break;
+        case 3:
+           app.test_mode_info.task = "go_to_field";
+           break;
         case 4:
             app.test_mode_info.task = "field_manage";
             break;
@@ -561,8 +565,8 @@ test_mode_go_to_player: function test_mode_go_to_player(){
 
         if(target_player.id == app.session_player.id) return;
 
-        app.test_mode_info.target_location = {x:target_player.current_location.x + app.random_number(-100, 100),
-                                              y:target_player.current_location.y + app.random_number(-100, 100)};
+        app.test_mode_info.target_location = {x:target_player.current_location.x + app.random_number(75, 100),
+                                              y:target_player.current_location.y + app.random_number(75, 100)};
         app.test_mode_info.target = target_player;
     }
 
