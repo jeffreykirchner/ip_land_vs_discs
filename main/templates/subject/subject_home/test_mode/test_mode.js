@@ -203,18 +203,23 @@ find_test_mode_task: function find_test_mode_task()
 {
     let v = app.random_number(1, 7);
 
+    if(app.session.world_state.time_remaining<=app.session.parameter_set.interaction_only_length)
+    {
+       v = app.random_number(1, 3);
+    }
+
     switch (v){
         case 1:
             app.test_mode_info.task = "chat";
             break;        
         case 2:                
-            app.test_mode_info.task = "field_claim";
+            app.test_mode_info.task = "go_to_field";
             break;
         case 3:
-            app.test_mode_info.task = "field_manage";
+            app.test_mode_info.task = "go_to_player";
             break;
         case 4:
-            app.test_mode_info.task = "go_to_field";
+            app.test_mode_info.task = "field_manage";
             break;
         case 5:
             app.test_mode_info.task = "grow_seeds";
@@ -223,7 +228,7 @@ find_test_mode_task: function find_test_mode_task()
             app.test_mode_info.task = "build_disk";
             break;
         case 7:
-            app.test_mode_info.task = "go_to_player";
+            app.test_mode_info.task = "field_claim";
             break;
     }
 },
@@ -508,6 +513,11 @@ test_mode_build_discs: function test_mode_build_discs(){
     }
 
     let local_player = app.session.world_state.session_players[app.session_player.id];
+    if(!app.get_parameter_set_player_from_player_id(local_player.id).enable_disc_production)
+    {
+        app.test_mode_reset_info();
+        return;
+    }
 
     //check if player has enough production time
     if(local_player.state == "open")
