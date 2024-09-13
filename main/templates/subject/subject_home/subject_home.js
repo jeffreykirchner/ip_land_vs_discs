@@ -403,6 +403,7 @@ let app = Vue.createApp({
 
             //update fields
             app.session.world_state.fields = message_data.fields;
+            app.update_fields();
             app.update_field_multiplier_tables();
 
             //period has changed
@@ -422,7 +423,7 @@ let app = Vue.createApp({
                 });          
                 
                 app.setup_pixi_minimap();
-                app.update_fields();
+                // app.update_fields();
 
                 //reset player locations
 
