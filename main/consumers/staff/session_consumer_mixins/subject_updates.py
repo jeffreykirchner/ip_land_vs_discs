@@ -686,6 +686,11 @@ class SubjectUpdatesMixin():
                 status = "fail"
                 error_message.append({"id":"field_claim", "message": "Not enough production time to plow a field."})
 
+        #check if player is doing an action
+        if source == "client" and source_player["state"] != "open":
+            status = "fail"
+            error_message.append({"id":"build_disc", "message": "Invalid Entry."})
+
         result = {"status" : status, 
                   "error_message" : error_message, 
                   "source_player_id" : player_id}
@@ -697,6 +702,7 @@ class SubjectUpdatesMixin():
             session_player = self.world_state_local["session_players"][player_id_s]
 
             if source == "client":
+
                 event["message_text"]["source"]="server"
 
                 session_player["build_time_remaining"] = Decimal(session_player["build_time_remaining"]) - Decimal(self.parameter_set_local["field_build_length"])
@@ -871,10 +877,10 @@ class SubjectUpdatesMixin():
             status = "fail"
             error_message.append({"id":"build_disc", "message": "Not enough production time remaining."})
 
-        #check if player is already building
+        #check if player is doing an action
         if source == "client" and session_player["state"] != "open":
             status = "fail"
-            error_message.append({"id":"build_disc", "message": "You are already building."})
+            error_message.append({"id":"build_disc", "message": "Invalid Entry."})
 
         result = {"status" : status, 
                   "error_message" : error_message, 
@@ -973,10 +979,10 @@ class SubjectUpdatesMixin():
             status = "fail"
             error_message.append({"id":"build_seeds", "message": "Not enough production time remaining."})
 
-        #check if player is already building
+        #check if player is available
         if source == "client" and session_player["state"] != "open":
             status = "fail"
-            error_message.append({"id":"build_seeds", "message": "You are already building."})
+            error_message.append({"id":"build_seeds", "message": "Invalid action."})
 
         result = {"status" : status, 
                   "error_message" : error_message, 

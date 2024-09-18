@@ -91,7 +91,6 @@ subject_pointer_right_click: function subject_pointer_right_click(event)
     let local_pos = event.data.getLocalPosition(event.currentTarget);
     let local_player = app.session.world_state.session_players[app.session_player.id];
 
-
     if(local_player.frozen)
     {
         let frozen_text = "No actions while interacting.";
