@@ -968,7 +968,7 @@ setup_tractor_beam: function setup_tractor_beam(source_id, target_id)
 /**
  * move players if target does not equal current location
  */
-move_player: function move_player(delta)
+move_players: function move_players(delta)
 {
     if(!app.session.world_state.started) return;
 
@@ -991,7 +991,7 @@ move_player: function move_player(delta)
 
             //update the sprite locations
             gear_sprite.play();
-            avatar_container.position.set(obj.current_location.x, obj.current_location.y);
+            
             if (obj.current_location.x < obj.target_location.x )
             {
                 gear_sprite.animationSpeed =  app.session.parameter_set.avatar_animation_speed;
@@ -1014,6 +1014,8 @@ move_player: function move_player(delta)
         {
             gear_sprite.stop();
         }
+
+        avatar_container.position.set(obj.current_location.x, obj.current_location.y);
 
         //update status
         if(obj.interaction > 0)

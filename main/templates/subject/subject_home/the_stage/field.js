@@ -695,9 +695,14 @@ send_build_disc: function send_build_disc()
     {
 
         app.working = true;
+        let session_player = app.session.world_state.session_players[app.session_player.id];
+
+        session_player.target_location =  Object.assign({}, session_player.current_location);
+        session_player.nav_point = null;
             
         app.send_message("build_disc", 
-                        {"source" : "client"},
+                        {"source" : "client",
+                         "current_location" : session_player.current_location, },
                         "group"); 
     }
 },
@@ -713,6 +718,13 @@ take_build_disc: function take_build_disc(message_data)
 
     if(message_data.status == "success")
     {
+        if("current_location" in message_data)
+        {
+            session_player.current_location = Object.assign({}, message_data.current_location);
+            session_player.target_location = Object.assign({}, message_data.current_location);
+        }
+        session_player.nav_point = null;
+
         session_player.build_time_remaining =  message_data.build_time_remaining;
         session_player.frozen = message_data.frozen;
         session_player.state = message_data.state;
