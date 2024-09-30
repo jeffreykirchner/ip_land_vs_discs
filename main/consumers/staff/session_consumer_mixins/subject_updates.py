@@ -952,6 +952,7 @@ class SubjectUpdatesMixin():
             player_id = self.session_players_local[event["player_key"]]["id"]
             build_seed_count = event["message_text"]["build_seed_count"]
             source = event["message_text"]["source"]
+            current_location = event["message_text"]["current_location"]
         except:
             logger.error(f"build_seeds: invalid data, {event['message_text']}")
             status = "fail"
@@ -1017,6 +1018,7 @@ class SubjectUpdatesMixin():
             result["state"] = session_player["state"]
             result["frozen"] = session_player["frozen"]
             result["interaction"] = session_player["interaction"]
+            result["current_location"] = current_location
 
             await Session.objects.filter(id=self.session_id).aupdate(world_state=self.world_state_local)
 
