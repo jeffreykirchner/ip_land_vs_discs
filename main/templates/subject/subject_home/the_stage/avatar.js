@@ -611,14 +611,24 @@ take_tractor_beam: function take_tractor_beam(message_data)
 
         let player_id = message_data.player_id;
         let target_player_id = message_data.target_player_id;
+
+        let source_player = app.session.world_state.session_players[player_id];
+        let target_player = app.session.world_state.session_players[target_player_id];
     
-        app.session.world_state.session_players[player_id].tractor_beam_target = target_player_id;
+        source_player.tractor_beam_target = target_player_id;
     
-        app.session.world_state.session_players[player_id].frozen = true
-        app.session.world_state.session_players[target_player_id].frozen = true
+        source_player.frozen = true
+        target_player.frozen = true
     
-        app.session.world_state.session_players[player_id].interaction = app.session.parameter_set.interaction_length;
-        app.session.world_state.session_players[target_player_id].interaction = app.session.parameter_set.interaction_length;
+        source_player.interaction = app.session.parameter_set.interaction_length;
+        target_player.interaction = app.session.parameter_set.interaction_length;
+
+        //remove target location
+        source_player.target_location = Object.assign({}, source_player.current_location);
+        target_player.target_location = Object.assign({}, target_player.current_location);
+
+        source_player.nav_point = null;
+        target_player.nav_point = null;
     
         if(app.is_subject)
         {
