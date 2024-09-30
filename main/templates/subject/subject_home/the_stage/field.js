@@ -498,9 +498,16 @@ send_field_claim: function send_field_claim()
     else
     {    
         app.working = true;
+
+        let session_player = app.session.world_state.session_players[app.session_player.id];
+
+        session_player.target_location = Object.assign({}, session_player.current_location);
+        session_player.nav_point = null;
             
         app.send_message("field_claim", 
-                        {"field_id" : field_id, "source" : "client"},
+                        {"field_id" : field_id, 
+                         "current_location" : session_player.current_location,
+                         "source" : "client"},
                         "group"); 
     }
 },
@@ -525,6 +532,13 @@ take_field_claim: function take_field_claim(message_data)
         }
 
         let session_player = app.session.world_state.session_players[source_player_id];
+
+        if("current_location" in message_data)
+        {
+            session_player.current_location = Object.assign({}, message_data.current_location);
+            session_player.target_location = Object.assign({}, message_data.current_location);
+        }
+        session_player.nav_point = null;
 
         session_player.build_time_remaining =  message_data.build_time_remaining;
         session_player.frozen = message_data.frozen;

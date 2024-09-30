@@ -652,6 +652,7 @@ class SubjectUpdatesMixin():
             field_id = event["message_text"]["field_id"]
             field = self.world_state_local["fields"][str(field_id)]
             source = event["message_text"]["source"]
+            current_location = event["message_text"]["current_location"]
         except:
             logger.error(f"field_claim: invalid data, {event['message_text']}")
             status = "fail"
@@ -738,6 +739,7 @@ class SubjectUpdatesMixin():
             result["state"] = session_player["state"]
             result["frozen"] = session_player["frozen"]
             result["interaction"] = session_player["interaction"]
+            result["current_location"] = current_location
 
             await Session.objects.filter(id=self.session_id).aupdate(world_state=self.world_state_local)
 
