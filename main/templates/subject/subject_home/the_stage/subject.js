@@ -31,6 +31,7 @@ subject_pointer_tap: function subject_pointer_tap(event)
  */
 subject_pointer_click: function subject_pointer_click(event)
 {
+    if(app.working) return;
     if(!app.session.world_state.hasOwnProperty('started')) return;
     let local_pos = event.data.getLocalPosition(event.currentTarget);
     let local_player = app.session.world_state.session_players[app.session_player.id];
