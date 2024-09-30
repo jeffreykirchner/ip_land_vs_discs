@@ -495,6 +495,7 @@ let app = Vue.createApp({
                         //reset locations
                         app.session.world_state.session_players[p].current_location = server_location;
                         app.session.world_state.session_players[p].target_location = server_target_location;
+                        app.session.world_state.session_players[p].nav_point = null;
                     }
                     else if(app.get_distance(server_location, app.session.world_state.session_players[p].current_location) > 1000)
                     {

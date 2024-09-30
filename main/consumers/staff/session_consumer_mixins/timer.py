@@ -306,8 +306,8 @@ class TimerMixin():
             session_player["current_location"] = {"x": parameter_set_player["start_x"],
                                                   "y": parameter_set_player["start_y"]}
             
-            session_player["target_location"] = {"x": parameter_set_player["start_x"]+1,
-                                                 "y": parameter_set_player["start_y"]+1}
+            session_player["target_location"] = {"x": parameter_set_player["start_x"],
+                                                 "y": parameter_set_player["start_y"]}
             
             summary_data_player["earnings"] = period_earnings
 
