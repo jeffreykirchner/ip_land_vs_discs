@@ -222,6 +222,7 @@ simulate_build_disc: function simulate_build_disc(){
                 "state": "building_disc",
                 "frozen": true,
                 "interaction": parameter_set.disc_build_length,
+                "current_location": session_player.current_location,
         };
 
         app.take_build_disc(message_data);
@@ -244,7 +245,8 @@ simulate_build_disc: function simulate_build_disc(){
             "build_time_remaining": session_player.build_time_remaining - parameter_set.disc_build_length,
             "state": "open",
             "frozen": false,
-            "interaction": 0
+            "interaction": 0,
+            "current_location": session_player.current_location,
         }
 
         app.take_build_disc(message_data);
@@ -305,6 +307,7 @@ simulate_build_seeds: function simulate_build_seeds(){
                 "state": "building_seeds",
                 "frozen": true,
                 "interaction": app.build_seed_count * parameter_set.seed_build_length,
+                "current_location": session_player.current_location,
             };
     
             app.take_build_seeds(message_data);
@@ -328,6 +331,7 @@ simulate_build_seeds: function simulate_build_seeds(){
                 "state": "open",
                 "frozen": false,
                 "interaction": 0,
+                "current_location": session_player.current_location,
             };
     
             app.take_build_seeds(message_data);
@@ -371,6 +375,7 @@ simulate_field_claim: function simulate_field_claim(field_id, field){
             "state": "claiming_field",
             "frozen": true,
             "interaction": parameter_set.field_build_length,
+            "current_location": session_player.current_location,
         }
 
         app.take_field_claim(message_data);
@@ -396,7 +401,8 @@ simulate_field_claim: function simulate_field_claim(field_id, field){
             "build_time_remaining": session_player.build_time_remaining - parameter_set.field_build_length,
             "state": "open",
             "frozen": false,
-            "interaction": 0
+            "interaction": 0,
+            "current_location": session_player.current_location,
         }
 
         app.take_field_claim(message_data);
